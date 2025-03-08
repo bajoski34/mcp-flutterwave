@@ -1,0 +1,201 @@
+openapi: 3.0.3
+info:
+  title: Flutterwave Transactions API
+  description: API for managing and retrieving transaction details via Flutterwave.
+  version: 1.0.0
+servers:
+  - url: https://api.flutterwave.com/v3
+paths:
+  /transactions/{id}/verify:
+    get:
+      summary: Retrieve transaction details
+      description: Fetch the final status of a transaction using its transaction ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique transaction ID.
+      responses:
+        "200":
+          description: Successfully retrieved transaction details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Transaction fetched successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 4975363
+                      tx_ref:
+                        type: string
+                        example: "1710840858755-RND_83"
+                      amount:
+                        type: number
+                        format: float
+                        example: 1000
+                      currency:
+                        type: string
+                        example: NGN
+                      status:
+                        type: string
+                        example: successful
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-03-19T09:34:27.000Z"
+        "400":
+          description: Bad request, invalid transaction ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: "Invalid Transaction ID"
+                  data:
+                    type: object
+                    nullable: true
+        "404":
+          description: Transaction not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: "Transaction not found"
+                  data:
+                    type: object
+                    nullable: true
+  /transactions/verify_by_reference:
+    get:
+      summary: Retrieve transaction details
+      description: Fetch the final status of a transaction using its transaction ID.
+      parameters:
+        - name: tx_ref
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The unique transaction ID.
+      responses:
+        "200":
+          description: Successfully retrieved transaction details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Transaction fetched successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 4975363
+                      tx_ref:
+                        type: string
+                        example: "1710840858755-RND_83"
+                      amount:
+                        type: number
+                        format: float
+                        example: 1000
+                      currency:
+                        type: string
+                        example: NGN
+                      status:
+                        type: string
+                        example: successful
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-03-19T09:34:27.000Z"
+        "400":
+          description: Bad request, invalid transaction ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: "Invalid Transaction ID"
+                  data:
+                    type: object
+                    nullable: true
+        "404":
+          description: Transaction not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: "Transaction not found"
+                  data:
+                    type: object
+                    nullable: true
+  /transactions/{id}/resend-hook:
+    post:
+      summary: Resend failed webhook
+      description: Resend failed webhook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique transaction ID.
+  /transactions/{id}/events:
+      post:
+        summary: Resend failed webhook
+        description: Resend failed webhook
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: string
+            description: The unique transaction ID.
+      security:
+        - bearerAuth: []
+components:
+  schemas:
+    Transaction:
+      type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

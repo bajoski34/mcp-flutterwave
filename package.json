@@ -1,0 +1,33 @@
+{
+  "name": "mcp-flutterwave",
+  "type": "module",
+  "bin": {
+    "flutterwave": "./build/index.js"
+  },
+  "version": "1.0.0",
+  "description": "MCP Server to interact with flutterwave APIs.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build:types": "npx openapi-typescript ./src/client/specs/v3.yaml -o ./src/client/types/v3.d.ts"
+  },
+  "files": [
+    "build"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "flutterwave-node-v3": "^1.1.15",
+    "openapi-fetch": "^0.13.4",
+    "ts-node": "^10.9.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "nodemon": "^3.1.9",
+    "openapi-typescript": "^7.6.1",
+    "typescript": "^5.8.2"
+  }
+}
