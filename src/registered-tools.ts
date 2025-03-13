@@ -3,6 +3,8 @@ import { type Tool } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import get_transaction from "./tools/get_transaction.js";
 import resend_failed_webhook from "./tools/resend_failed_webhook.js";
+import create_checkout from "./tools/create_checkout.js";
+import disable_checkout from "./tools/disable_checkout.js";
 
 
 const tools:any[] = [];
@@ -19,10 +21,45 @@ tools.push({
 });
 
 tools.push({
-    name: "resent_failed_webhook",
+    name: "resent-failed-webhook",
     description: "Resent failed Webhook",
     inputSchema: transactionSchema,
     cb: resend_failed_webhook,
 });
+
+tools.push({
+    name: "create-checkout",
+    description: "Create a payment link",
+    inputSchema: {
+        tx_ref: z.string(),
+        amount: z.string(),
+        currency: z.string(),
+        redirect_url: z.string(),
+        customer: {
+            email: z.string(),
+            name: z.string(),
+            phonenumber: z.string(),
+        },
+        customizations: {
+            title: z.string(),
+        },
+        configurations: {
+            session_duration: z.number().default(0),
+            max_retry_attempt: z.number().default(3)
+        }
+    },
+    cb: create_checkout
+});
+
+tools.push({
+    name: "disable-checkout",
+    description: "Disable a Checkout Transaction",
+    inputSchema: {
+        link: z.string().url(`Checkout url is invalid. pass valid checkout url.`)
+    },
+    cb: disable_checkout
+})
+
+//{ 'checkout.create': {  } }
 
 export default tools;

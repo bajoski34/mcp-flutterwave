@@ -6,6 +6,55 @@ info:
 servers:
   - url: https://api.flutterwave.com/v3
 paths:
+  /payments:
+      post:
+        summary: Process a payment through Flutterwave
+        description: Initiates a payment process through Flutterwave using a unique transaction reference.
+        operationId: createPayment
+        requestBody:
+          description: Payment data for the transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tx_ref:
+                    type: string
+                    example: 'txnref_djsdkjsnkdjvnsdfj'
+                  amount:
+                    type: string
+                    example: '7500'
+                  currency:
+                    type: string
+                    example: 'NGN'
+                  redirect_url:
+                    type: string
+                    example: 'https://example_company.com/success'
+                  customer:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: 'developers@flutterwavego.com'
+                      name:
+                        type: string
+                        example: 'Flutterwave Developers'
+                      phonenumber:
+                        type: string
+                        example: '09012345678'
+                  customizations:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: 'Flutterwave Standard Payment'
+                required:
+                  - tx_ref
+                  - amount
+                  - currency
+                  - redirect_url
+                  - customer
+                  - customizations
   /transactions/{id}/verify:
     get:
       summary: Retrieve transaction details
@@ -179,8 +228,8 @@ paths:
           description: The unique transaction ID.
   /transactions/{id}/events:
       post:
-        summary: Resend failed webhook
-        description: Resend failed webhook
+        summary: Resend failed webhook.
+        description: Resend failed webhook.
         parameters:
           - name: id
             in: path

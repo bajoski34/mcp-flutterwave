@@ -1,4 +1,4 @@
-import client from "../client.js";
+import { transactionClient as client } from "../http/index.js";
 
 /**
  * This endpoint helps you query the details of a transaction.

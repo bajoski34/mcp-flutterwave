@@ -1,0 +1,106 @@
+openapi: 3.0.3
+info:
+  title: Flutterwave Transactions API
+  description: API for managing and retrieving transaction details via Flutterwave.
+  version: 1.0.0
+servers:
+  - url: https://api.flutterwave.com/v3
+paths:
+  /payments:
+      post:
+        summary: Process a payment through Flutterwave
+        description: Initiates a payment process through Flutterwave using a unique transaction reference.
+        operationId: createPayment
+        requestBody:
+          description: Payment data for the transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tx_ref:
+                    type: string
+                    example: 'txnref_djsdkjsnkdjvnsdfj'
+                  amount:
+                    type: string
+                    example: '7500'
+                  currency:
+                    type: string
+                    example: 'NGN'
+                  redirect_url:
+                    type: string
+                    example: 'https://example_company.com/success'
+                  customer:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: 'developers@flutterwavego.com'
+                      name:
+                        type: string
+                        example: 'Flutterwave Developers'
+                      phonenumber:
+                        type: string
+                        example: '09012345678'
+                  customizations:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: 'Flutterwave Standard Payment'
+                required:
+                  - tx_ref
+                  - amount
+                  - currency
+                  - redirect_url
+                  - customer
+                  - customizations
+
+  /payments/link/disable:
+    post:
+      summary: Disable a Flutterwave payment link
+      description: Disables a specific payment link for the given URL.
+      operationId: disablePaymentLink
+      requestBody:
+        description: Payment link data to disable
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                link:
+                  type: string
+                  example: 'https://checkout.flutterwave.com/v3/hosted/pay/flwlnk-01j8hkejppgm821xv8mfxfpgrb'
+              required:
+                - link
+      responses:
+        '200':
+          description: Payment link disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'success'
+                  message:
+                    type: string
+                    example: 'Payment link has been disabled successfully'
+        '400':
+          description: Bad request, invalid data
+        '401':
+          description: Unauthorized, invalid API key
+        '404':
+          description: Payment link not found
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    Transaction:
+      type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

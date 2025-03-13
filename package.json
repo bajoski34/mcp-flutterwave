@@ -9,7 +9,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
-    "build:types": "npx openapi-typescript ./src/client/specs/v3.yaml -o ./src/client/types/v3.d.ts"
+    "clean": "rm -rf build",
+    "build:types": "npx openapi-typescript ./src/client/specs/v3/transactions.yaml -o ./src/client/types/v3/transactions.d.ts && npx openapi-typescript ./src/client/specs/v3/checkout.yaml -o ./src/client/types/v3/checkout.d.ts"
   },
   "files": [
     "build"
@@ -19,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
+    "colors": "^1.4.0",
     "flutterwave-node-v3": "^1.1.15",
     "openapi-fetch": "^0.13.4",
     "ts-node": "^10.9.2",

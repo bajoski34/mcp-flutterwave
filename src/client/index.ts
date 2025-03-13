@@ -1,12 +1,12 @@
 import transactions from "./lib/transactions.js"
+import checkout from "./lib/checkout.js";
 
 export default class Flutterwave {
     static transactions() {
         return transactions;
     }
 
-    transfers() {
-        //TODO: implement
-        return null
+    static checkout() {
+        return checkout;
     }
 }
