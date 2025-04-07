@@ -19,7 +19,7 @@ Add the following to your `claude_desktop_config.json`. See [here](https://model
 ```json
 {
   "mcpServers": {
-    "stripe": {
+    "flutterwave": {
       "command": "npx",
       "args": [
           "-y",
