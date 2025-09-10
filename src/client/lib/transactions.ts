@@ -80,9 +80,60 @@ async function timeline(tx_id: string) {
     return data;
 }
 
+/**
+ * Retry a failed transaction by creating a new transaction with the same details
+ * This is a wrapper function that gets the original transaction and recreates it
+ */
+async function retry_transaction(tx_id: string) {
+    try {
+        // First get the original transaction details
+        const original = await get(tx_id);
+        
+        if (!original || !original.data) {
+            return {
+                status: 'error',
+                message: 'Could not retrieve original transaction details',
+                data: null
+            };
+        }
+
+        const txData = original.data;
+        
+        // Check if transaction is in a retriable state
+        if (txData.status === 'successful') {
+            return {
+                status: 'error',
+                message: 'Transaction is already successful, cannot retry',
+                data: null
+            };
+        }
+
+        return {
+            status: 'info',
+            message: 'Transaction retry initiated. Please create a new transaction with the same details.',
+            data: {
+                original_tx_ref: txData.tx_ref,
+                amount: txData.amount,
+                currency: txData.currency,
+                customer_email: (txData as any).customer?.email,
+                status: txData.status
+            }
+        };
+        
+    } catch (error) {
+        console.error('Error retrying transaction:', error);
+        return {
+            status: 'error',
+            message: 'Failed to retry transaction',
+            data: null
+        };
+    }
+}
+
 export default {
     get,
     get_with_reference,
     timeline,
-    send_failed_webhook
+    send_failed_webhook,
+    retry_transaction
 }

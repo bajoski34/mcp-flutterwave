@@ -13,7 +13,9 @@ const ACCEPTED_TOOLS = [
     'transaction.read',
     'plan.create',
     'plan.read',
-    'subscription.read'
+    'subscription.read',
+    'transaction.retry',
+    'transaction.timeline'
 ];
 
 export function parseArgs(args: string[]): Options {

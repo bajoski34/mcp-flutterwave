@@ -5,6 +5,8 @@ import get_transaction from "./tools/get_transaction.js";
 import resend_failed_webhook from "./tools/resend_failed_webhook.js";
 import create_checkout from "./tools/create_checkout.js";
 import disable_checkout from "./tools/disable_checkout.js";
+import retry_transaction from "./tools/retry_transaction.js";
+import get_transaction_timeline from "./tools/get_transaction_timeline.js";
 
 
 const tools:any[] = [];
@@ -58,7 +60,21 @@ tools.push({
         link: z.string().url(`Checkout url is invalid. pass valid checkout url.`)
     },
     cb: disable_checkout
-})
+});
+
+tools.push({
+    name: "retry-transaction",
+    description: "Analyze and provide guidance for retrying a failed transaction",
+    inputSchema: transactionSchema,
+    cb: retry_transaction,
+});
+
+tools.push({
+    name: "get-transaction-timeline",
+    description: "Get the timeline/history of events for a transaction",
+    inputSchema: transactionSchema,
+    cb: get_transaction_timeline,
+});
 
 //{ 'checkout.create': {  } }
 
