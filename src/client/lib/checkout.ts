@@ -69,7 +69,16 @@ async function disable(payment_link: string): Promise<{
         return;
     }
 
-    return data;
+    // Ensure the data structure matches the expected return type
+    if (data && typeof data === 'object') {
+        return {
+            status: data.status || 'success',
+            message: data.message || 'Link disabled successfully',
+            data: null
+        };
+    }
+
+    return data as any;
 }
 
 export default {
