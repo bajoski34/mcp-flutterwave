@@ -7,11 +7,20 @@ This MCP is in active development.
 ## Features
 
 - Confirm Transactions (Already included)
-- Retry Failed Transactions (Automatically retry transactions with recoverable errors) [x]
-- Retrieve Transaction History (Fetch and analyze past transactions) [x]
+- Retry Failed Transactions (Automatically retry transactions with recoverable errors) [✓]
+- Retrieve Transaction History (Fetch and analyze past transactions) [✓]
 - Send Failed Hooks (Already included)
-- Generate Payment Links [x]
-- Automated Customer Support (AI chatbot integrated with Flutterwave for transaction inquiries) [x]
+- Generate Payment Links [✓]
+- Automated Customer Support (AI chatbot integrated with Flutterwave for transaction inquiries) [✓]
+
+## Available Tools
+
+- `get-transactions`: Get the final status of a transaction with a transaction ID
+- `resent-failed-webhook`: Resend failed webhook for a transaction
+- `create-checkout`: Create a payment link for customers
+- `disable-checkout`: Disable a checkout transaction link
+- `retry-transaction`: Analyze and provide guidance for retrying a failed transaction
+- `get-transaction-timeline`: Get the timeline/history of events for a transaction
 
 ## Usage with Claude Desktop
 Add the following to your `claude_desktop_config.json`. See [here](https://modelcontextprotocol.io/quickstart/user) for more details.
@@ -24,10 +33,25 @@ Add the following to your `claude_desktop_config.json`. See [here](https://model
       "args": [
           "-y",
           "mcp-flutterwave",
-          "--tools=checkout.create",
+          "--tools=all",
           "--secret-key=FLW_SECRET_KEY"
       ]
     }
   }
 }
+```
+
+### Available Tool Arguments
+
+You can specify specific tools instead of `all`:
+
+- `--tools=checkout.create,transaction.read` - Only enable checkout creation and transaction reading
+- `--tools=all` - Enable all available tools
+
+### Environment Variable
+
+Alternatively, you can set the `FLW_SECRET_KEY` environment variable instead of passing it as an argument:
+
+```bash
+export FLW_SECRET_KEY=your_flutterwave_secret_key
 ```
