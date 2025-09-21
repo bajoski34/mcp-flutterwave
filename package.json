@@ -4,13 +4,13 @@
   "bin": {
     "flutterwave": "build/index.js"
   },
-  "version": "0.3.0",
+  "version": "1.0.0",
   "mcpName": "io.github.bajoski34/mcp-flutterwave",
   "repository": {
     "type": "git",
     "url": "https://github.com/bajoski34/mcp-flutterwave.git"
   },
-  "description": "MCP Server to interact with flutterwave APIs.",
+  "description": "MCP Server to interact with Flutterwave APIs.",
   "main": "index.js",
   "scripts": {
     "build": "npm run build:types &&tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
