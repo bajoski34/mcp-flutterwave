@@ -58,7 +58,7 @@ export function parseArgs(args: string[]): Options {
     });
 
     // Check if API key is either provided in args or set in environment variables
-    const apiKey = options.apiKey || process.env.FLW_SECRET_KEY;
+    const apiKey = process.env.FLW_SECRET_KEY;
 
     if (!apiKey) {
         throw new Error(

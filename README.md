@@ -7,11 +7,20 @@ This MCP is in active development.
 ## Features
 
 - Confirm Transactions (Already included)
-- Retry Failed Transactions (Automatically retry transactions with recoverable errors) [x]
-- Retrieve Transaction History (Fetch and analyze past transactions) [x]
+- Retry Failed Transactions (Automatically retry transactions with recoverable errors) [✓]
+- Retrieve Transaction History (Fetch and analyze past transactions) [✓]
 - Send Failed Hooks (Already included)
-- Generate Payment Links [x]
-- Automated Customer Support (AI chatbot integrated with Flutterwave for transaction inquiries) [x]
+- Generate Payment Links [✓]
+- Automated Customer Support (AI chatbot integrated with Flutterwave for transaction inquiries) [✓]
+
+## Available Tools
+
+- `get-transactions`: Get the final status of a transaction with a transaction ID
+- `resent-failed-webhook`: Resend failed webhook for a transaction
+- `create-checkout`: Create a payment link for customers
+- `disable-checkout`: Disable a checkout transaction link
+- `retry-transaction`: Analyze and provide guidance for retrying a failed transaction
+- `get-transaction-timeline`: Get the timeline/history of events for a transaction
 
 ## Usage with Claude Desktop
 Add the following to your `claude_desktop_config.json`. See [here](https://modelcontextprotocol.io/quickstart/user) for more details.

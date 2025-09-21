@@ -16,7 +16,7 @@
     "build"
   ],
   "keywords": [],
-  "author": "",
+  "author": "Abraham Olaobaju <olaobajua@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.2",
