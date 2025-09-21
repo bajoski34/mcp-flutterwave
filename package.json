@@ -5,6 +5,10 @@
     "flutterwave": "build/index.js"
   },
   "version": "0.3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bajoski34/mcp-flutterwave.git"
+  },
   "description": "MCP Server to interact with flutterwave APIs.",
   "main": "index.js",
   "scripts": {
