@@ -11,7 +11,7 @@ type GetPlanResponse = paths["/plans"]["get"]["responses"]["200"]["content"]["ap
 type GetPlanParams = paths["/plans"]["get"]["parameters"]["query"];
 
 export default class Plan {
-    async create(payload: CreatePlanPayload): Promise<{ status: number; data: CreatePlanResponse | null }> {
+    async create(payload: CreatePlanPayload): Promise<{ status: number; data: CreatePlanResponse | string | null }> {
         try {
         const response = await client.POST("/plans", { body: payload });
         return { 
@@ -19,7 +19,7 @@ export default class Plan {
             data: response.data ?? null 
         };
         } catch (error) {
-        return { status: 500, data: null };
+        return { status: 500, data: (error as any)?.message || 'An error occurred'};
         }
     }
 
