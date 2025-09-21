@@ -22,17 +22,32 @@ This MCP is in active development.
 - `retry-transaction`: Analyze and provide guidance for retrying a failed transaction
 - `get-transaction-timeline`: Get the timeline/history of events for a transaction
 
+## Installation
+
+### Via npm (Recommended)
+```bash
+npm install -g mcp-flutterwave
+```
+
+### Via GitHub
+```bash
+git clone https://github.com/your-username/mcp-flutterwave.git
+cd mcp-flutterwave
+npm install
+npm run build
+```
+
 ## Usage with Claude Desktop
 Add the following to your `claude_desktop_config.json`. See [here](https://modelcontextprotocol.io/quickstart/user) for more details.
 
+### Using npm installation
 ```json
 {
   "mcpServers": {
     "flutterwave": {
-      "command": "node",
+      "command": "mcp-flutterwave",
       "args": [
-	        "/Users/username/Documents/mcp-flutterwave/build/index.js",
-          "--tools=create_checkout,disable_checkout,read_transactions, read_transaction, resend_transaction_webhook"
+        "--tools=checkout.create,checkout.disable,transaction.read,transaction.webhook.resend"
       ],
       "env": {
         "FLW_SECRET_KEY": "YOUR_SECRET_KEY"
@@ -42,12 +57,43 @@ Add the following to your `claude_desktop_config.json`. See [here](https://model
 }
 ```
 
-### Local Setup Steps
+### Using local build
+```json
+{
+  "mcpServers": {
+    "flutterwave": {
+      "command": "node",
+      "args": [
+        "/path/to/mcp-flutterwave/build/index.js",
+        "--tools=create_checkout,disable_checkout,read_transaction,resend_transaction_webhook"
+      ],
+      "env": {
+        "FLW_SECRET_KEY": "YOUR_SECRET_KEY"
+      }
+    }
+  }
+}
+```
 
-1. Clone the repository.
-2. Install the depencies
-3. Setup the Claude Configuration
-4. Open Claude and Ask question related to Flutterwave
+## Setup Steps
+
+1. **Install the package**
+   ```bash
+   npm install -g mcp-flutterwave
+   ```
+
+2. **Get your Flutterwave secret key**
+   - Log into your Flutterwave dashboard
+   - Go to Settings > API Keys
+   - Copy your Secret Key
+
+3. **Configure Claude Desktop**
+   - Add the configuration to your `claude_desktop_config.json`
+   - Replace `YOUR_SECRET_KEY` with your actual Flutterwave secret key
+
+4. **Start using with Claude**
+   - Open Claude Desktop
+   - Ask questions related to Flutterwave transactions, payments, etc.
 
 ## Contributing
 
