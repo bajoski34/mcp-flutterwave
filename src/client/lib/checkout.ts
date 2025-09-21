@@ -49,7 +49,7 @@ async function create(payment_data: CheckoutPayload) : Promise<{ data: {
 
 /**
  * Disable a checkout link.
- * https://developer.flutterwave.com/docs/flutterwave-standard-1#how-to-disable-a-payment-link-via-api
+ * https://developer.flutterwave.com/v3.0.0/docs/flutterwave-standard-1#how-to-disable-a-payment-link-via-api
  * @param payment_link 
  * @returns 
  */
@@ -66,10 +66,15 @@ async function disable(payment_link: string): Promise<{
 
     if (error) {
         console.error(error);
-        return;
+        throw new Error('Failed to disable checkout link', { cause: error });
     }
 
-    return data;
+    // Ensure returned object always has data: null
+    return {
+        status: data?.status || 'error',
+        message: data?.message || 'An error occurred',
+        data: null
+    };
 }
 
 export default {

@@ -1,18 +1,15 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import tools from "./registered-tools.js";
+import { registerTools } from "./tools/index.js";
+import { registerPrompts } from "./prompts/index.js";
 
 // Create server instance.
-const server = new McpServer({
+export const server = new McpServer({
     name: "flutterwave",
     version: "0.2.0",
-}, {
-    capabilities: {
-        tools: {},
-    },
 });
 
-for (const tool of tools) {
-    server.tool(tool.name, tool.description, tool.inputSchema, tool.cb)
-}
+// Register tools with the server.
+registerTools();
+registerPrompts();
 
 export default server;
