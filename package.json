@@ -2,7 +2,7 @@
   "name": "mcp-flutterwave",
   "type": "module",
   "bin": {
-    "flutterwave": "build/index.js"
+    "mcp-flutterwave": "build/index.js"
   },
   "version": "1.0.0",
   "mcpName": "io.github.bajoski34/mcp-flutterwave",
@@ -11,7 +11,7 @@
     "url": "https://github.com/bajoski34/mcp-flutterwave.git"
   },
   "description": "MCP Server to interact with Flutterwave APIs.",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "npm run build:types &&tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "clean": "rm -rf build",
@@ -20,9 +20,16 @@
   "files": [
     "build"
   ],
-  "keywords": [],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "flutterwave",
+    "payment",
+    "fintech",
+    "ai"
+  ],
   "author": "Abraham Olaobaju <olaobajua@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.2",
     "colors": "^1.4.0",

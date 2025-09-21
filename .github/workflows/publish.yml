@@ -53,8 +53,11 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           npm version ${{ github.event.inputs.version }} --no-git-tag-version
-          git add package.json package-lock.json
-          git commit -m "chore: bump version to $(node -p "require('./package.json').version")"
+          # Update server.json version to match package.json
+          VERSION=$(node -p "require('./package.json').version")
+          jq --arg v "$VERSION" '.version = $v' server.json > tmp && mv tmp server.json
+          git add package.json package-lock.json server.json
+          git commit -m "chore: bump version to $VERSION"
           git push
 
       - name: Create tag (manual trigger)
@@ -63,6 +66,13 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           git tag "v$VERSION"
           git push origin "v$VERSION"
+
+      - name: Update server.json version on release
+        if: github.event_name == 'release'
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed 's/refs\/tags\/v//')
+          jq --arg v "$VERSION" '.version = $v' server.json > tmp && mv tmp server.json
+          jq --arg v "$VERSION" '.packages[0].version = $v' server.json > tmp && mv tmp server.json
 
       - name: Publish to npm
         run: npm publish --provenance --access public
@@ -85,7 +95,21 @@ jobs:
             
             ## Installation
             ```bash
-            npm install mcp-flutterwave
+            npm install -g mcp-flutterwave
+            ```
+            
+            ## Usage with Claude Desktop
+            ```json
+            {
+              "mcpServers": {
+                "flutterwave": {
+                  "command": "mcp-flutterwave",
+                  "env": {
+                    "FLW_SECRET_KEY": "YOUR_SECRET_KEY"
+                  }
+                }
+              }
+            }
             ```
           draft: false
           prerelease: false
