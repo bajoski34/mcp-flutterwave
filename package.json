@@ -4,22 +4,22 @@
   "bin": {
     "flutterwave": "./build/index.js"
   },
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "MCP Server to interact with flutterwave APIs.",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build": "npm run build:types &&tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "clean": "rm -rf build",
-    "build:types": "npx openapi-typescript ./src/client/specs/v3/transactions.yaml -o ./src/client/types/v3/transactions.d.ts && npx openapi-typescript ./src/client/specs/v3/checkout.yaml -o ./src/client/types/v3/checkout.d.ts"
+    "build:types": "./bin/generate-openapi-typescript"
   },
   "files": [
     "build"
   ],
   "keywords": [],
-  "author": "",
+  "author": "Abraham Olaobaju <olaobajua@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@modelcontextprotocol/sdk": "^1.10.2",
     "colors": "^1.4.0",
     "flutterwave-node-v3": "^1.1.15",
     "openapi-fetch": "^0.13.4",
@@ -30,6 +30,7 @@
     "@types/node": "^22.13.10",
     "nodemon": "^3.1.9",
     "openapi-typescript": "^7.6.1",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "zod-to-json-schema": "^3.24.6"
   }
 }

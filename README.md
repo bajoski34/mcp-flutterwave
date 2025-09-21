@@ -29,29 +29,27 @@ Add the following to your `claude_desktop_config.json`. See [here](https://model
 {
   "mcpServers": {
     "flutterwave": {
-      "command": "npx",
+      "command": "node",
       "args": [
-          "-y",
-          "mcp-flutterwave",
-          "--tools=all",
-          "--secret-key=FLW_SECRET_KEY"
-      ]
+	        "/Users/username/Documents/mcp-flutterwave/build/index.js",
+          "--tools=create_checkout,disable_checkout,read_transactions, read_transaction, resend_transaction_webhook"
+      ],
+      "env": {
+        "FLW_SECRET_KEY": "YOUR_SECRET_KEY"
+      }
     }
   }
 }
 ```
 
-### Available Tool Arguments
+### Local Setup Steps
 
-You can specify specific tools instead of `all`:
+1. Clone the repository.
+2. Install the depencies
+3. Setup the Claude Configuration
+4. Open Claude and Ask question related to Flutterwave
 
-- `--tools=checkout.create,transaction.read` - Only enable checkout creation and transaction reading
-- `--tools=all` - Enable all available tools
+## Contributing
 
-### Environment Variable
+We welcome contributions! Please read our [Contributing Guide](./CONTRIBUTING.md) for details on how to get started, development guidelines, and how to submit changes.
 
-Alternatively, you can set the `FLW_SECRET_KEY` environment variable instead of passing it as an argument:
-
-```bash
-export FLW_SECRET_KEY=your_flutterwave_secret_key
-```
