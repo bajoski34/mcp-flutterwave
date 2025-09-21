@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.bajoski34/mcp-flutterwave",
+  "description": "MCP Server to interact with Flutterwave APIs.",
+  "status": "active",
+  "repository": {
+    "url": "https://github.com/bajoski34/mcp-flutterwave",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "environmentVariables": [
+    {
+      "name": "YOUR_API_KEY",
+      "description": "Your API key for the service",
+      "isRequired": true,
+      "isSecret": true,
+      "format": "string"
+    }
+  ],
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "mcp-flutterwave",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

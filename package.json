@@ -5,6 +5,7 @@
     "flutterwave": "build/index.js"
   },
   "version": "0.3.0",
+  "mcpName": "io.github.bajoski34/mcp-flutterwave",
   "repository": {
     "type": "git",
     "url": "https://github.com/bajoski34/mcp-flutterwave.git"
