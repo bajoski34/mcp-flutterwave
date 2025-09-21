@@ -2,7 +2,7 @@
   "name": "mcp-flutterwave",
   "type": "module",
   "bin": {
-    "flutterwave": "./build/index.js"
+    "flutterwave": "build/index.js"
   },
   "version": "0.3.0",
   "description": "MCP Server to interact with flutterwave APIs.",
