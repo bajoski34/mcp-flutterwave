@@ -31,7 +31,7 @@ npm install -g mcp-flutterwave
 
 ### Via GitHub
 ```bash
-git clone https://github.com/your-username/mcp-flutterwave.git
+git clone https://github.com/bajoski34/mcp-flutterwave.git
 cd mcp-flutterwave
 npm install
 npm run build
