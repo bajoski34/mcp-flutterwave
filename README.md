@@ -47,7 +47,7 @@ Add the following to your `claude_desktop_config.json`. See [here](https://model
     "flutterwave": {
       "command": "mcp-flutterwave",
       "args": [
-        "--tools=checkout.create,checkout.disable,transaction.read,transaction.webhook.resend"
+        "--tools=create_checkout,disable_checkout,read_transaction,resend_transaction_webhook"
       ],
       "env": {
         "FLW_SECRET_KEY": "YOUR_SECRET_KEY"
