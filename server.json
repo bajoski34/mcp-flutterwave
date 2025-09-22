@@ -10,8 +10,8 @@
   "version": "1.0.0",
   "environmentVariables": [
     {
-      "name": "YOUR_API_KEY",
-      "description": "Your API key for the service",
+      "name": "FLW_SECRET_KEY",
+      "description": "Your Flutterwave Secret Key for API authentication",
       "isRequired": true,
       "isSecret": true,
       "format": "string"
