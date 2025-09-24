@@ -1,4 +1,4 @@
-FROM node:20-slim AS builder
+FROM node:20.19.5-trixie-slim AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY src/ ./src/
 RUN npm run build
 
 # Start a new stage for a smaller production image
-FROM node:20-slim
+FROM node:20.19.5-trixie-slim
 
 WORKDIR /app
 
