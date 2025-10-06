@@ -1,30 +1,30 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.bajoski34/mcp-flutterwave",
   "description": "MCP Server to interact with Flutterwave APIs.",
-  "status": "active",
   "repository": {
     "url": "https://github.com/bajoski34/mcp-flutterwave",
     "source": "github"
   },
-  "version": "1.0.0",
-  "environmentVariables": [
-    {
-      "name": "FLW_SECRET_KEY",
-      "description": "Your Flutterwave Secret Key for API authentication",
-      "isRequired": true,
-      "isSecret": true,
-      "format": "string"
-    }
-  ],
+  "version": "1.2.0",
   "packages": [
     {
       "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-flutterwave",
-      "version": "1.2.1",
+      "version": "1.2.0",
       "transport": {
         "type": "stdio"
-      }
+      },
+      "environmentVariables": [
+        {
+          "description": "Your SECRET API key for the service",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true,
+          "name": "FLW_SECRET_KEY"
+        }
+      ]
     }
   ]
 }
