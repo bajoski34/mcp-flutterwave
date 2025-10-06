@@ -4,7 +4,7 @@
   "bin": {
     "mcp-flutterwave": "build/index.js"
   },
-  "version": "1.2.0",
+  "version": "1.2.1",
   "mcpName": "io.github.bajoski34/mcp-flutterwave",
   "repository": {
     "type": "git",

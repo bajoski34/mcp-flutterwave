@@ -21,7 +21,7 @@
     {
       "registryType": "npm",
       "identifier": "mcp-flutterwave",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "transport": {
         "type": "stdio"
       }
