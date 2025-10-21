@@ -31,7 +31,7 @@
   "author": "Abraham Olaobaju <olaobajua@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.10.2",
+    "@modelcontextprotocol/sdk": "^1.18.2",
     "colors": "^1.4.0",
     "flutterwave-node-v3": "^1.1.15",
     "openapi-fetch": "^0.14.0",
