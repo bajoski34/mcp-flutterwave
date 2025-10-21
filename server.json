@@ -6,13 +6,13 @@
     "url": "https://github.com/bajoski34/mcp-flutterwave",
     "source": "github"
   },
-  "version": "1.2.0",
+  "version": "1.2.2",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-flutterwave",
-      "version": "1.2.0",
+      "version": "1.2.2",
       "transport": {
         "type": "stdio"
       },
