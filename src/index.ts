@@ -19,6 +19,9 @@ const ACCEPTED_TOOLS = [
     'read_subscription'
 ];
 
+// Create a Set for faster lookup performance (O(1) vs O(n))
+const ACCEPTED_TOOLS_SET = new Set(ACCEPTED_TOOLS);
+
 export function parseArgs(args: string[]): Options {
     const options: Options = {};
 
@@ -26,7 +29,7 @@ export function parseArgs(args: string[]): Options {
         if (arg.startsWith('--')) {
             const [key, value] = arg.slice(2).split('=');
 
-            if (key == 'tools') {
+            if (key === 'tools') {
                 options.tools = value.split(',');
             } else {
                 throw new Error(
@@ -43,12 +46,13 @@ export function parseArgs(args: string[]): Options {
         throw new Error('The --tools arguments must be provided.');
     }
 
-    // Validate tools against accepted enum values.
+    // Validate tools against accepted enum values using Set for better performance
     options.tools.forEach((tool: string) => {
-        if (tool == 'all') {
+        const trimmedTool = tool.trim();
+        if (trimmedTool === 'all') {
             return;
         }
-        if (!ACCEPTED_TOOLS.includes(tool.trim())) {
+        if (!ACCEPTED_TOOLS_SET.has(trimmedTool)) {
             throw new Error(
                 `Invalid tool: ${tool}. Accepted tools are: ${ACCEPTED_TOOLS.join(
                     ', '
