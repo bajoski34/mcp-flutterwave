@@ -25,7 +25,7 @@ export async function createCheckout(payload: CheckoutPayload) {
         if (!isValidResponse(status, data) || !data?.data?.status) {
             return createErrorResponse(
                 data 
-                    ? `Error Occured on creating checkout url for ${payload.customer.name} json: ${JSON.stringify(data)}`
+                    ? `Error occurred on creating checkout url for ${payload.customer.name} json: ${JSON.stringify(data)}`
                     : `Unable to create a checkout url for ${payload.customer.name}`
             );
         }
@@ -39,7 +39,7 @@ export async function createCheckout(payload: CheckoutPayload) {
             ],
         };
     } catch (error) {
-        return createErrorResponse(`Error Occured on creating checkout url for ${payload.customer.name} json: ${JSON.stringify(error)}`);
+        return createErrorResponse(`Error occurred on creating checkout url for ${payload.customer.name} json: ${JSON.stringify(error)}`);
     }
 }
 
@@ -64,7 +64,7 @@ export async function disableCheckout(link: string) {
             ],
         };
     } catch (error) {
-        return createErrorResponse(`Error Occured on diabling the checkout: ${link} json: ${JSON.stringify(error)}`);
+        return createErrorResponse(`Error occurred on disabling the checkout: ${link} json: ${JSON.stringify(error)}`);
     }
 }
 

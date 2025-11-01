@@ -42,7 +42,7 @@ export async function createPlan(payload: { name: string; amount: number; interv
             ],
         };
     } catch (error) {
-        return createErrorResponse(`Error Occured on creating plan ${payload.name} json: ${JSON.stringify(error)}`);
+        return createErrorResponse(`Error occurred on creating plan ${payload.name} json: ${JSON.stringify(error)}`);
     }
 }
 
@@ -55,7 +55,7 @@ export async function getPlans(filters?: { name?: string; amount?: number; inter
         if (!isValidResponse(status, data) || !data?.status) {
             return createErrorResponse(
                 data 
-                    ? `Error Occured on retrieving plans json: ${JSON.stringify(data)}`
+                    ? `Error occurred on retrieving plans json: ${JSON.stringify(data)}`
                     : `Unable to retrieve plans`
             );
         }
@@ -69,7 +69,7 @@ export async function getPlans(filters?: { name?: string; amount?: number; inter
             ],
         };
     } catch (error) {
-        return createErrorResponse(`Error Occured on retrieving plans json: ${JSON.stringify(error)}`);
+        return createErrorResponse(`Error occurred on retrieving plans json: ${JSON.stringify(error)}`);
     }
 }
 

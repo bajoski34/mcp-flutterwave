@@ -15,37 +15,19 @@ const clientConfig = {
     headers: { "User-Agent": USER_AGENT }
 };
 
-// Create clients once and reuse them (singleton pattern)
-let _transactionClient: ReturnType<typeof createClient<transactionPaths>> | null = null;
-let _checkoutClient: ReturnType<typeof createClient<checkoutPaths>> | null = null;
-let _planClient: ReturnType<typeof createClient<planPaths>> | null = null;
+// Create singleton clients - initialized once and reused throughout the application
+const transactionClient = createClient<transactionPaths>(clientConfig);
+transactionClient.use(authMiddlewareV3);
 
-function getTransactionClient() {
-    if (!_transactionClient) {
-        _transactionClient = createClient<transactionPaths>(clientConfig);
-        _transactionClient.use(authMiddlewareV3);
-    }
-    return _transactionClient;
-}
+const checkoutClient = createClient<checkoutPaths>(clientConfig);
+checkoutClient.use(authMiddlewareV3);
 
-function getCheckoutClient() {
-    if (!_checkoutClient) {
-        _checkoutClient = createClient<checkoutPaths>(clientConfig);
-        _checkoutClient.use(authMiddlewareV3);
-    }
-    return _checkoutClient;
-}
+const planClient = createClient<planPaths>(clientConfig);
+planClient.use(authMiddlewareV3);
 
-function getPlanClient() {
-    if (!_planClient) {
-        _planClient = createClient<planPaths>(clientConfig);
-        _planClient.use(authMiddlewareV3);
-    }
-    return _planClient;
-}
-
-// Export getters to maintain singleton pattern
-export const transactionClient = getTransactionClient();
-export const checkoutClient = getCheckoutClient();
-export const planClient = getPlanClient();
+export {
+    transactionClient,
+    checkoutClient,
+    planClient
+};
 

@@ -22,7 +22,7 @@ export async function getTransaction({ tx_id }: { tx_id: string }) {
         const { status, data } = await transactionsClient.get(tx_id) || { status: null, data: null };
 
         if (!isValidResponse(status, data) || !data.status) {
-            return createErrorResponse(`Unable to retrive ${tx_id}`);
+            return createErrorResponse(`Unable to retrieve ${tx_id}`);
         }
 
         return {
@@ -34,7 +34,7 @@ export async function getTransaction({ tx_id }: { tx_id: string }) {
             ],
         };
     } catch (error) {
-        return createErrorResponse(`Unable to retrive ${tx_id}`);
+        return createErrorResponse(`Unable to retrieve ${tx_id}`);
     }
 }
 
@@ -43,7 +43,7 @@ export async function getTransactionTimeline({ tx_id }: { tx_id: string }) {
         const { status, data } = await transactionsClient.timeline(tx_id) || { status: null, data: null };
 
         if (!isValidResponse(status, data)) {
-            return createErrorResponse(`Unable to retrive timeline for ${tx_id}`);
+            return createErrorResponse(`Unable to retrieve timeline for ${tx_id}`);
         }
 
         return {
@@ -55,7 +55,7 @@ export async function getTransactionTimeline({ tx_id }: { tx_id: string }) {
             ],
         };
     } catch (error) {
-        return createErrorResponse(`Unable to retrive timeline for ${tx_id}`);
+        return createErrorResponse(`Unable to retrieve timeline for ${tx_id}`);
     }
 }
 
