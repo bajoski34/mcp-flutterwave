@@ -1,24 +1,25 @@
 import Flutterwave from "../client/index.js";
 
+// Cache transactions client to avoid repeated function calls
+const transactionsClient = Flutterwave.transactions();
+
+// Helper function to create error responses
+function createErrorResponse(message: string) {
+    return {
+        content: [{ type: "text", text: message }],
+    };
+}
+
 export default async ({ tx_id }: { tx_id: string }) => {
     if (!process.env.FLW_SECRET_KEY) {
-        return {
-            content: [{ type: "text", text: "API key is missing. Please check configuration." }],
-        };
+        return createErrorResponse("API key is missing. Please check configuration.");
     }
 
-    const transactions = Flutterwave.transactions();
-
     try {
-        const response = await transactions.retry_transaction(tx_id);
+        const response = await transactionsClient.retry_transaction(tx_id);
 
         if (!response || response.status === 'error') {
-            return {
-                content: [{ 
-                    type: "text", 
-                    text: response?.message || `Unable to retry transaction ${tx_id}` 
-                }],
-            };
+            return createErrorResponse(response?.message || `Unable to retry transaction ${tx_id}`);
         }
 
         if (response.status === 'info' && response.data) {
@@ -48,8 +49,6 @@ export default async ({ tx_id }: { tx_id: string }) => {
         };
     } catch (error) {
         console.error(`Error retrying transaction ${tx_id}:`, error);
-        return {
-            content: [{ type: "text", text: `Error retrying transaction ${tx_id}` }],
-        };
+        return createErrorResponse(`Error retrying transaction ${tx_id}`);
     }
 };
