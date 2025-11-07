@@ -1,9 +1,6 @@
 # mcp-flutterwave
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that enables AI assistants to interact with Flutterwave, providing tools for confirming transactions, send failed hooks, and more.
 
-## Warning!!!
-This MCP is in active development.
-
 ## Features
 
 - Confirm Transactions (Already included)
