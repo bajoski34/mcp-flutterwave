@@ -2,26 +2,28 @@ import Flutterwave from "../client/index.js";
 import { server } from "../server.js";
 import { TransactionSchema } from "../types/transaction/schema.js";
 
+// Cache transactions client to avoid repeated function calls
+const transactionsClient = Flutterwave.transactions();
+
+// Helper function to create error responses
+function createErrorResponse(message: string) {
+    return {
+        content: [{ type: "text" as const, text: message }],
+    };
+}
+
+// Helper function to validate API response
+function isValidResponse(status: unknown, data: unknown): data is { status?: string } {
+    return !(typeof status === 'number' && status >= 400) && !!data;
+}
+
 export async function getTransaction({ tx_id }: { tx_id: string }) {
-    const transactions = Flutterwave.transactions();
-
     try {
-        const { status, data } = await transactions.get(tx_id) || { status: null, data: null };
+        const { status, data } = await transactionsClient.get(tx_id) || { status: null, data: null };
 
-        if(typeof status == 'number' && status >= 400)
-            return {
-                content: [{ type: "text" as const, text: `Unable to retrive ${tx_id}` }],
-            };
-        
-        if(!data)
-            return {
-                content: [{ type: "text" as const, text: `Unable to retrive ${tx_id}` }],
-            };
-
-        if(!data.status)
-            return {
-                content: [{ type: "text" as const, text: `Unable to retrive ${tx_id}` }],
-            };
+        if (!isValidResponse(status, data) || !data.status) {
+            return createErrorResponse(`Unable to retrieve ${tx_id}`);
+        }
 
         return {
             content: [
@@ -32,27 +34,17 @@ export async function getTransaction({ tx_id }: { tx_id: string }) {
             ],
         };
     } catch (error) {
-        return {
-            content: [{ type: "text" as const, text: `Unable to retrive ${tx_id}` }],
-        };
+        return createErrorResponse(`Unable to retrieve ${tx_id}`);
     }
 }
 
 export async function getTransactionTimeline({ tx_id }: { tx_id: string }) {
-    const transactions = Flutterwave.transactions();
-
     try {
-        const { status, data } = await transactions.timeline(tx_id) || { status: null, data: null };
+        const { status, data } = await transactionsClient.timeline(tx_id) || { status: null, data: null };
 
-        if(typeof status == 'number' && status >= 400)
-            return {
-                content: [{ type: "text" as const, text: `Unable to retrive timeline for ${tx_id}` }],
-            };
-        
-        if(!data)
-            return {
-                content: [{ type: "text" as const, text: `Unable to retrive timeline for ${tx_id}` }],
-            };
+        if (!isValidResponse(status, data)) {
+            return createErrorResponse(`Unable to retrieve timeline for ${tx_id}`);
+        }
 
         return {
             content: [
@@ -63,29 +55,17 @@ export async function getTransactionTimeline({ tx_id }: { tx_id: string }) {
             ],
         };
     } catch (error) {
-        return {
-            content: [{ type: "text" as const, text: `Unable to retrive timeline for ${tx_id}` }],
-        };
+        return createErrorResponse(`Unable to retrieve timeline for ${tx_id}`);
     }
 }
 
 export async function resendFailedWebhook({ tx_id }: { tx_id: string }) {
-    const transactions = Flutterwave.transactions();
-
     try {
-        const response = await transactions.send_failed_webhook(tx_id);
+        const response = await transactionsClient.send_failed_webhook(tx_id);
         const { status, data } = response || { status: 200, data: { status: "successful" }};
 
-        if (!data || !data.status) {
-            return {
-                content: [{ type: "text" as const, text: `Unable to retrieve ${tx_id}` }],
-            };
-        }
-
-        if (typeof status === "number" && status >= 400) {
-            return {
-                content: [{ type: "text" as const, text: `Unable to retrieve ${tx_id}` }],
-            };
+        if (!data || !data.status || (typeof status === "number" && status >= 400)) {
+            return createErrorResponse(`Unable to retrieve ${tx_id}`);
         }
 
         return {
@@ -98,9 +78,7 @@ export async function resendFailedWebhook({ tx_id }: { tx_id: string }) {
         };
     } catch (error) {
         console.error(`Error fetching transaction ${tx_id}:`, error);
-        return {
-            content: [{ type: "text" as const, text: `Error retrieving ${tx_id}` }],
-        };
+        return createErrorResponse(`Error retrieving ${tx_id}`);
     }
 };
 

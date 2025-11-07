@@ -1,4 +1,3 @@
-import { version } from 'os';
 import {z} from 'zod';
 
 // environment variable schema for validation

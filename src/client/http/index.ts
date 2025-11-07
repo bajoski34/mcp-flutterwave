@@ -6,19 +6,28 @@ import authMiddlewareV3 from "../middleware/authMiddlewareV3.js";
 import { config } from "../../config/index.js";
 
 const FLW_API_VERSION = process.env.FLW_VERSION || config.flutterwave.version;
-const FLW_API_BASE = config.flutterwave.apiUrl + '/' + FLW_API_VERSION;
+const FLW_API_BASE = `${config.flutterwave.apiUrl}/${FLW_API_VERSION}`;
 const USER_AGENT = "flutterwave-mcp/0.1.0";
- 
-const transactionClient = createClient<transactionPaths>({ baseUrl: FLW_API_BASE, headers: { "User-Agent": USER_AGENT } });
+
+// Shared configuration for all clients to reduce memory overhead
+const clientConfig = {
+    baseUrl: FLW_API_BASE,
+    headers: { "User-Agent": USER_AGENT }
+};
+
+// Create singleton clients - initialized once and reused throughout the application
+const transactionClient = createClient<transactionPaths>(clientConfig);
 transactionClient.use(authMiddlewareV3);
-const checkoutClient = createClient<checkoutPaths>({ baseUrl: FLW_API_BASE, headers: { "User-Agent": USER_AGENT } });
+
+const checkoutClient = createClient<checkoutPaths>(clientConfig);
 checkoutClient.use(authMiddlewareV3);
-const planClient = createClient<planPaths>({ baseUrl: FLW_API_BASE, headers: { "User-Agent": USER_AGENT } });
+
+const planClient = createClient<planPaths>(clientConfig);
 planClient.use(authMiddlewareV3);
 
 export {
     transactionClient,
     checkoutClient,
     planClient
-}
+};
 
