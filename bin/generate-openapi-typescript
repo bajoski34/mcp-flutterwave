@@ -4,3 +4,4 @@ npx openapi-typescript ./src/client/specs/v3/transactions.yaml -o ./src/client/t
 npx openapi-typescript ./src/client/specs/v3/checkout.yaml -o ./src/client/types/v3/checkout.d.ts
 # npx openapi-typescript ./src/client/specs/v3/refunds.yaml -o ./src/client/types/v3/refunds.d.ts
 npx openapi-typescript ./src/client/specs/v3/plan.yaml -o ./src/client/types/v3/plans.d.ts
+npx openapi-typescript ./src/client/specs/v3/transfer.yaml -o ./src/client/types/v3/transfer.d.ts

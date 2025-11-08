@@ -1,6 +1,7 @@
 import createClient from "openapi-fetch";
 import type { paths as checkoutPaths } from "../types/v3/checkout.js";
 import type { paths as transactionPaths } from "../types/v3/transactions.js";
+import type { paths as transferPaths } from "../types/v3/transfer.js";
 import type { paths as planPaths } from "../types/v3/plans.js";
 import authMiddlewareV3 from "../middleware/authMiddlewareV3.js";
 import { config } from "../../config/index.js";
@@ -25,9 +26,12 @@ checkoutClient.use(authMiddlewareV3);
 const planClient = createClient<planPaths>(clientConfig);
 planClient.use(authMiddlewareV3);
 
+const transferClient = createClient<transferPaths>(clientConfig);
+
 export {
     transactionClient,
     checkoutClient,
-    planClient
+    planClient,
+    transferClient
 };
 

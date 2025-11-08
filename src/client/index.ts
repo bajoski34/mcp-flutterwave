@@ -1,6 +1,7 @@
 import transactions from "./lib/transactions.js"
 import checkout from "./lib/checkout.js";
 import Plan from "./lib/plan.js";
+import transfer from "./lib/transfer.js";
 
 // Cache plan instance to avoid repeated instantiation
 let _planInstance: Plan | null = null;
@@ -19,5 +20,9 @@ export default class Flutterwave {
             _planInstance = new Plan();
         }
         return _planInstance;
+    }
+
+    static transfers() {
+        return transfer;
     }
 }

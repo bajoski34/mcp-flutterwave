@@ -20,7 +20,7 @@ type CheckoutPayload = {
 }
 
 /**
- * This checkout create paymrnt.
+ * This checkout create payment.
  * https://developer.flutterwave.com/docs/flutterwave-standard-1
  * 
 */

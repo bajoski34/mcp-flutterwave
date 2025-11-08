@@ -1,0 +1,490 @@
+openapi: 3.0.3
+info:
+  title: Flutterwave Transactions API
+  description: API for managing and retrieving transaction details via Flutterwave.
+  version: 1.0.0
+servers:
+  - url: https://api.flutterwave.com/v3
+paths:
+  /transfers:
+    post:
+      summary: Initiate a Transfer request
+      description: Initiates a transfer through Flutterwave using a unique transaction reference.
+      operationId: createTransfer
+      requestBody:
+        description: Transfer data for the transaction
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account_bank:
+                  type: string
+                  example: "044"
+                account_number:
+                  type: string
+                  example: "0690000040"
+                amount:
+                  type: integer
+                  example: 5500
+                currency:
+                  type: string
+                  example: "NGN"
+                debit_subaccount:
+                  type: string
+                  example: "PSA******07974"
+                beneficiary:
+                  type: integer
+                  example: "3768"
+                beneficiary_name:
+                  type: string
+                  example: "Yemi Desola"
+                reference:
+                  type: string
+                  example: "newFLWXTransfer123"
+                debit_currency:
+                  type: string
+                  example: "NGN"
+                destination_branch_code:
+                  type: string
+                  example: "GH280103"
+                narration:
+                  type: string
+                  example: "Payment for goods purchased"
+                callback_url:
+                  type: string
+                  example: "https://example_company.com/success"
+                meta:
+                  type: object
+                  properties:
+                    sender:
+                      type: string
+                      example: "John Avery Doe"
+                    sender_address:
+                      type: string
+                      example: "123 Sample Street, Cambuslang, AB12 345"
+                    sender_city:
+                      type: string
+                      example: "Glasgow"
+                    sender_country:
+                      type: string
+                      example: "United Kingdom"
+                    first_name:
+                      type: string
+                      example: "John"
+                    last_name:
+                      type: string
+                      example: "Doe"
+                    email:
+                      type: string
+                      example: "john@example.com"
+                    mobile_number:
+                      type: string
+                      example: "+23490XXXXX23"
+                    beneficiary_mobile_number:
+                      type: string
+                      example: "+23490XXXXX25"
+                    recipient_address:
+                      type: string
+                      example: "456 Sample Street, Motherwell, CD12 345"
+                    beneficiary_state:
+                      type: string
+                      example: "Scotland"
+                    beneficiary_country:
+                      type: string
+                      example: "United Kingdom"
+                    beneficiary_occupation:
+                      type: string
+                      example: "Software Engineer"
+                    transfer_purpose:
+                      type: string
+                      example: "Pocket Money"
+              required:
+                - account_bank
+                - account_number
+                - amount
+                - currency
+  /transfers/{id}/retries:
+    post:
+      summary: Retry Transfer details
+      description: Retry a transfer using its transfer ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique transaction ID.
+      responses:
+        "200":
+          description: Transfer retry attempt queued.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Transfer retry attempt queued.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 4975363
+                      reference:
+                        type: string
+                        example: "TRF-640361604052_RETRY_2"
+                      amount:
+                        type: number
+                        format: float
+                        example: 1000
+                      fee:
+                        type: number
+                        format: float
+                        example: 1000
+                      account_number:
+                        type: string
+                        example: 1234567841
+                      currency:
+                        type: string
+                        example: NGN
+                      bank_name:
+                        type: string
+                        example: ACCESS BANK NIGERIA
+                      full_name:
+                        type: string
+                        example: John Doe
+                      debit_currency:
+                        type: string
+                        example: NGN
+                      status:
+                        type: string
+                        example: NEW
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-03-19T09:34:27.000Z"
+        "400":
+          description: Bad request, invalid transaction ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: "Invalid Transaction ID"
+                  data:
+                    type: object
+                    nullable: true
+        "404":
+          description: Transaction not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: "Transaction not found"
+                  data:
+                    type: object
+                    nullable: true
+  /bulk-transfers:
+    post:
+      summary: Initiate a Bulk Transfer request
+      description: Initiates a bulk transfer through Flutterwave using a unique transaction reference.
+      operationId: createBulkTransfer
+      requestBody:
+        description: Bulk Transfer data for the transaction
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  type: string
+                  example: "NGN"
+                bulk_data:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/transfer"
+              required:
+                - currency
+                - bulk_data
+  /beneficiaries:
+    get:
+      summary: List beneficiaries
+      description: Retrieve a paginated list of beneficiaries. Supports the `page` query parameter.
+      operationId: listBeneficiaries
+      parameters:
+        - name: page
+          in: query
+          description: Page number to retrieve
+          required: false
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: A list of beneficiaries.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Payout beneficiaries fetched
+                  meta:
+                    type: object
+                    properties:
+                      page_info:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                            example: 9
+                          current_page:
+                            type: integer
+                            example: 1
+                          total_pages:
+                            type: integer
+                            example: 1
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 3768
+                        account_number:
+                          type: string
+                          example: "0690000040"
+                        bank_code:
+                          type: string
+                          example: "044"
+                        full_name:
+                          type: string
+                          example: "Alexis Sanchez"
+                        meta:
+                          type: object
+                          nullable: true
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: "2020-01-20T16:09:24.000Z"
+                        bank_name:
+                          type: string
+                          example: "ACCESS BANK NIGERIA"
+              example:
+                status: success
+                message: Payout beneficiaries fetched
+                meta:
+                  page_info:
+                    total: 9
+                    current_page: 1
+                    total_pages: 1
+                data:
+                  - id: 3768
+                    account_number: "0690000040"
+                    bank_code: "044"
+                    full_name: "Alexis Sanchez"
+                    meta: null
+                    created_at: "2020-01-20T16:09:24.000Z"
+                    bank_name: "ACCESS BANK NIGERIA"
+                  - id: 3690
+                    account_number: "0690000039"
+                    bank_code: "044"
+                    full_name: "Dotun Ajib"
+                    meta: null
+                    created_at: "2020-01-19T22:36:06.000Z"
+                    bank_name: "ACCESS BANK NIGERIA"
+                  - id: 3644
+                    account_number: "0690000034"
+                    bank_code: "044"
+                    full_name: "Ade Bond"
+                    meta: null
+                    created_at: "2020-01-16T18:01:28.000Z"
+                    bank_name: "ACCESS BANK NIGERIA"
+                  - id: 3608
+                    account_number: "0690000044"
+                    bank_code: "044"
+                    full_name: "Mercedes Daniel"
+                    meta: null
+                    created_at: "2020-01-15T11:58:02.000Z"
+                    bank_name: "ACCESS BANK NIGERIA"
+                  - id: 3565
+                    account_number: "0690000038"
+                    bank_code: "044"
+                    full_name: "John Sunday"
+                    meta: null
+                    created_at: "2020-01-14T05:53:34.000Z"
+                    bank_name: "ACCESS BANK NIGERIA"
+                  - id: 3104
+                    account_number: "2540782773934"
+                    bank_code: "000"
+                    full_name: "Kwame Adew"
+                    meta: null
+                    created_at: "2019-12-05T23:49:31.000Z"
+                    bank_name: "FA-BANK"
+                  - id: 3093
+                    account_number: "0690000041"
+                    bank_code: "044"
+                    full_name: "Alexis Rogers"
+                    meta: null
+                    created_at: "2019-12-05T21:29:57.000Z"
+                    bank_name: "ACCESS BANK NIGERIA"
+                  - id: 2923
+                    account_number: "0690000032"
+                    bank_code: "044"
+                    full_name: "Pastor Bright"
+                    meta: null
+                    created_at: "2019-11-28T08:15:29.000Z"
+                    bank_name: "ACCESS BANK NIGERIA"
+                  - id: 2857
+                    account_number: "0690000031"
+                    bank_code: "044"
+                    full_name: "Forrest Green"
+                    meta: null
+                    created_at: "2019-11-20T10:33:20.000Z"
+                    bank_name: "ACCESS BANK NIGERIA"
+    post:
+      summary: Create a beneficiary
+      description: Create a transfer beneficiary. Example request body matches Flutterwave's create beneficiary endpoint.
+      operationId: createBeneficiary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account_bank:
+                  type: string
+                  example: "044"
+                account_number:
+                  type: string
+                  example: "0690000032"
+                beneficiary_name:
+                  type: string
+                  example: "Flutterwave Developers"
+                currency:
+                  type: string
+                  example: "NGN"
+                bank_name:
+                  type: string
+                  example: "ACCESS BANK NIGERIA"
+              required:
+                - account_bank
+                - account_number
+                - beneficiary_name
+                - currency
+            example:
+              account_bank: "044"
+              account_number: "0690000032"
+              beneficiary_name: "Flutterwave Developers"
+              currency: "NGN"
+              bank_name: "ACCESS BANK NIGERIA"
+      responses:
+        "200":
+          description: Beneficiary created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Beneficiary created
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 3644
+                      account_number:
+                        type: string
+                        example: "0690000034"
+                      bank_code:
+                        type: string
+                        example: "044"
+                      full_name:
+                        type: string
+                        example: "Ade Bond"
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2020-01-16T18:01:28.000Z"
+                      bank_name:
+                        type: string
+                        example: "ACCESS BANK NIGERIA"
+              example:
+                status: success
+                message: Beneficiary created
+                data:
+                  id: 3644
+                  account_number: "0690000034"
+                  bank_code: "044"
+                  full_name: "Ade Bond"
+                  created_at: "2020-01-16T18:01:28.000Z"
+                  bank_name: "ACCESS BANK NIGERIA"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Invalid request
+                  data:
+                    type: object
+                    nullable: true
+
+components:
+  schemas:
+    transfer:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@example.com
+        mobile_number:
+          type: string
+          example: +2349012345678
+        recipient_address:
+          type: string
+          example: 7A, Super Street, Awesome Address, Smart State, NG
+        first_name:
+          type: string
+          example: Abraham
+        last_name:
+          type: string
+          example: Olaobaju
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
