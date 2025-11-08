@@ -5,7 +5,7 @@ import { registerPrompts } from "./prompts/index.js";
 // Create server instance.
 export const server = new McpServer({
     name: "flutterwave",
-    version: "1.2.2",
+    version: "1.3.2",
 });
 
 // Register tools with the server.
