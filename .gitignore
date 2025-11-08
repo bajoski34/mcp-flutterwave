@@ -2,3 +2,4 @@
 /build
 src/example.ts
 .mcpre*
+.idea/
