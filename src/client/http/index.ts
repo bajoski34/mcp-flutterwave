@@ -27,7 +27,7 @@ const planClient = createClient<planPaths>(clientConfig);
 planClient.use(authMiddlewareV3);
 
 const transferClient = createClient<transferPaths>(clientConfig);
-
+transferClient.use(authMiddlewareV3);
 export {
     transactionClient,
     checkoutClient,

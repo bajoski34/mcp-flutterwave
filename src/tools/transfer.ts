@@ -26,11 +26,34 @@ export async function listBeneficiaries(): Promise<{ content: { type: "text"; te
     }
 
     if (!isValidResponse(response.status, response.data)) {
-        return createErrorResponse("Failed to list beneficiaries");
+
+        if (response.data?.message) {
+            return createErrorResponse(`Failed to list beneficiaries: ${response.data.message}`)
+        }
+
+        return createErrorResponse("Failed to list beneficiaries **: " + JSON.stringify( response.data ));
+    }
+
+    let responseData: any[] = [response.data]
+    let remainingPages = [];
+    // @ts-ignore
+    if (response.meta?.page_info?.total_pages > 1) {
+        // @ts-ignore
+        for (let i = 2; i <= response.meta?.page_info?.total_pages; i++) {
+            remainingPages.push(transfersClient.listBeneficiaries(i))
+        }
+
+        let otherResults = await Promise.all(remainingPages)
+
+        otherResults.forEach(result => {
+            if (result?.data) {
+                responseData.push(result.data)
+            }
+        })
     }
 
     return {
-        content: [{ type: "text" as const, text: "Beneficiaries listed successfully" }],
+        content: [{ type: "text" as const, text: "Beneficiaries listed successfully" + JSON.stringify(responseData) }],
     };
 }
 
@@ -48,7 +71,11 @@ export async function createBeneficiary(payload: {
     }
 
     if (!isValidResponse(response.status, response.data)) {
-        return createErrorResponse("Failed to create beneficiary");
+        if (response.data?.message) {
+            return createErrorResponse(`Failed to create a beneficiary: ${response.message}`)
+        }
+
+        return createErrorResponse("Failed to create beneficiary *: " + JSON.stringify( response.message ));
     }
 
     return {

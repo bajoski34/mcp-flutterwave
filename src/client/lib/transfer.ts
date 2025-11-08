@@ -40,7 +40,7 @@ async function createBeneficiary(payload: {
     beneficiary_name: string,
     currency: string,
     bank_name: string
-}): Promise<{ data?: any; status?: string | number } | undefined> {
+}): Promise<{ data?: any; status?: string | number; message?: string } | undefined> {
     const { data, error } = await client.POST("/beneficiaries", {
         body: {
             ...payload
@@ -49,7 +49,7 @@ async function createBeneficiary(payload: {
 
     if (error) {
         console.error(error);
-        return;
+        return error;
     }
 
     return data;
@@ -57,12 +57,18 @@ async function createBeneficiary(payload: {
 
 /**
  * List Beneficiaries.
- * 
- * @param payload 
- * @returns 
+ *
+ * @returns
+ * @param page
  */
-async function listBeneficiaries(): Promise<{ data?: any; status?: string | number } | undefined> {
-    const { data, error } = await client.GET("/beneficiaries");
+async function listBeneficiaries(page: number = 1): Promise<{ data?: any; status?: string | number; meta?: { page_info?: { total_pages?: number } } } | undefined> {
+    const { data, error } = await client.GET("/beneficiaries", {
+        parameters: {
+            query: {
+                page
+            }
+        }
+    });
 
     if (error) {
         console.error(error);
