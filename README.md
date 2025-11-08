@@ -9,6 +9,7 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that e
 - Send Failed Hooks (Already included)
 - Generate Payment Links [✓]
 - Automated Customer Support (AI chatbot integrated with Flutterwave for transaction inquiries) [✓]
+- Manage Transfers and Beneficiaries (Already included)[✓]
 
 ## Available Tools
 
@@ -18,6 +19,10 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that e
 - `disable-checkout`: Disable a checkout transaction link
 - `retry-transaction`: Analyze and provide guidance for retrying a failed transaction
 - `get-transaction-timeline`: Get the timeline/history of events for a transaction
+- `get-beneficiaries`: Get the list of beneficiaries for a transfer
+- `get-transfers`: Get the list of transfers for a customer
+- `create-transfer`: Create a transfer for a customer
+- `create-beneficiary`: Create a beneficiary for transfers
 
 ## Installation
 
