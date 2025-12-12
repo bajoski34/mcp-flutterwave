@@ -1,6 +1,7 @@
 import Flutterwave from "../client/index.js";
 import { server } from "../server.js";
 import { TransactionSchema } from "../types/transaction/schema.js";
+import { createTransactionUI, createTimelineUI } from "../ui/index.js";
 
 // Cache transactions client to avoid repeated function calls
 const transactionsClient = Flutterwave.transactions();
@@ -25,11 +26,28 @@ export async function getTransaction({ tx_id }: { tx_id: string }) {
             return createErrorResponse(`Unable to retrieve ${tx_id}`);
         }
 
+        // Create UI resource for rich visualization
+        const uiResource = createTransactionUI({
+            status: data.status || 'unknown',
+            amount: (data as any).amount || 0,
+            currency: (data as any).currency || 'NGN',
+            tx_id: tx_id,
+            customer: {
+                name: (data as any).customer?.name,
+                email: (data as any).customer?.email,
+            },
+            created_at: (data as any).created_at,
+        });
+
         return {
             content: [
                 {
                     type: "text" as const,
-                    text: `Transaction Status: ${data.status}\nAmount: ${data.amount}\nCurrency: ${data.currency}`,
+                    text: `Transaction Status: ${data.status}\nAmount: ${(data as any).amount}\nCurrency: ${(data as any).currency}`,
+                },
+                {
+                    type: "resource" as const,
+                    resource: uiResource,
                 },
             ],
         };
@@ -46,11 +64,18 @@ export async function getTransactionTimeline({ tx_id }: { tx_id: string }) {
             return createErrorResponse(`Unable to retrieve timeline for ${tx_id}`);
         }
 
+        // Create UI resource for timeline visualization
+        const uiResource = createTimelineUI(tx_id, data);
+
         return {
             content: [
                 {
                     type: "text" as const,
                     text: `Transaction Timeline: ${JSON.stringify(data)}`,
+                },
+                {
+                    type: "resource" as const,
+                    resource: uiResource,
                 },
             ],
         };
