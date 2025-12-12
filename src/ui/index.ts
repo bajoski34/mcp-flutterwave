@@ -2,20 +2,22 @@ import { createUIResource } from "@mcp-ui/server";
 
 type URI = `ui://${string}`;
 
-// Flutterwave brand colors
+// Flutterwave brand colors - matching Figma design
 const COLORS = {
     primary: '#F5A623',
+    primaryDark: '#FF8C00',
     dark: '#1E1E1E',
     success: '#00C853',
     error: '#D32F2F',
     warning: '#FFA726',
-    text: '#333333',
-    textLight: '#666666',
+    text: '#2C2C2C',
+    textLight: '#757575',
     background: '#FFFFFF',
-    border: '#E0E0E0',
+    border: '#E5E5E5',
+    cardBg: '#FAFAFA',
 };
 
-// Base styles for all UI components
+// Base styles for all UI components - matching Figma design
 const baseStyles = `
     <style>
         * {
@@ -28,65 +30,70 @@ const baseStyles = `
             background: ${COLORS.background};
             padding: 20px;
             color: ${COLORS.text};
-            line-height: 1.6;
+            line-height: 1.5;
         }
         .container {
             max-width: 600px;
             margin: 0 auto;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
         .header {
-            background: linear-gradient(135deg, ${COLORS.primary} 0%, #FF8C00 100%);
+            background: linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%);
             color: white;
-            padding: 24px;
+            padding: 28px 24px;
             text-align: center;
         }
         .header h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            letter-spacing: -0.2px;
         }
         .header p {
-            font-size: 14px;
-            opacity: 0.9;
+            font-size: 13px;
+            opacity: 0.95;
+            font-weight: 400;
         }
         .content {
-            padding: 24px;
+            padding: 28px 24px;
         }
         .info-grid {
             display: grid;
-            gap: 16px;
+            gap: 14px;
         }
         .info-item {
-            padding: 16px;
-            background: #F9FAFB;
-            border-radius: 8px;
-            border-left: 4px solid ${COLORS.primary};
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            border-left: 3px solid ${COLORS.primary};
+            padding-left: 14px;
         }
         .info-label {
-            font-size: 12px;
+            font-size: 11px;
             color: ${COLORS.textLight};
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
         .info-value {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: ${COLORS.text};
             word-break: break-word;
+            line-height: 1.4;
         }
         .status {
             display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
         .status.success {
             background: ${COLORS.success};
@@ -101,46 +108,51 @@ const baseStyles = `
             color: white;
         }
         .button {
-            display: inline-block;
-            padding: 12px 24px;
+            display: block;
+            width: 100%;
+            padding: 14px 24px;
             background: ${COLORS.primary};
             color: white;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: none;
             cursor: pointer;
+            font-size: 14px;
         }
         .button:hover {
-            background: #E59612;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(245, 166, 35, 0.3);
+            background: ${COLORS.primaryDark};
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(245, 166, 35, 0.25);
         }
         .footer {
-            padding: 20px 24px;
-            background: #F9FAFB;
+            padding: 18px 24px;
+            background: ${COLORS.cardBg};
             border-top: 1px solid ${COLORS.border};
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             color: ${COLORS.textLight};
+            font-weight: 500;
         }
         .amount {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
             color: ${COLORS.primary};
-            margin: 16px 0;
+            margin: 18px 0;
+            letter-spacing: -0.5px;
         }
         .link-box {
             background: ${COLORS.dark};
             color: white;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 16px 0;
+            padding: 18px;
+            border-radius: 10px;
+            margin: 18px 0;
             word-break: break-all;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
+            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
         }
     </style>
 `;
