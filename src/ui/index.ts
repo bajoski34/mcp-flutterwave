@@ -381,6 +381,48 @@ export function createTransferUI(data: TransferUIData) {
 }
 
 export function createTimelineUI(tx_id: string, timeline: any) {
+    // Format timeline data into HTML items
+    let timelineItems = '';
+    
+    if (Array.isArray(timeline)) {
+        timelineItems = timeline.map((item: any) => {
+            const time = item.created_at || item.timestamp || item.time || 'N/A';
+            const event = item.event || item.action || item.status || 'Event';
+            const details = item.message || item.description || '';
+            
+            return `
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-time">${new Date(time).toLocaleString()}</div>
+                        <div class="timeline-event">${event}</div>
+                        ${details ? `<div style="font-size: 14px; color: #666; margin-top: 4px;">${details}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } else if (typeof timeline === 'object' && timeline !== null) {
+        // If timeline is an object, convert it to an array of entries
+        timelineItems = Object.entries(timeline).map(([key, value]: [string, any]) => {
+            return `
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-event">${key}</div>
+                        <div style="font-size: 14px; color: #666; margin-top: 4px;">${typeof value === 'object' ? JSON.stringify(value, null, 2) : value}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } else {
+        // Fallback to displaying the raw data
+        timelineItems = `
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <pre style="margin: 0; font-size: 12px; overflow-x: auto;">${JSON.stringify(timeline, null, 2)}</pre>
+                </div>
+            </div>
+        `;
+    }
+
     const html = `
         <!DOCTYPE html>
         <html>
@@ -446,7 +488,7 @@ export function createTimelineUI(tx_id: string, timeline: any) {
                 </div>
                 <div class="content">
                     <div class="timeline">
-                        ${JSON.stringify(timeline, null, 2)}
+                        ${timelineItems}
                     </div>
                 </div>
                 <div class="footer">
