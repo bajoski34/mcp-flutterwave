@@ -2,6 +2,7 @@ import Flutterwave from "../client/index.js";
 import { CheckoutPayload } from "../types/index.js";
 import { server } from "../server.js";
 import { CheckoutPayloadSchema, DisableCheckoutSchema } from "../types/checkout/index.js";
+import { createCheckoutUI } from "../ui/index.js";
 
 // Cache checkout client to avoid repeated function calls
 const checkoutClient = Flutterwave.checkout();
@@ -30,11 +31,23 @@ export async function createCheckout(payload: CheckoutPayload) {
             );
         }
 
+        // Create UI resource for checkout link
+        const uiResource = createCheckoutUI({
+            link: data.data.link,
+            customer: payload.customer,
+            amount: Number(payload.amount),
+            currency: payload.currency,
+        });
+
         return {
             content: [
                 {
                     type: "text" as const,
                     text: `Checkout link at: ${data.data?.link}`,
+                },
+                {
+                    type: "resource" as const,
+                    resource: uiResource,
                 },
             ],
         };

@@ -2,6 +2,7 @@ import z from "zod";
 import Flutterwave from "../client/index.js";
 import { server } from "../server.js";
 import { CreateTransferPayloadSchema, CreateBeneficiaryPayloadSchema } from "../types/transfer/schema.js";
+import { createTransferUI } from "../ui/index.js";
 
 // Cache transfer client to avoid repeated function calls
 const transfersClient = Flutterwave.transfers();
@@ -124,8 +125,27 @@ export async function createTransfer(payload: {
         return createErrorResponse("Failed to create transfer");
     }
 
+    // Create UI resource for transfer
+    const uiResource = createTransferUI({
+        reference: payload.reference || (response.data as any).reference || `TRF-${Date.now()}`,
+        amount: Number(payload.amount),
+        currency: payload.currency,
+        beneficiary: {
+            name: payload.beneficiary_name,
+            account_number: payload.account_number,
+            bank_name: (response.data as any).bank_name,
+        },
+        status: (response.data as any).status || 'pending',
+    });
+
     return {
-        content: [{ type: "text" as const, text: "Transfer created successfully" }],
+        content: [
+            { type: "text" as const, text: "Transfer created successfully" },
+            {
+                type: "resource" as const,
+                resource: uiResource,
+            },
+        ],
     };
 }
 
