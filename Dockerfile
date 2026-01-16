@@ -8,8 +8,9 @@ ENV DOCKER=true
 COPY package*.json ./
 RUN npm ci
 
-# Copy source code
+# Copy source code AND bin directory
 COPY tsconfig.json ./
+COPY bin/ ./bin/
 COPY src/ ./src/
 
 # Build the application
