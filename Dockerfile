@@ -34,4 +34,4 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/build ./build
 
 # Run the application
-CMD ["node", "build/index.js"] 
+CMD ["node", "build/index.js", "--tools=create_checkout,disable_checkout,read_transaction,resend_transaction_webhook"] 
