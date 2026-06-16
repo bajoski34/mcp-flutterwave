@@ -15,7 +15,8 @@
   "scripts": {
     "build": "npm run build:types &&tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "clean": "rm -rf build",
-    "build:types": "./bin/generate-openapi-typescript"
+    "build:types": "./bin/generate-openapi-typescript",
+    "test": "vitest run"
   },
   "files": [
     "build"
@@ -44,6 +45,7 @@
     "nodemon": "^3.1.9",
     "openapi-typescript": "^7.6.1",
     "typescript": "^5.8.2",
+    "vitest": "^4.1.9",
     "zod-to-json-schema": "^3.24.6"
   }
 }

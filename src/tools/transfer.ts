@@ -4,193 +4,89 @@ import { server } from "../server.js";
 import { CreateTransferPayloadSchema, CreateBeneficiaryPayloadSchema } from "../types/transfer/schema.js";
 import { createTransferUI } from "../ui/index.js";
 
-// Cache transfer client to avoid repeated function calls
 const transfersClient = Flutterwave.transfers();
 
-// Helper function to create error responses
 function createErrorResponse(message: string) {
-    return {
-        content: [{ type: "text" as const, text: message }],
-    };
+    return { content: [{ type: "text" as const, text: message }] };
 }
 
-// Helper function to validate API response
 function isValidResponse(status: unknown, data: unknown): data is { status?: string } {
     return !(typeof status === 'number' && status >= 400) && !!data;
 }
 
 export async function listBeneficiaries(): Promise<{ content: { type: "text"; text: string }[] }> {
-    const response = await transfersClient.listBeneficiaries();
-
-    if (!response) {
-        return createErrorResponse("No response from transfer client");
-    }
-
-    if (!isValidResponse(response.status, response.data)) {
-
-        if (response.data?.message) {
-            return createErrorResponse(`Failed to list beneficiaries: ${response.data.message}`)
+    try {
+        const response = await transfersClient.listBeneficiaries();
+        if (!response) return createErrorResponse("No response from transfer client");
+        if (!isValidResponse(response.status, response.data)) {
+            if (response.data?.message) return createErrorResponse(`Failed to list beneficiaries: ${response.data.message}`);
+            return createErrorResponse("Failed to list beneficiaries: " + JSON.stringify(response.data));
         }
-
-        return createErrorResponse("Failed to list beneficiaries **: " + JSON.stringify( response.data ));
-    }
-
-    let responseData: any[] = [response.data]
-    let remainingPages = [];
-    // @ts-ignore
-    if (response.meta?.page_info?.total_pages > 1) {
+        let responseData: any[] = [response.data];
+        let remainingPages = [];
         // @ts-ignore
-        for (let i = 2; i <= response.meta?.page_info?.total_pages; i++) {
-            remainingPages.push(transfersClient.listBeneficiaries(i))
-        }
-
-        let otherResults = await Promise.all(remainingPages)
-
-        otherResults.forEach(result => {
-            if (result?.data) {
-                responseData.push(result.data)
+        if (response.meta?.page_info?.total_pages > 1) {
+            // @ts-ignore
+            for (let i = 2; i <= response.meta?.page_info?.total_pages; i++) {
+                remainingPages.push(transfersClient.listBeneficiaries(i));
             }
-        })
+            let otherResults = await Promise.all(remainingPages);
+            otherResults.forEach(result => { if (result?.data) responseData.push(result.data); });
+        }
+        return { content: [{ type: "text" as const, text: "Beneficiaries listed successfully: " + JSON.stringify(responseData) }] };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        return createErrorResponse(`Error listing beneficiaries: ${message}`);
     }
-
-    return {
-        content: [{ type: "text" as const, text: "Beneficiaries listed successfully" + JSON.stringify(responseData) }],
-    };
 }
 
 export async function createBeneficiary(payload: {
-    account_bank: string,
-    account_number: string,
-    beneficiary_name: string,
-    currency: string,
-    bank_name: string
+    account_bank: string, account_number: string, beneficiary_name: string, currency: string, bank_name: string
 }) {
-    const response = await transfersClient.createBeneficiary(payload);
-
-    if (!response) {
-        return createErrorResponse("No response from transfer client");
-    }
-
-    if (!isValidResponse(response.status, response.data)) {
-        if (response.data?.message) {
-            return createErrorResponse(`Failed to create a beneficiary: ${response.message}`)
+    try {
+        const response = await transfersClient.createBeneficiary(payload);
+        if (!response) return createErrorResponse("No response from transfer client");
+        if (!isValidResponse(response.status, response.data)) {
+            if (response.data?.message) return createErrorResponse(`Failed to create a beneficiary: ${response.message}`);
+            return createErrorResponse("Failed to create beneficiary: " + JSON.stringify(response.message));
         }
-
-        return createErrorResponse("Failed to create beneficiary *: " + JSON.stringify( response.message ));
+        return { content: [{ type: "text" as const, text: "Beneficiary created successfully" }] };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        return createErrorResponse(`Error creating beneficiary: ${message}`);
     }
-
-    return {
-        content: [{ type: "text" as const, text: "Beneficiary created successfully" }],
-    };
 }
 
 export async function createTransfer(payload: {
-    account_bank: string,
-    account_number: string,
-    amount: number | string,
-    currency: string,
-    callback_url?: string,
-    debit_subaccount?: string,
-    beneficiary?: number,
-    beneficiary_name?: string,
-    reference?: string,
-    debit_currency?: string,
-    destination_branch_code?: string,
-    narration?: string,
+    account_bank: string, account_number: string, amount: number | string, currency: string,
+    callback_url?: string, debit_subaccount?: string, beneficiary?: number, beneficiary_name?: string,
+    reference?: string, debit_currency?: string, destination_branch_code?: string, narration?: string,
 }) {
-
-    // Ensure amount is a string as required by the Flutterwave API
     const requestPayload = {
-        account_bank: payload.account_bank,
-        account_number: payload.account_number,
-        amount: String(payload.amount),
-        currency: payload.currency,
-        callback_url: payload.callback_url,
-        debit_subaccount: payload.debit_subaccount,
-        beneficiary: payload.beneficiary,
-        beneficiary_name: payload.beneficiary_name,
-        reference: payload.reference,
-        debit_currency: payload.debit_currency,
-        destination_branch_code: payload.destination_branch_code,
-        narration: payload.narration,
+        account_bank: payload.account_bank, account_number: payload.account_number,
+        amount: String(payload.amount), currency: payload.currency,
+        callback_url: payload.callback_url, debit_subaccount: payload.debit_subaccount,
+        beneficiary: payload.beneficiary, beneficiary_name: payload.beneficiary_name,
+        reference: payload.reference, debit_currency: payload.debit_currency,
+        destination_branch_code: payload.destination_branch_code, narration: payload.narration,
     };
-
     const response = await transfersClient.create(requestPayload);
-
-    if (!response) {
-        return createErrorResponse("No response from transfer client");
-    }
-
-    if (!isValidResponse(response.status, response.data)) {
-        return createErrorResponse("Failed to create transfer");
-    }
-
-    // Create UI resource for transfer
+    if (!response) return createErrorResponse("No response from transfer client");
+    if (!isValidResponse(response.status, response.data)) return createErrorResponse("Failed to create transfer");
     const uiResource = createTransferUI({
         reference: payload.reference || (response.data as any).reference || `TRF-${Date.now()}`,
-        amount: Number(payload.amount),
-        currency: payload.currency,
-        beneficiary: {
-            name: payload.beneficiary_name,
-            account_number: payload.account_number,
-            bank_name: (response.data as any).bank_name,
-        },
+        amount: Number(payload.amount), currency: payload.currency,
+        beneficiary: { name: payload.beneficiary_name, account_number: payload.account_number, bank_name: (response.data as any).bank_name },
         status: (response.data as any).status || 'pending',
     });
-
-    return {
-        content: [
-            { type: "text" as const, text: "Transfer created successfully" },
-            {
-                type: "resource" as const,
-                resource: uiResource,
-            },
-        ],
-    };
+    return { content: [{ type: "text" as const, text: "Transfer created successfully" }, { type: "resource" as const, resource: uiResource }] };
 }
 
 export function registerTransferTools() {
-    server.tool(
-        "create_transfer",
-        "Create a transfer with Flutterwave.",
-        CreateTransferPayloadSchema,
-        async (args) => {
-            try {
-                return await createTransfer(args);
-            } catch (error) {
-                return {
-                    content: [{ type: "text" as const, text: `Error Occured on creating transfer` }],
-                };
-            }
-        }
-    );
-
-    server.tool(
-        "list_beneficiaries",
-        "List all beneficiaries with Flutterwave.",
-        async () => {
-            try {
-                return await listBeneficiaries();
-            } catch (error) {
-                return {
-                    content: [{ type: "text" as const, text: `Error Occured on listing beneficiaries` }],
-                };
-            }
-        }
-    );
-
-    server.tool(
-        "create_beneficiary",
-        "Create a new beneficiary with Flutterwave.",
-        CreateBeneficiaryPayloadSchema,
-        async (args) => {
-            try {
-                return await createBeneficiary(args);
-            } catch (error) {
-                return {
-                    content: [{ type: "text" as const, text: `Error Occured on creating beneficiary` }],
-                };
-            }
-        }
-    );
+    server.tool("create_transfer", "Create a transfer with Flutterwave.", CreateTransferPayloadSchema,
+        async (args) => { try { return await createTransfer(args); } catch (error) { return { content: [{ type: "text" as const, text: `Error occurred on creating transfer` }] }; } });
+    server.tool("list_beneficiaries", "List all beneficiaries with Flutterwave.",
+        async () => { try { return await listBeneficiaries(); } catch (error) { return { content: [{ type: "text" as const, text: `Error occurred on listing beneficiaries` }] }; } });
+    server.tool("create_beneficiary", "Create a new beneficiary with Flutterwave.", CreateBeneficiaryPayloadSchema,
+        async (args) => { try { return await createBeneficiary(args); } catch (error) { return { content: [{ type: "text" as const, text: `Error occurred on creating beneficiary` }] }; } });
 }
