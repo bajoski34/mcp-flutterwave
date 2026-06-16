@@ -1,6 +1,6 @@
 import Flutterwave from "../client/index.js";
 import { server } from "../server.js";
-import { TransactionSchema } from "../types/transaction/schema.js";
+import { TransactionReferenceSchema, TransactionSchema } from "../types/transaction/schema.js";
 import { createTransactionUI, createTimelineUI } from "../ui/index.js";
 
 // Cache transactions client to avoid repeated function calls
@@ -53,6 +53,28 @@ export async function getTransaction({ tx_id }: { tx_id: string }) {
         };
     } catch (error) {
         return createErrorResponse(`Unable to retrieve ${tx_id}`);
+    }
+}
+
+
+export async function getTransactionWithReference({ tx_ref }: { tx_ref: string }) {
+    try {
+        const { status, data } = await transactionsClient.get_with_reference(tx_ref) || { status: null, data: null };
+
+        if (!isValidResponse(status, data) || !data.status) {
+            return createErrorResponse(`Unable to retrieve ${tx_ref}`);
+        }
+
+        return {
+            content: [
+                {
+                    type: "text" as const,
+                    text: `Transaction Status: ${data.status}\nAmount: ${(data as any).amount}\nCurrency: ${(data as any).currency}`,
+                }
+            ],
+        };
+    } catch (error) {
+        return createErrorResponse(`Unable to retrieve ${tx_ref}`);
     }
 }
 
@@ -114,6 +136,15 @@ export async function registerTransactionTools() {
         TransactionSchema,
         async (args) => {
             return await getTransaction(args);
+        }
+    );
+
+    server.tool(
+        "read_transaction_with_reference",
+        "Get Transaction Details by reference",
+        TransactionReferenceSchema,
+        async (args) => {
+            return await getTransactionWithReference(args);
         }
     );
 
