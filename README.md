@@ -3,6 +3,7 @@
 [![CI](https://github.com/bajoski34/mcp-flutterwave/actions/workflows/ci.yml/badge.svg)](https://github.com/bajoski34/mcp-flutterwave/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/mcp-flutterwave.svg)](https://www.npmjs.com/package/mcp-flutterwave)
 [![npm downloads](https://img.shields.io/npm/dm/mcp-flutterwave.svg)](https://www.npmjs.com/package/mcp-flutterwave)
+[![Docker](https://img.shields.io/badge/ghcr.io-mcp--flutterwave-blue?logo=docker)](https://github.com/bajoski34/mcp-flutterwave/pkgs/container/mcp-flutterwave)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node.js](https://img.shields.io/node/v/mcp-flutterwave.svg)](https://www.npmjs.com/package/mcp-flutterwave)
 [![MCP](https://img.shields.io/badge/MCP-compatible-blue.svg)](https://modelcontextprotocol.io)
@@ -58,17 +59,30 @@ Also ships with a **built-in web app** that connects to the MCP server and lets 
 
 ## Installation
 
+### npm
+
 ```bash
 npm install -g mcp-flutterwave
 ```
 
-Or run directly with npx (no install needed):
+### npx (no install needed)
 
 ```bash
 npx mcp-flutterwave --tools=all
 ```
 
-**Requirements:** Node.js 18 or later.
+### Docker
+
+```bash
+docker pull ghcr.io/bajoski34/mcp-flutterwave:latest
+
+docker run --rm \
+  -e FLW_SECRET_KEY=your_secret_key \
+  -e FLW_ENCRYPTION_KEY=your_encryption_key \
+  ghcr.io/bajoski34/mcp-flutterwave:latest
+```
+
+**Requirements:** Node.js 20 or later (for npm/npx).
 
 ---
 
