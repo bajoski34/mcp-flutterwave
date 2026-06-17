@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: Flutterwave Virtual Account API
+  description: API for creating and managing virtual account numbers (NGN and GHS).
+  version: 1.0.0
+servers:
+  - url: https://api.flutterwave.com/v3
+paths:
+  /virtual-account-numbers:
+    post:
+      summary: Create a virtual account number
+      description: >
+        Create a static (permanent) or dynamic (one-time) virtual account number
+        for a customer. NGN static accounts require a BVN. GHS accounts support
+        frequency and duration for recurring collection.
+      operationId: createVirtualAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - currency
+                - tx_ref
+              properties:
+                email:
+                  type: string
+                  example: 'user@example.com'
+                currency:
+                  type: string
+                  enum: [NGN, GHS]
+                  example: 'NGN'
+                tx_ref:
+                  type: string
+                  description: Unique transaction reference for this account.
+                  example: 'VA-NGN-20240610-001'
+                amount:
+                  type: number
+                  description: Amount to collect. Required for dynamic accounts; omit or use 0 for static.
+                  example: 5000
+                is_permanent:
+                  type: boolean
+                  description: true creates a static (reusable) account; false (default) creates a dynamic one-time account.
+                  example: false
+                bvn:
+                  type: string
+                  description: Bank Verification Number (11 digits). Required for NGN static accounts.
+                  example: '22415929481'
+                narration:
+                  type: string
+                  description: Display name shown when the account is resolved at the bank.
+                  example: 'My Store Payments'
+                phonenumber:
+                  type: string
+                  description: Customer phone number.
+                  example: '+2349012345678'
+                firstname:
+                  type: string
+                  example: 'Adaeze'
+                lastname:
+                  type: string
+                  example: 'Okonkwo'
+                frequency:
+                  type: integer
+                  description: GHS only — number of times the account can be used. Omit for unlimited.
+                  example: 5
+                duration:
+                  type: integer
+                  description: GHS only — number of days the account stays active.
+                  example: 7
+      responses:
+        '200':
+          description: Virtual account created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualAccountResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+  /virtual-account-numbers/{order_ref}:
+    get:
+      summary: Get a virtual account by order_ref
+      description: Retrieve the details of a single virtual account using its order_ref.
+      operationId: getVirtualAccount
+      parameters:
+        - name: order_ref
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The order_ref returned when the virtual account was created.
+          example: 'URF_1234567890_8044304_NG'
+      responses:
+        '200':
+          description: Virtual account details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualAccountResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+    put:
+      summary: Update a virtual account (BVN)
+      description: Update the BVN linked to a virtual account.
+      operationId: updateVirtualAccount
+      parameters:
+        - name: order_ref
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 'URF_1234567890_8044304_NG'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bvn
+              properties:
+                bvn:
+                  type: string
+                  description: Updated Bank Verification Number (11 digits).
+                  example: '22415929481'
+      responses:
+        '200':
+          description: Virtual account updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualAccountResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+  /bulk-virtual-account-numbers:
+    get:
+      summary: List virtual accounts in bulk by batch ID
+      description: Retrieve all virtual accounts created in a bulk batch.
+      operationId: listVirtualAccountBulk
+      parameters:
+        - name: batch_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The batch_id returned when a bulk virtual account was created.
+          example: 'b_ABCDEF123'
+      responses:
+        '200':
+          description: List of virtual accounts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VirtualAccountData'
+
+components:
+  schemas:
+    VirtualAccountData:
+      type: object
+      properties:
+        response_code:
+          type: string
+          example: '02'
+        response_message:
+          type: string
+          example: 'Transaction fetched successfully'
+        flw_ref:
+          type: string
+          example: 'FLW-MOCK-VA-001'
+        order_ref:
+          type: string
+          example: 'URF_1234567890_8044304_NG'
+        account_number:
+          type: string
+          example: '8044304553'
+        frequency:
+          type: string
+          example: '1'
+        bank_name:
+          type: string
+          example: 'WEMA BANK'
+        created_at:
+          type: string
+          example: '2024-06-10T11:34:11.000Z'
+        expiry_date:
+          type: string
+          example: '2024-06-10 12:34:11'
+        note:
+          type: string
+          example: 'Please make a bank transfer to Flutterwave MFB Bank with account number 8044304553'
+        amount:
+          type: number
+          example: 5000
+        email:
+          type: string
+          example: 'user@example.com'
+        is_permanent:
+          type: boolean
+          example: false
+        account_status:
+          type: string
+          example: 'active'
+        currency:
+          type: string
+          example: 'NGN'
+    VirtualAccountResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'success'
+        message:
+          type: string
+          example: 'Virtual account created'
+        data:
+          $ref: '#/components/schemas/VirtualAccountData'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

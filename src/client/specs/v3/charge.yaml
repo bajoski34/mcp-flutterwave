@@ -1,0 +1,233 @@
+openapi: 3.0.3
+info:
+  title: Flutterwave Charge API
+  description: API for directly charging customers via card, bank account, mobile money, USSD, or M-Pesa.
+  version: 1.0.0
+servers:
+  - url: https://api.flutterwave.com/v3
+paths:
+  /charges:
+    post:
+      summary: Charge a payment method
+      description: Directly charge a customer using the specified payment method type.
+      operationId: createCharge
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - card
+              - account
+              - mobile_money_ghana
+              - enaira
+              - qr
+              - mono
+              - debit_uk_account
+              - ach_payment
+              - bank_transfer
+              - mobile_money_tanzania
+              - mobile_money_uganda
+              - mobile_money_rwanda
+              - mobile_money_zambia
+              - mobile_money_francophone
+              - mpesa
+              - ussd
+              - capitec
+              - fawry_pay
+              - opay
+              - voucher_payment
+          description: The payment method type to charge.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client:
+                  type: string
+                  example: 'encrypted_card_data_here'
+                tx_ref:
+                  type: string
+                  example: 'MC-158523s09v5050e8'
+                amount:
+                  type: string
+                  example: '100'
+                currency:
+                  type: string
+                  example: 'NGN'
+                email:
+                  type: string
+                  example: 'user@example.com'
+                fullname:
+                  type: string
+                  example: 'Yemi Desola'
+                phone_number:
+                  type: string
+                  example: '09000000000'
+                redirect_url:
+                  type: string
+                  example: 'https://example.com/callback'
+                card_number:
+                  type: string
+                  example: '5531886652142950'
+                cvv:
+                  type: string
+                  example: '564'
+                expiry_month:
+                  type: string
+                  example: '09'
+                expiry_year:
+                  type: string
+                  example: '32'
+                account_bank:
+                  type: string
+                  example: '044'
+                account_number:
+                  type: string
+                  example: '0690000031'
+                network:
+                  type: string
+                  example: 'MTN'
+                card_holder_name:
+                  type: string
+                  description: Card holder name (required for AMEX transactions)
+                  example: 'John Doe'
+                authorization:
+                  type: object
+                  description: Authorization data for PIN or AVS flows — second call only, after initial charge returns the required mode.
+                  properties:
+                    mode:
+                      type: string
+                      enum: [pin, avs_noauth]
+                      description: Authorization mode returned by the initial charge response.
+                    pin:
+                      type: string
+                      description: Card PIN (for pin mode)
+                    city:
+                      type: string
+                    address:
+                      type: string
+                    state:
+                      type: string
+                    country:
+                      type: string
+                    zipcode:
+                      type: string
+      responses:
+        '200':
+          description: Charge initiated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeResponse'
+        '400':
+          description: Bad request, invalid data.
+        '401':
+          description: Unauthorized, invalid API key.
+  /validate-charge:
+    post:
+      summary: Validate a charge with OTP
+      description: Validate a pending charge that requires OTP authorisation (card, account, or USSD).
+      operationId: validateCharge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otp:
+                  type: string
+                  example: '12345'
+                flw_ref:
+                  type: string
+                  example: 'FLW-MOCK-1e9e0e0e0e0e0e0e'
+                type:
+                  type: string
+                  example: 'card'
+              required:
+                - otp
+                - flw_ref
+      responses:
+        '200':
+          description: Charge validated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+components:
+  schemas:
+    ChargeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'success'
+        message:
+          type: string
+          example: 'Charge initiated'
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 4975363
+            tx_ref:
+              type: string
+              example: 'MC-158523s09v5050e8'
+            flw_ref:
+              type: string
+              example: 'FLW-MOCK-1e9e0e0e0e0e0e0e'
+            status:
+              type: string
+              example: 'pending'
+            amount:
+              type: number
+              example: 100
+            currency:
+              type: string
+              example: 'NGN'
+            charge_type:
+              type: string
+              example: 'normal'
+            auth_model:
+              type: string
+              description: Auth model used by the card (e.g. PIN, VBVSECURECODE)
+              example: 'PIN'
+            processor_response:
+              type: string
+              example: 'Approved'
+        meta:
+          type: object
+          description: Present when further authorization steps are required.
+          properties:
+            authorization:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  enum: [pin, avs_noauth, otp, redirect]
+                  description: The next required action.
+                fields:
+                  type: array
+                  items:
+                    type: string
+                  description: Fields needed from the customer (PIN or AVS flows).
+                redirect:
+                  type: string
+                  description: Redirect URL for 3DS authentication.
+                endpoint:
+                  type: string
+                  description: Endpoint for OTP validation.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

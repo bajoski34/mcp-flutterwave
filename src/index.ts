@@ -7,19 +7,54 @@ import { config } from "./config/index.js";
 const ACCEPTED_ARGS = ['tools'];
 
 const ACCEPTED_TOOLS = [
+    // checkout
     'create_checkout',
     'disable_checkout',
-    'create_refund',
-    'read_transactions',
+    // transactions
+    'read_transaction',
+    'read_transaction_with_reference',
+    'read_transaction_timeline',
+    'resend_transaction_webhook',
+    // transfers
     'create_transfer',
     'create_beneficiary',
     'list_beneficiaries',
-    'read_transaction',
-    'read_transaction_timeline',
-    'resend_transaction_webhook',
-    'create_plan',
-    'read_plan',
-    'read_subscription'
+    // plans
+    'create_payment_plan',
+    'get_payment_plans',
+    // charges
+    'charge_card',
+    'charge_bank_account',
+    'charge_mobile_money',
+    'charge_mpesa',
+    'charge_ussd',
+    'validate_charge',
+    // virtual accounts
+    'create_virtual_account',
+    'get_virtual_account',
+    'update_virtual_account',
+    'list_virtual_account_bulk',
+    // bill payments
+    'get_bill_categories',
+    'get_bill_providers',
+    'get_bill_items',
+    'validate_bill_customer',
+    'pay_bill',
+    'get_bill_status',
+    // fx trade
+    'request_fx_quote',
+    'get_fx_quote',
+    'initiate_fx_trade',
+    'get_fx_trade',
+    // verification
+    'initiate_bvn_verification',
+    'get_bvn_details',
+    'resolve_bank_account',
+    'verify_card_bin',
+    // stablecoins
+    'get_stablecoin_fee',
+    'send_stablecoin',
+    'convert_to_stablecoin',
 ];
 
 // Create a Set for faster lookup performance (O(1) vs O(n))

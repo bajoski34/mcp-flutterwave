@@ -154,6 +154,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/transfers/fee": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get transfer fee
+         * @description Get the fee for a transfer before initiating it. For stablecoin (crypto) transfers, pass type=crypto. For cross-currency (fiat → stablecoin), also pass debit_currency.
+         */
+        get: operations["getTransferFee"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/beneficiaries": {
         parameters: {
             query?: never;
@@ -291,6 +311,77 @@ export interface operations {
             };
         };
         responses: never;
+    };
+    getTransferFee: {
+        parameters: {
+            query: {
+                /**
+                 * @description Transfer amount.
+                 * @example 50
+                 */
+                amount: number;
+                /**
+                 * @description Target currency (e.g. USDC, USDT, NGN).
+                 * @example USDC
+                 */
+                currency: string;
+                /**
+                 * @description Transfer type. Use "crypto" for stablecoin transfers.
+                 * @example crypto
+                 */
+                type?: string;
+                /**
+                 * @description Source currency for cross-currency transfers (e.g. NGN, USD).
+                 * @example NGN
+                 */
+                debit_currency?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Transfer fee details. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example success */
+                        status?: string;
+                        /** @example Transfer fee fetched */
+                        message?: string;
+                        data?: {
+                            /** @example USDC */
+                            currency?: string;
+                            /** @example value */
+                            fee_type?: string;
+                            /** @example 1.5 */
+                            fee?: number;
+                            fee_amount_in_fiat_currency?: number | null;
+                            fee_amount_in_crypto_currency?: number | null;
+                            amount_minus_fee?: number | null;
+                        }[];
+                    };
+                };
+            };
+            /** @description Bad request. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
     };
     listBeneficiaries: {
         parameters: {

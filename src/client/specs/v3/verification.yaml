@@ -1,0 +1,332 @@
+openapi: 3.0.3
+info:
+  title: Flutterwave Verification API
+  description: >
+    KYC and integrity verification services — BVN verification (Nigeria),
+    bank account resolution, and card BIN lookup.
+  version: 1.0.0
+servers:
+  - url: https://api.flutterwave.com/v3
+paths:
+
+  /bvn/verifications:
+    post:
+      summary: Initiate BVN verification (consent request)
+      description: >
+        Begin a BVN (Bank Verification Number) verification for a customer.
+        Returns a single-use hosted consent URL that the customer must visit
+        to approve data sharing on the NIBSS portal.
+        If the customer already consented, url will be null and you can
+        retrieve their data immediately via GET /bvn/verifications/{reference}.
+        Requires account enablement — contact hi@flutterwavego.com.
+      operationId: initiateBvnVerification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bvn
+                - firstname
+                - lastname
+                - redirect_url
+              properties:
+                bvn:
+                  type: string
+                  description: 11-digit Bank Verification Number.
+                  example: '22415929481'
+                firstname:
+                  type: string
+                  description: Customer's first name.
+                  example: Desola
+                lastname:
+                  type: string
+                  description: Customer's last name.
+                  example: Ade
+                redirect_url:
+                  type: string
+                  description: URL the customer is redirected to after completing consent on the NIBSS portal.
+                  example: 'https://myapp.com/bvn/callback'
+      responses:
+        '200':
+          description: Consent request initiated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Bvn verification initiated
+                  data:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        nullable: true
+                        description: Single-use consent page URL. Null if customer has already consented previously.
+                        example: 'https://bvn.flutterwave.com/consent/...'
+                      reference:
+                        type: string
+                        description: Unique reference for this verification — use with GET /bvn/verifications/{reference}.
+                        example: 'BVN-REF-20240610-001'
+        '400':
+          description: Invalid BVN or missing required fields.
+        '401':
+          description: Unauthorized.
+
+  /bvn/verifications/{reference}:
+    get:
+      summary: Retrieve BVN verification details
+      description: >
+        Fetch the BVN data for a completed verification using its reference.
+        Returns comprehensive identity data including name, DOB, gender,
+        phone numbers, state of origin, and a face image (base64).
+        Status will be COMPLETED when the customer has provided consent.
+      operationId: getBvnDetails
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Reference returned from POST /bvn/verifications.
+          example: 'BVN-REF-20240610-001'
+      responses:
+        '200':
+          description: BVN details retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Bvn details fetched
+                  data:
+                    $ref: '#/components/schemas/BvnVerificationData'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+  /accounts/resolve:
+    post:
+      summary: Resolve a bank account number
+      description: >
+        Look up the account holder name for a bank account number.
+        Use this to verify account details before initiating a transfer.
+        Requires account_number (10 digits) and account_bank (bank code).
+      operationId: resolveBankAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - account_number
+                - account_bank
+              properties:
+                account_number:
+                  type: string
+                  description: 10-digit bank account number.
+                  example: '0690000040'
+                account_bank:
+                  type: string
+                  description: Bank code (3 digits). Use get_banks to look up codes.
+                  example: '044'
+      responses:
+        '200':
+          description: Account resolved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Account details fetched
+                  data:
+                    type: object
+                    properties:
+                      account_number:
+                        type: string
+                        example: '0690000040'
+                      account_name:
+                        type: string
+                        example: Desola Ade
+        '400':
+          description: Account not found or invalid parameters.
+        '401':
+          description: Unauthorized.
+
+  /card-bins/{bin}:
+    get:
+      summary: Verify a card BIN
+      description: >
+        Look up card metadata from the first 6 digits (BIN) of a card number.
+        Returns issuer, card type (debit/credit), brand (Visa/Mastercard/AMEX),
+        country of issue, and card subtype. Useful for validating cards before charging.
+      operationId: verifyCardBin
+      parameters:
+        - name: bin
+          in: path
+          required: true
+          schema:
+            type: string
+          description: First 6 digits of the card number (Bank Identification Number).
+          example: '553188'
+      responses:
+        '200':
+          description: Card BIN details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Bin found
+                  data:
+                    $ref: '#/components/schemas/CardBinData'
+        '400':
+          description: Invalid BIN.
+        '401':
+          description: Unauthorized.
+
+components:
+  schemas:
+
+    BvnData:
+      type: object
+      description: Comprehensive identity data returned after customer consent.
+      properties:
+        bvn:
+          type: string
+          example: '22415929481'
+        nin:
+          type: string
+          nullable: true
+          example: '12345678901'
+        email:
+          type: string
+          nullable: true
+          example: customer@example.com
+        gender:
+          type: string
+          example: Male
+        surname:
+          type: string
+          example: Ade
+        firstName:
+          type: string
+          example: Desola
+        middleName:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          example: '1990-01-15'
+        faceImage:
+          type: string
+          description: Base64-encoded facial image.
+          nullable: true
+        phoneNumber1:
+          type: string
+          example: '+2348012345678'
+        phoneNumber2:
+          type: string
+          nullable: true
+        maritalStatus:
+          type: string
+          nullable: true
+        stateOfOrigin:
+          type: string
+          example: Lagos
+        stateOfCapture:
+          type: string
+          nullable: true
+        stateOfResidence:
+          type: string
+          nullable: true
+        lgaOfOrigin:
+          type: string
+          nullable: true
+        lgaOfResidence:
+          type: string
+          nullable: true
+        nameOnCard:
+          type: string
+          nullable: true
+        watchlisted:
+          type: boolean
+          nullable: true
+
+    BvnVerificationData:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: Desola
+        last_name:
+          type: string
+          example: Ade
+        status:
+          type: string
+          enum: [PENDING, COMPLETED]
+          example: COMPLETED
+        reference:
+          type: string
+          example: 'BVN-REF-20240610-001'
+        callback_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        bvn_data:
+          $ref: '#/components/schemas/BvnData'
+          nullable: true
+          description: Present only when status is COMPLETED.
+
+    CardBinData:
+      type: object
+      properties:
+        issuing-country:
+          type: string
+          example: NG
+        bin:
+          type: string
+          example: '553188'
+        card-type:
+          type: string
+          example: CREDIT
+        issuer-info:
+          type: string
+          example: NEXUS MERCHANT BANK DEBIT PERSONAL
+        iso-country-alpha2:
+          type: string
+          example: NIGERIA
+        brand:
+          type: string
+          example: MASTERCARD
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

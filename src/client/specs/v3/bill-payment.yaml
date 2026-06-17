@@ -1,0 +1,426 @@
+openapi: 3.0.3
+info:
+  title: Flutterwave Bill Payment API
+  description: Pay bills in Nigeria — airtime, data, cable TV, electricity, internet, and more.
+  version: 1.0.0
+servers:
+  - url: https://api.flutterwave.com/v3
+paths:
+
+  /top-bill-categories:
+    get:
+      summary: Get supported bill categories
+      description: Returns all bill categories available for the given country (default NG).
+      operationId: getBillCategories
+      parameters:
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+            default: NG
+          description: Country code. Currently only NG is supported.
+      responses:
+        '200':
+          description: List of bill categories.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BillCategory'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+  /bills/{category}/billers:
+    get:
+      summary: Get billers for a category
+      description: Returns all billers (providers) available for the given category code.
+      operationId: getBillProviders
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Category code (e.g. AIRTIME, CABLEBILLS, UTILITYBILLS).
+          example: CABLEBILLS
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+            default: NG
+      responses:
+        '200':
+          description: List of billers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Biller'
+        '400':
+          description: Invalid category.
+        '401':
+          description: Unauthorized.
+
+  /billers/{biller_code}/items:
+    get:
+      summary: Get bill items for a biller
+      description: Returns packages/items for a specific biller, including item_code and amount.
+      operationId: getBillItems
+      parameters:
+        - name: biller_code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Biller code from get_bill_providers (e.g. BIL119 for DSTV).
+          example: BIL119
+      responses:
+        '200':
+          description: List of bill items.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BillItem'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+  /bill-items/{item_code}/validate:
+    get:
+      summary: Validate a bill customer
+      description: >
+        Validate a customer's identifier (phone number, meter number, smartcard number, etc.)
+        before making a payment. Not required for AIRTIME or MOBILEDATA.
+      operationId: validateBillCustomer
+      parameters:
+        - name: item_code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Item code from get_bill_items.
+          example: CB140
+        - name: customer
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Customer identifier (phone number, smartcard number, meter number, etc.).
+          example: '08038291822'
+      responses:
+        '200':
+          description: Customer validation result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/BillValidation'
+        '400':
+          description: Invalid customer.
+        '401':
+          description: Unauthorized.
+
+  /billers/{biller_code}/items/{item_code}/payment:
+    post:
+      summary: Pay a bill
+      description: Initiate a bill payment for a specific biller and item.
+      operationId: payBill
+      parameters:
+        - name: biller_code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Biller code from get_bill_providers.
+          example: BIL119
+        - name: item_code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Item code from get_bill_items.
+          example: CB140
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - country
+                - customer_id
+                - amount
+              properties:
+                country:
+                  type: string
+                  description: Country code — must be NG.
+                  example: NG
+                customer_id:
+                  type: string
+                  description: Customer identifier (phone, meter number, smartcard, etc.).
+                  example: '08038291822'
+                amount:
+                  type: number
+                  description: Amount to pay. Must match the amount from get_bill_items for fixed-amount bills.
+                  example: 200
+                reference:
+                  type: string
+                  description: Your unique reference for tracking. Auto-generated if not provided.
+                  example: 'BILL-MTN-20240610-001'
+                callback_url:
+                  type: string
+                  description: URL for webhook notifications when the bill payment completes.
+                  example: 'https://myapp.com/webhooks/bills'
+      responses:
+        '200':
+          description: Bill payment initiated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/BillPaymentResult'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+  /bills/{reference}/status:
+    get:
+      summary: Get bill payment status
+      description: Check the status of a bill payment using the tx_ref returned from pay_bill.
+      operationId: getBillStatus
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The tx_ref or reference returned from pay_bill.
+          example: 'BILL-MTN-20240610-001'
+      responses:
+        '200':
+          description: Bill payment status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/BillStatus'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+components:
+  schemas:
+    BillCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Airtime'
+        code:
+          type: string
+          example: 'AIRTIME'
+        description:
+          type: string
+          example: 'Buy airtime for any Nigerian network'
+        country_code:
+          type: string
+          example: 'NG'
+
+    Biller:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          example: 'MTN Nigeria'
+        biller_code:
+          type: string
+          example: 'BIL099'
+        short_name:
+          type: string
+          example: 'MTN'
+        description:
+          type: string
+        country_code:
+          type: string
+          example: 'NG'
+
+    BillItem:
+      type: object
+      properties:
+        item_code:
+          type: string
+          example: 'AT099'
+        label_name:
+          type: string
+          description: The input label to show to the customer (e.g. "Phone Number", "Meter Number").
+          example: 'Phone Number'
+        amount:
+          type: number
+          description: Fixed amount for this item. 0 means user-defined amount.
+          example: 0
+        id:
+          type: integer
+        biller_code:
+          type: string
+        name:
+          type: string
+        short_name:
+          type: string
+        fee:
+          type: number
+        is_resolvable:
+          type: boolean
+
+    BillValidation:
+      type: object
+      properties:
+        response_code:
+          type: string
+          example: '00'
+        response_message:
+          type: string
+          example: 'Successful'
+        name:
+          type: string
+          description: Customer name returned by the biller.
+          example: 'John Doe'
+        biller_code:
+          type: string
+        customer:
+          type: string
+        product_code:
+          type: string
+        address:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        fee:
+          type: number
+        minimum:
+          type: number
+        maximum:
+          type: number
+
+    BillPaymentResult:
+      type: object
+      properties:
+        phone_number:
+          type: string
+        amount:
+          type: number
+        network:
+          type: string
+        code:
+          type: string
+        tx_ref:
+          type: string
+          description: Transaction reference — use with get_bill_status to check status.
+        reference:
+          type: string
+          description: Your custom reference.
+        batch_reference:
+          type: string
+          nullable: true
+        recharge_token:
+          type: string
+          nullable: true
+          description: Token for prepaid electricity meters.
+        fee:
+          type: number
+
+    BillStatus:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: 'NGN'
+        customer_id:
+          type: string
+        amount:
+          type: string
+        fee:
+          type: number
+        product:
+          type: string
+        product_name:
+          type: string
+          nullable: true
+        transaction_date:
+          type: string
+        customer_reference:
+          type: string
+        country:
+          type: string
+        flw_ref:
+          type: string
+        tx_ref:
+          type: string
+        extra:
+          type: string
+          nullable: true
+          description: Contains meter token for prepaid electricity payments.
+        product_details:
+          type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
