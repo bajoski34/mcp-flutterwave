@@ -5,3 +5,8 @@ npx openapi-typescript ./src/client/specs/v3/checkout.yaml -o ./src/client/types
 # npx openapi-typescript ./src/client/specs/v3/refunds.yaml -o ./src/client/types/v3/refunds.d.ts
 npx openapi-typescript ./src/client/specs/v3/plan.yaml -o ./src/client/types/v3/plans.d.ts
 npx openapi-typescript ./src/client/specs/v3/transfer.yaml -o ./src/client/types/v3/transfer.d.ts
+npx openapi-typescript ./src/client/specs/v3/charge.yaml -o ./src/client/types/v3/charge.d.ts
+npx openapi-typescript ./src/client/specs/v3/virtual-account.yaml -o ./src/client/types/v3/virtual-account.d.ts
+npx openapi-typescript ./src/client/specs/v3/bill-payment.yaml -o ./src/client/types/v3/bill-payment.d.ts
+npx openapi-typescript ./src/client/specs/v3/fx-trade.yaml -o ./src/client/types/v3/fx-trade.d.ts
+npx openapi-typescript ./src/client/specs/v3/verification.yaml -o ./src/client/types/v3/verification.d.ts

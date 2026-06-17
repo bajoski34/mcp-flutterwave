@@ -2,523 +2,223 @@ import { createUIResource } from "@mcp-ui/server";
 
 type URI = `ui://${string}`;
 
-// Flutterwave brand colors - matching Figma design
 const COLORS = {
-    primary: '#F5A623',
-    primaryDark: '#FF8C00',
-    dark: '#1E1E1E',
-    success: '#00C853',
-    error: '#D32F2F',
-    warning: '#FFA726',
-    text: '#2C2C2C',
-    textLight: '#757575',
-    background: '#FFFFFF',
-    border: '#E5E5E5',
-    cardBg: '#FAFAFA',
+    primary: '#F5A623', primaryDark: '#FF8C00', dark: '#1E1E1E',
+    success: '#00C853', error: '#D32F2F', warning: '#FFA726',
+    text: '#2C2C2C', textLight: '#757575', background: '#FFFFFF',
+    border: '#E5E5E5', cardBg: '#FAFAFA',
 };
 
-// Base styles for all UI components - matching Figma design
-const baseStyles = `
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-            background: ${COLORS.background};
-            padding: 20px;
-            color: ${COLORS.text};
-            line-height: 1.5;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%);
-            color: white;
-            padding: 28px 24px;
-            text-align: center;
-        }
-        .header h1 {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            letter-spacing: -0.2px;
-        }
-        .header p {
-            font-size: 13px;
-            opacity: 0.95;
-            font-weight: 400;
-        }
-        .content {
-            padding: 28px 24px;
-        }
-        .info-grid {
-            display: grid;
-            gap: 14px;
-        }
-        .info-item {
-            padding: 0;
-            background: transparent;
-            border-radius: 0;
-            border-left: 3px solid ${COLORS.primary};
-            padding-left: 14px;
-        }
-        .info-label {
-            font-size: 11px;
-            color: ${COLORS.textLight};
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-        .info-value {
-            font-size: 15px;
-            font-weight: 600;
-            color: ${COLORS.text};
-            word-break: break-word;
-            line-height: 1.4;
-        }
-        .status {
-            display: inline-block;
-            padding: 8px 18px;
-            border-radius: 24px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-        .status.success {
-            background: ${COLORS.success};
-            color: white;
-        }
-        .status.pending {
-            background: ${COLORS.warning};
-            color: white;
-        }
-        .status.failed {
-            background: ${COLORS.error};
-            color: white;
-        }
-        .button {
-            display: block;
-            width: 100%;
-            padding: 14px 24px;
-            background: ${COLORS.primary};
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            text-align: center;
-            transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .button:hover {
-            background: ${COLORS.primaryDark};
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(245, 166, 35, 0.25);
-        }
-        .footer {
-            padding: 18px 24px;
-            background: ${COLORS.cardBg};
-            border-top: 1px solid ${COLORS.border};
-            text-align: center;
-            font-size: 11px;
-            color: ${COLORS.textLight};
-            font-weight: 500;
-        }
-        .amount {
-            font-size: 36px;
-            font-weight: 700;
-            color: ${COLORS.primary};
-            margin: 18px 0;
-            letter-spacing: -0.5px;
-        }
-        .link-box {
-            background: ${COLORS.dark};
-            color: white;
-            padding: 18px;
-            border-radius: 10px;
-            margin: 18px 0;
-            word-break: break-all;
-            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-    </style>
-`;
+const baseStyles = `<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto',sans-serif;background:${COLORS.background};padding:20px;color:${COLORS.text};line-height:1.5}.container{max-width:600px;margin:0 auto;background:white;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08);overflow:hidden}.header{background:linear-gradient(135deg,${COLORS.primary} 0%,${COLORS.primaryDark} 100%);color:white;padding:28px 24px;text-align:center}.header h1{font-size:22px;font-weight:600;margin-bottom:6px}.header p{font-size:13px;opacity:0.95}.content{padding:28px 24px}.info-grid{display:grid;gap:14px}.info-item{border-left:3px solid ${COLORS.primary};padding-left:14px}.info-label{font-size:11px;color:${COLORS.textLight};text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;font-weight:500}.info-value{font-size:15px;font-weight:600;color:${COLORS.text};word-break:break-word;line-height:1.4}.status{display:inline-block;padding:8px 18px;border-radius:24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px}.status.success{background:${COLORS.success};color:white}.status.pending{background:${COLORS.warning};color:white}.status.failed{background:${COLORS.error};color:white}.button{display:block;width:100%;padding:14px 24px;background:${COLORS.primary};color:white;text-decoration:none;border-radius:10px;font-weight:600;text-align:center;font-size:14px}.footer{padding:18px 24px;background:${COLORS.cardBg};border-top:1px solid ${COLORS.border};text-align:center;font-size:11px;color:${COLORS.textLight};font-weight:500}.amount{font-size:36px;font-weight:700;color:${COLORS.primary};margin:18px 0;letter-spacing:-0.5px}.link-box{background:${COLORS.dark};color:white;padding:18px;border-radius:10px;margin:18px 0;word-break:break-all;font-family:monospace;font-size:13px;line-height:1.6}</style>`;
 
-export interface TransactionUIData {
-    status: string;
-    amount: number;
-    currency: string;
-    tx_id: string;
-    customer?: {
-        name?: string;
-        email?: string;
-    };
-    created_at?: string;
-}
-
-export interface CheckoutUIData {
-    link: string;
-    customer: {
-        name: string;
-        email: string;
-    };
-    amount: number;
-    currency: string;
-}
-
-export interface TransferUIData {
-    reference: string;
-    amount: number;
-    currency: string;
-    beneficiary: {
-        name?: string;
-        account_number?: string;
-        bank_name?: string;
-    };
-    status: string;
-}
+export interface TransactionUIData { status: string; amount: number; currency: string; tx_id: string; customer?: { name?: string; email?: string; }; created_at?: string; }
+export interface CheckoutUIData { link: string; customer: { name: string; email: string; }; amount: number; currency: string; }
+export interface TransferUIData { reference: string; amount: number; currency: string; beneficiary: { name?: string; account_number?: string; bank_name?: string; }; status: string; }
+export interface ChargeUIData { tx_ref: string; status: string; amount: number; currency: string; charge_type: string; email: string; fullname?: string; flw_ref?: string; auth_mode?: string; processor_response?: string; }
+export interface VirtualAccountUIData { tx_ref: string; account_number: string; bank_name: string; currency: string; amount?: number; email: string; is_permanent: boolean; order_ref?: string; flw_ref?: string; note?: string; expiry_date?: string; account_status?: string; }
+export interface PinAuthUIData { tx_ref: string; charge_type: string; }
+export interface AvsAuthUIData { tx_ref: string; charge_type: string; fields: string[]; }
+export interface ThreeDsRedirectUIData { tx_ref: string; charge_type: string; redirect_url: string; flw_ref?: string; amount?: number; currency?: string; }
+export interface OtpPromptUIData { tx_ref: string; charge_type: string; flw_ref: string; processor_response?: string; amount?: number; currency?: string; email?: string; }
 
 export function createTransactionUI(data: TransactionUIData) {
-    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : 
-                       data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
-    
-    const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Transaction Details</title>
-            ${baseStyles}
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>💳 Transaction Details</h1>
-                    <p>Flutterwave Payment</p>
-                </div>
-                <div class="content">
-                    <div style="text-align: center; margin-bottom: 24px;">
-                        <div class="status ${statusClass}">${data.status}</div>
-                    </div>
-                    <div class="amount" style="text-align: center;">
-                        ${data.currency} ${data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Transaction ID</div>
-                            <div class="info-value">${data.tx_id}</div>
-                        </div>
-                        ${data.customer?.name ? `
-                        <div class="info-item">
-                            <div class="info-label">Customer Name</div>
-                            <div class="info-value">${data.customer.name}</div>
-                        </div>
-                        ` : ''}
-                        ${data.customer?.email ? `
-                        <div class="info-item">
-                            <div class="info-label">Customer Email</div>
-                            <div class="info-value">${data.customer.email}</div>
-                        </div>
-                        ` : ''}
-                        ${data.created_at ? `
-                        <div class="info-item">
-                            <div class="info-label">Created At</div>
-                            <div class="info-value">${new Date(data.created_at).toLocaleString()}</div>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-                <div class="footer">
-                    Powered by Flutterwave
-                </div>
-            </div>
-        </body>
-        </html>
-    `;
-
-    const uiResource = createUIResource({
-        uri: `ui://transaction/${data.tx_id}` as URI,
-        content: {
-            type: 'rawHtml',
-            htmlString: html,
-        },
-        encoding: 'text',
-    });
-
-    return uiResource.resource;
+    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Transaction Details</title>${baseStyles}</head><body><div class="container"><div class="header"><h1>Transaction Details</h1><p>Flutterwave Payment</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="status ${statusClass}">${data.status}</div></div><div class="amount" style="text-align:center">${data.currency} ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Transaction ID</div><div class="info-value">${data.tx_id}</div></div>${data.customer?.name?`<div class="info-item"><div class="info-label">Customer Name</div><div class="info-value">${data.customer.name}</div></div>`:''} ${data.customer?.email?`<div class="info-item"><div class="info-label">Customer Email</div><div class="info-value">${data.customer.email}</div></div>`:''} ${data.created_at?`<div class="info-item"><div class="info-label">Created At</div><div class="info-value">${new Date(data.created_at).toLocaleString()}</div></div>`:''}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://transaction/${data.tx_id}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
 }
 
 export function createCheckoutUI(data: CheckoutUIData) {
-    const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Payment Link Created</title>
-            ${baseStyles}
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>🔗 Payment Link Created</h1>
-                    <p>Share this link with your customer</p>
-                </div>
-                <div class="content">
-                    <div class="amount" style="text-align: center;">
-                        ${data.currency} ${data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Customer Name</div>
-                            <div class="info-value">${data.customer.name}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Customer Email</div>
-                            <div class="info-value">${data.customer.email}</div>
-                        </div>
-                    </div>
-                    <div class="link-box">
-                        ${data.link}
-                    </div>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <a href="${data.link}" target="_blank" class="button">
-                            Open Payment Link →
-                        </a>
-                    </div>
-                </div>
-                <div class="footer">
-                    Powered by Flutterwave
-                </div>
-            </div>
-        </body>
-        </html>
-    `;
-
-    const uiResource = createUIResource({
-        uri: `ui://checkout/${Date.now()}` as URI,
-        content: {
-            type: 'rawHtml',
-            htmlString: html,
-        },
-        encoding: 'text',
-    });
-
-    return uiResource.resource;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Payment Link Created</title>${baseStyles}</head><body><div class="container"><div class="header"><h1>Payment Link Created</h1><p>Share this link with your customer</p></div><div class="content"><div class="amount" style="text-align:center">${data.currency} ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Customer Name</div><div class="info-value">${data.customer.name}</div></div><div class="info-item"><div class="info-label">Customer Email</div><div class="info-value">${data.customer.email}</div></div></div><div class="link-box">${data.link}</div><div style="text-align:center;margin-top:20px"><a href="${data.link}" target="_blank" class="button">Open Payment Link</a></div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://checkout/${Date.now()}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
 }
 
 export function createTransferUI(data: TransferUIData) {
-    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : 
-                       data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
-    
-    const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Transfer Details</title>
-            ${baseStyles}
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>💸 Transfer Details</h1>
-                    <p>Flutterwave Transfer</p>
-                </div>
-                <div class="content">
-                    <div style="text-align: center; margin-bottom: 24px;">
-                        <div class="status ${statusClass}">${data.status}</div>
-                    </div>
-                    <div class="amount" style="text-align: center;">
-                        ${data.currency} ${data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Reference</div>
-                            <div class="info-value">${data.reference}</div>
-                        </div>
-                        ${data.beneficiary.name ? `
-                        <div class="info-item">
-                            <div class="info-label">Beneficiary Name</div>
-                            <div class="info-value">${data.beneficiary.name}</div>
-                        </div>
-                        ` : ''}
-                        ${data.beneficiary.account_number ? `
-                        <div class="info-item">
-                            <div class="info-label">Account Number</div>
-                            <div class="info-value">${data.beneficiary.account_number}</div>
-                        </div>
-                        ` : ''}
-                        ${data.beneficiary.bank_name ? `
-                        <div class="info-item">
-                            <div class="info-label">Bank Name</div>
-                            <div class="info-value">${data.beneficiary.bank_name}</div>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-                <div class="footer">
-                    Powered by Flutterwave
-                </div>
-            </div>
-        </body>
-        </html>
-    `;
+    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Transfer Details</title>${baseStyles}</head><body><div class="container"><div class="header"><h1>Transfer Details</h1><p>Flutterwave Transfer</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="status ${statusClass}">${data.status}</div></div><div class="amount" style="text-align:center">${data.currency} ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Reference</div><div class="info-value">${data.reference}</div></div>${data.beneficiary.name?`<div class="info-item"><div class="info-label">Beneficiary Name</div><div class="info-value">${data.beneficiary.name}</div></div>`:''} ${data.beneficiary.account_number?`<div class="info-item"><div class="info-label">Account Number</div><div class="info-value">${data.beneficiary.account_number}</div></div>`:''} ${data.beneficiary.bank_name?`<div class="info-item"><div class="info-label">Bank Name</div><div class="info-value">${data.beneficiary.bank_name}</div></div>`:''}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://transfer/${data.reference}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
 
-    const uiResource = createUIResource({
-        uri: `ui://transfer/${data.reference}` as URI,
-        content: {
-            type: 'rawHtml',
-            htmlString: html,
-        },
-        encoding: 'text',
-    });
+export function createChargeUI(data: ChargeUIData) {
+    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
+    const chargeLabel = data.charge_type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Charge Details</title>${baseStyles}</head><body><div class="container"><div class="header"><h1>Charge Details</h1><p>${chargeLabel}</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="status ${statusClass}">${data.status}</div></div><div class="amount" style="text-align:center">${data.currency} ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Transaction Reference</div><div class="info-value">${data.tx_ref}</div></div>${data.flw_ref?`<div class="info-item"><div class="info-label">Flutterwave Reference</div><div class="info-value">${data.flw_ref}</div></div>`:''}<div class="info-item"><div class="info-label">Customer Email</div><div class="info-value">${data.email}</div></div>${data.fullname?`<div class="info-item"><div class="info-label">Customer Name</div><div class="info-value">${data.fullname}</div></div>`:''} ${data.auth_mode?`<div class="info-item"><div class="info-label">Auth Mode</div><div class="info-value">${data.auth_mode}</div></div>`:''} ${data.processor_response?`<div class="info-item"><div class="info-label">Processor Response</div><div class="info-value">${data.processor_response}</div></div>`:''}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://charge/${data.tx_ref}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
 
-    return uiResource.resource;
+export function createVirtualAccountUI(data: VirtualAccountUIData) {
+    const accountType   = data.is_permanent ? 'Static Account' : 'Dynamic Account';
+    const statusClass   = data.account_status === 'active' ? 'success' : data.account_status === 'inactive' ? 'failed' : 'pending';
+    const statusLabel   = data.account_status ?? 'active';
+    const amountStr     = data.amount ? `${data.currency} ${data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Virtual Account</title>${baseStyles}<style>.va-header{background:linear-gradient(135deg,#0A0E27 0%,#262C55 100%);color:white;padding:28px 24px;text-align:center}.va-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.va-header p{font-size:13px;opacity:0.85}.account-box{background:linear-gradient(135deg,#F5F7FF 0%,#EEF2FF 100%);border:2px solid #C7D2FE;border-radius:14px;padding:24px;text-align:center;margin:20px 0}.account-number{font-size:30px;font-weight:700;color:#0A0E27;letter-spacing:3px;font-family:monospace;margin-bottom:8px}.account-bank{font-size:14px;color:#5F6489;font-weight:500}.type-badge{display:inline-block;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px}.type-static{background:#0A0E27;color:white}.type-dynamic{background:#F5A623;color:white}.note-box{background:#FFFDE7;border:1px solid #FFE082;border-radius:8px;padding:12px 16px;font-size:13px;color:#5D4037;margin-top:16px;line-height:1.5}</style></head><body><div class="container"><div class="va-header"><h1>Virtual Account</h1><p>${accountType} · ${data.currency}</p></div><div class="content"><div style="text-align:center;margin-bottom:8px"><div class="type-badge ${data.is_permanent ? 'type-static' : 'type-dynamic'}">${accountType}</div></div><div style="text-align:center;margin-bottom:8px"><div class="status ${statusClass}">${statusLabel}</div></div>${amountStr ? `<div class="amount" style="text-align:center">${amountStr}</div>` : ''}<div class="account-box"><div class="account-number">${data.account_number}</div><div class="account-bank">${data.bank_name}</div></div><div class="info-grid"><div class="info-item"><div class="info-label">Transaction Reference</div><div class="info-value">${data.tx_ref}</div></div><div class="info-item"><div class="info-label">Customer Email</div><div class="info-value">${data.email}</div></div>${data.order_ref ? `<div class="info-item"><div class="info-label">Order Reference</div><div class="info-value">${data.order_ref}</div></div>` : ''}${data.flw_ref ? `<div class="info-item"><div class="info-label">Flutterwave Reference</div><div class="info-value">${data.flw_ref}</div></div>` : ''}${data.expiry_date ? `<div class="info-item"><div class="info-label">Expires At</div><div class="info-value">${data.expiry_date}</div></div>` : ''}</div>${data.note ? `<div class="note-box">${data.note}</div>` : ''}</div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://virtual-account/${data.tx_ref}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createPinAuthUI(data: PinAuthUIData) {
+    const chargeLabel = data.charge_type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>PIN Required</title>${baseStyles}<style>.action-header{background:linear-gradient(135deg,#FF8C00 0%,${COLORS.primary} 100%);color:white;padding:28px 24px;text-align:center}.action-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.action-header p{font-size:13px;opacity:0.95}.steps{list-style:none;counter-reset:step;margin-top:16px}.steps li{counter-increment:step;padding:12px 14px 12px 44px;position:relative;border-left:3px solid ${COLORS.primary};margin-bottom:10px;background:#FFFDF7;border-radius:0 8px 8px 0;font-size:14px;color:${COLORS.text}}.steps li::before{content:counter(step);position:absolute;left:10px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:${COLORS.primary};color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;line-height:22px;text-align:center}.badge-action{display:inline-block;padding:8px 18px;border-radius:24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;background:#FF8C00;color:white}</style></head><body><div class="container"><div class="action-header"><h1>PIN Required</h1><p>${chargeLabel} · Step 2 of 3</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="badge-action">Action Required</div></div><div class="info-grid"><div class="info-item"><div class="info-label">Transaction Reference</div><div class="info-value">${data.tx_ref}</div></div><div class="info-item"><div class="info-label">Next Step</div><div class="info-value">Ask the customer for their 4-digit card PIN</div></div></div><ol class="steps" style="margin-top:20px"><li>Ask the customer: "Please enter your card PIN"</li><li>Call <strong>charge_card</strong> again with the same card details</li><li>Add <code style="background:#f1f1f1;padding:2px 6px;border-radius:4px">authorization: { mode: "pin", pin: "&lt;PIN&gt;" }</code></li></ol></div><div class="footer">Powered by Flutterwave · No charge made yet</div></div></body></html>`;
+    return createUIResource({ uri: `ui://charge-auth/pin/${data.tx_ref}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createAvsAuthUI(data: AvsAuthUIData) {
+    const chargeLabel = data.charge_type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const fieldChips  = data.fields.map(f => `<span style="display:inline-block;background:#fff3e0;color:#FF8C00;border:1px solid #FFD599;border-radius:16px;padding:4px 12px;font-size:12px;font-weight:600;margin:4px">${f}</span>`).join('');
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Address Verification Required</title>${baseStyles}<style>.action-header{background:linear-gradient(135deg,#FF8C00 0%,${COLORS.primary} 100%);color:white;padding:28px 24px;text-align:center}.action-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.action-header p{font-size:13px;opacity:0.95}.badge-action{display:inline-block;padding:8px 18px;border-radius:24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;background:#FF8C00;color:white}.steps{list-style:none;counter-reset:step;margin-top:16px}.steps li{counter-increment:step;padding:12px 14px 12px 44px;position:relative;border-left:3px solid ${COLORS.primary};margin-bottom:10px;background:#FFFDF7;border-radius:0 8px 8px 0;font-size:14px;color:${COLORS.text}}.steps li::before{content:counter(step);position:absolute;left:10px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:${COLORS.primary};color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;line-height:22px;text-align:center}</style></head><body><div class="container"><div class="action-header"><h1>Address Verification</h1><p>${chargeLabel} · AVS Authentication</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="badge-action">Action Required</div></div><div class="info-grid"><div class="info-item"><div class="info-label">Transaction Reference</div><div class="info-value">${data.tx_ref}</div></div><div class="info-item"><div class="info-label">Fields Required</div><div class="info-value" style="margin-top:6px">${fieldChips}</div></div></div><ol class="steps" style="margin-top:20px"><li>Collect the customer's billing address details (${data.fields.join(', ')})</li><li>Call <strong>charge_card</strong> again with the same card details</li><li>Add <code style="background:#f1f1f1;padding:2px 6px;border-radius:4px">authorization: { mode: "avs_noauth", ${data.fields.map(f => `${f}: "..."}`).join(', ')} }</code></li></ol></div><div class="footer">Powered by Flutterwave · No charge made yet</div></div></body></html>`;
+    return createUIResource({ uri: `ui://charge-auth/avs/${data.tx_ref}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function create3dsRedirectUI(data: ThreeDsRedirectUIData) {
+    const chargeLabel = data.charge_type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const amountStr   = data.amount && data.currency ? `${data.currency} ${data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>3D Secure Authentication</title>${baseStyles}<style>.secure-header{background:linear-gradient(135deg,#006AFF 0%,#0044BB 100%);color:white;padding:28px 24px;text-align:center}.secure-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.secure-header p{font-size:13px;opacity:0.95}.badge-secure{display:inline-block;padding:8px 18px;border-radius:24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;background:#006AFF;color:white}.redirect-box{background:#EEF5FF;border:1px solid #BDD5FF;border-radius:10px;padding:16px 18px;margin:16px 0;word-break:break-all;font-family:monospace;font-size:13px;color:#003A8C;line-height:1.6}.cta-btn{display:block;width:100%;padding:14px 24px;background:#006AFF;color:white;text-decoration:none;border-radius:10px;font-weight:700;text-align:center;font-size:14px;margin-top:16px}.notice{background:#FFF8E1;border:1px solid #FFD54F;border-radius:8px;padding:12px 16px;font-size:13px;color:#5D4037;margin-top:16px}</style></head><body><div class="container"><div class="secure-header"><h1>3D Secure Authentication</h1><p>${chargeLabel} · Bank Verification Required</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="badge-secure">Redirect Required</div></div>${amountStr?`<div class="amount" style="text-align:center">${amountStr}</div>`:''}<div class="info-grid">${data.tx_ref?`<div class="info-item"><div class="info-label">Transaction Reference</div><div class="info-value">${data.tx_ref}</div></div>`:''} ${data.flw_ref?`<div class="info-item"><div class="info-label">Flutterwave Reference</div><div class="info-value">${data.flw_ref}</div></div>`:''}<div class="info-item"><div class="info-label">Authentication URL</div><div class="redirect-box">${data.redirect_url}</div></div></div><a href="${data.redirect_url}" target="_blank" class="cta-btn">Complete Authentication at Bank →</a><div class="notice">⚠ After the customer completes authentication, use <strong>read_transaction</strong> to verify the payment outcome.</div></div><div class="footer">Powered by Flutterwave · Secured by 3D Secure</div></div></body></html>`;
+    return createUIResource({ uri: `ui://charge-auth/3ds/${data.tx_ref}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createOtpPromptUI(data: OtpPromptUIData) {
+    const chargeLabel = data.charge_type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const amountStr   = data.amount && data.currency ? `${data.currency} ${data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>OTP Required</title>${baseStyles}<style>.action-header{background:linear-gradient(135deg,${COLORS.primary} 0%,${COLORS.primaryDark} 100%);color:white;padding:28px 24px;text-align:center}.action-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.action-header p{font-size:13px;opacity:0.95}.badge-otp{display:inline-block;padding:8px 18px;border-radius:24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;background:${COLORS.warning};color:white}.bank-msg{background:#FFFDE7;border:1px solid #FFE082;border-radius:10px;padding:16px 18px;margin:16px 0;font-size:15px;color:#4E342E;font-weight:500;text-align:center}.ref-box{background:#F5F5F5;border:1px solid ${COLORS.border};border-radius:8px;padding:12px 16px;font-family:monospace;font-size:14px;color:${COLORS.dark};word-break:break-all}.steps{margin-top:16px;padding-left:20px}.steps li{font-size:14px;color:${COLORS.text};margin-bottom:8px;line-height:1.5}</style></head><body><div class="container"><div class="action-header"><h1>OTP Validation Required</h1><p>${chargeLabel} · Step 3 of 3</p></div><div class="content"><div style="text-align:center;margin-bottom:20px"><div class="badge-otp">OTP Sent</div></div>${amountStr?`<div class="amount" style="text-align:center">${amountStr}</div>`:''} ${data.processor_response?`<div class="bank-msg">${data.processor_response}</div>`:''}<div class="info-grid"><div class="info-item"><div class="info-label">Transaction Reference</div><div class="info-value">${data.tx_ref}</div></div>${data.email?`<div class="info-item"><div class="info-label">Customer Email</div><div class="info-value">${data.email}</div></div>`:''}<div class="info-item"><div class="info-label">Flutterwave Reference (flw_ref)</div><div class="ref-box">${data.flw_ref}</div></div></div><ol class="steps"><li>Ask the customer for the OTP sent to their phone/email</li><li>Call <strong>validate_charge</strong> with the OTP and the <code>flw_ref</code> above</li></ol></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://charge-auth/otp/${data.tx_ref}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export interface StablecoinFeeUIData { amount: number; currency: string; debit_currency?: string; fee: number; fee_type: string; fee_in_fiat?: number; fee_in_crypto?: number; amount_minus_fee?: number; }
+export interface StablecoinTransferUIData { reference: string; amount: number; currency: string; debit_currency: string; recipient: string; transfer_type: 'wallet' | 'convert'; status: string; fee?: number; created_at?: string; }
+
+export function createStablecoinFeeUI(data: StablecoinFeeUIData) {
+    const isCross = !!data.debit_currency && data.debit_currency !== data.currency;
+    const feeLabel = data.fee_type === 'percentage' ? `${data.fee}%` : `${data.fee} ${data.currency}`;
+    const recipientStr = isCross ? `${data.debit_currency} → ${data.currency}` : `${data.currency} → ${data.currency}`;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Stablecoin Fee</title>${baseStyles}<style>.crypto-header{background:linear-gradient(135deg,#0F2C67 0%,#1A4DB8 100%);color:white;padding:28px 24px;text-align:center}.crypto-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.crypto-header p{font-size:13px;opacity:0.85}.coin-badge{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:12px}.fee-box{background:linear-gradient(135deg,#EEF4FF 0%,#E0EAFF 100%);border:2px solid #93B4F5;border-radius:14px;padding:20px;text-align:center;margin:20px 0}.fee-amount{font-size:28px;font-weight:700;color:#0F2C67;margin-bottom:6px}.fee-label{font-size:13px;color:#4B6CB5;font-weight:500}.receive-box{background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:14px 16px;margin-top:12px;text-align:center}.receive-amount{font-size:22px;font-weight:700;color:#1B5E20}</style></head><body><div class="container"><div class="crypto-header"><h1>Transfer Fee</h1><p>Stablecoin · Polygon Network</p><div style="margin-top:10px"><div class="coin-badge">${recipientStr}</div></div></div><div class="content"><div class="fee-box"><div class="fee-amount">${feeLabel}</div><div class="fee-label">Transfer fee · ${data.fee_type === 'percentage' ? 'percentage of amount' : 'flat rate'}</div></div><div class="info-grid"><div class="info-item"><div class="info-label">Send Amount</div><div class="info-value">${data.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })} ${data.currency}</div></div>${data.fee_in_fiat != null ? `<div class="info-item"><div class="info-label">Fee (${data.debit_currency})</div><div class="info-value">${data.fee_in_fiat} ${data.debit_currency}</div></div>` : ''} ${data.fee_in_crypto != null ? `<div class="info-item"><div class="info-label">Fee (${data.currency})</div><div class="info-value">${data.fee_in_crypto} ${data.currency}</div></div>` : ''} ${data.amount_minus_fee != null ? `<div class="receive-box"><div class="fee-label">Recipient receives</div><div class="receive-amount">${data.amount_minus_fee.toLocaleString('en-US', { minimumFractionDigits: 2 })} ${data.currency}</div></div>` : ''}</div></div><div class="footer">Powered by Flutterwave · Polygon Network</div></div></body></html>`;
+    return createUIResource({ uri: `ui://stablecoin-fee/${data.currency}-${Date.now()}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createStablecoinTransferUI(data: StablecoinTransferUIData) {
+    const statusClass = data.status.toLowerCase() === 'new' ? 'pending' : data.status.toLowerCase() === 'successful' ? 'success' : 'failed';
+    const isWallet = data.transfer_type === 'wallet';
+    const shortAddr = isWallet && data.recipient.startsWith('0x')
+        ? `${data.recipient.slice(0, 6)}…${data.recipient.slice(-4)}`
+        : data.recipient;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Stablecoin Transfer</title>${baseStyles}<style>.crypto-header{background:linear-gradient(135deg,#0F2C67 0%,#1A4DB8 100%);color:white;padding:28px 24px;text-align:center}.crypto-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.crypto-header p{font-size:13px;opacity:0.85}.coin-badge{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:1px;margin-top:10px}.addr-box{background:#F5F5F5;border:1px solid #E0E0E0;border-radius:8px;padding:10px 14px;font-family:monospace;font-size:13px;word-break:break-all;color:#1E1E1E;margin-top:4px}</style></head><body><div class="container"><div class="crypto-header"><h1>${isWallet ? 'Stablecoin Transfer' : 'Fiat → Stablecoin'}</h1><p>${isWallet ? 'Polygon Network · Wallet Transfer' : `${data.debit_currency} Conversion`}</p><div class="coin-badge">${data.debit_currency} → ${data.currency}</div></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="status ${statusClass}">${data.status}</div></div><div class="amount" style="text-align:center">${data.currency} ${data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</div><div class="info-grid"><div class="info-item"><div class="info-label">${isWallet ? 'Wallet Address' : 'Merchant ID'}</div><div class="addr-box">${isWallet ? data.recipient : shortAddr}</div></div><div class="info-item"><div class="info-label">Debit Currency</div><div class="info-value">${data.debit_currency}</div></div>${data.fee != null ? `<div class="info-item"><div class="info-label">Fee</div><div class="info-value">${data.fee} ${data.currency}</div></div>` : ''}<div class="info-item"><div class="info-label">Reference</div><div class="info-value" style="font-family:monospace;font-size:13px">${data.reference}</div></div>${data.created_at ? `<div class="info-item"><div class="info-label">Created At</div><div class="info-value">${new Date(data.created_at).toLocaleString()}</div></div>` : ''}</div></div><div class="footer">Powered by Flutterwave · Polygon Network</div></div></body></html>`;
+    return createUIResource({ uri: `ui://stablecoin-transfer/${data.reference}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export interface BvnConsentUIData { reference: string; url: string | null; firstname: string; lastname: string; bvn_last4: string; redirect_url: string; }
+export interface BvnDetailsUIData { reference: string; status: string; first_name?: string; last_name?: string; bvn?: string; dob?: string; gender?: string; phone?: string; state_of_origin?: string; email?: string; nin?: string; watchlisted?: boolean; created_at?: string; }
+export interface BankAccountUIData { account_number: string; account_name: string; bank_code: string; }
+export interface CardBinUIData { bin: string; brand?: string; type?: string; issuer?: string; country?: string; country_code?: string; }
+
+export function createBvnConsentUI(data: BvnConsentUIData) {
+    const hasUrl = !!data.url;
+    const headerColor = hasUrl ? '#1A2455' : '#00695C';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>BVN Verification</title>${baseStyles}<style>.kyc-header{background:linear-gradient(135deg,${headerColor} 0%,${hasUrl ? '#0A0E27' : '#00897B'} 100%);color:white;padding:28px 24px;text-align:center}.kyc-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.kyc-header p{font-size:13px;opacity:0.85}.consent-btn{display:block;width:100%;padding:14px 24px;background:${COLORS.primary};color:white;text-decoration:none;border-radius:10px;font-weight:700;text-align:center;font-size:14px;margin-top:16px}.badge-kyc{display:inline-block;padding:8px 18px;border-radius:24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;background:${COLORS.primary};color:white}.steps{list-style:none;counter-reset:step;margin-top:16px}.steps li{counter-increment:step;padding:12px 14px 12px 44px;position:relative;border-left:3px solid ${COLORS.primary};margin-bottom:10px;background:#FFFDF7;border-radius:0 8px 8px 0;font-size:14px}.steps li::before{content:counter(step);position:absolute;left:10px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:${COLORS.primary};color:white;border-radius:50%;font-size:11px;font-weight:700;line-height:22px;text-align:center}</style></head><body><div class="container"><div class="kyc-header"><h1>BVN Verification</h1><p>${hasUrl ? 'Customer Consent Required' : 'Consent Already Provided'}</p></div><div class="content"><div style="text-align:center;margin-bottom:20px"><div class="badge-kyc">${hasUrl ? 'Action Required' : 'Ready to Retrieve'}</div></div><div class="info-grid"><div class="info-item"><div class="info-label">Customer Name</div><div class="info-value">${data.firstname} ${data.lastname}</div></div><div class="info-item"><div class="info-label">BVN (last 4)</div><div class="info-value">••••••• ${data.bvn_last4}</div></div><div class="info-item"><div class="info-label">Reference</div><div class="info-value" style="font-family:monospace;font-size:13px">${data.reference}</div></div></div>${hasUrl ? `<ol class="steps"><li>Share the consent link below with the customer</li><li>Customer visits the NIBSS portal and approves data sharing</li><li>Call <strong>get_bvn_details</strong> with reference <code style="background:#f1f1f1;padding:2px 6px;border-radius:4px">${data.reference}</code> to retrieve their BVN data</li></ol><div class="link-box" style="margin-top:16px">${data.url}</div><a href="${data.url}" target="_blank" class="consent-btn">Open Consent Page →</a>` : `<div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:8px;padding:12px 16px;font-size:13px;color:#1B5E20;margin-top:16px">This customer has already provided consent. Call <strong>get_bvn_details</strong> with reference <code style="background:#C8E6C9;padding:2px 6px;border-radius:4px">${data.reference}</code> to retrieve their identity data.</div>`}</div><div class="footer">Powered by Flutterwave · Secured by NIBSS</div></div></body></html>`;
+    return createUIResource({ uri: `ui://bvn-consent/${data.reference}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createBvnDetailsUI(data: BvnDetailsUIData) {
+    const isComplete = data.status === 'COMPLETED';
+    const statusClass = isComplete ? 'success' : 'pending';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>BVN Details</title>${baseStyles}<style>.kyc-header{background:linear-gradient(135deg,#1A2455 0%,#0A0E27 100%);color:white;padding:28px 24px;text-align:center}.kyc-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.kyc-header p{font-size:13px;opacity:0.85}.masked-bvn{background:#F5F5F5;border:1px solid #E0E0E0;border-radius:8px;padding:12px 16px;font-family:monospace;font-size:16px;font-weight:700;letter-spacing:3px;text-align:center;margin:8px 0;color:#1E1E1E}${data.watchlisted ? '.watchlist-badge{background:#D32F2F;color:white;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px}' : ''}</style></head><body><div class="container"><div class="kyc-header"><h1>BVN Details</h1><p>Identity Verification · Flutterwave</p></div><div class="content"><div style="text-align:center;margin-bottom:20px"><div class="status ${statusClass}">${data.status}</div>${data.watchlisted ? '<br><span class="watchlist-badge" style="display:inline-block;margin-top:8px">⚠ Watchlisted</span>' : ''}</div><div class="info-grid">${data.first_name ? `<div class="info-item"><div class="info-label">Full Name</div><div class="info-value">${data.first_name}${data.last_name ? ' ' + data.last_name : ''}</div></div>` : ''}${data.bvn ? `<div class="info-item"><div class="info-label">BVN</div><div class="masked-bvn">${data.bvn.slice(0, 3)}•••••${data.bvn.slice(-3)}</div></div>` : ''}${data.dob ? `<div class="info-item"><div class="info-label">Date of Birth</div><div class="info-value">${data.dob}</div></div>` : ''}${data.gender ? `<div class="info-item"><div class="info-label">Gender</div><div class="info-value">${data.gender}</div></div>` : ''}${data.phone ? `<div class="info-item"><div class="info-label">Phone Number</div><div class="info-value">${data.phone}</div></div>` : ''}${data.email ? `<div class="info-item"><div class="info-label">Email</div><div class="info-value">${data.email}</div></div>` : ''}${data.nin ? `<div class="info-item"><div class="info-label">NIN</div><div class="info-value" style="font-family:monospace">${data.nin}</div></div>` : ''}${data.state_of_origin ? `<div class="info-item"><div class="info-label">State of Origin</div><div class="info-value">${data.state_of_origin}</div></div>` : ''}<div class="info-item"><div class="info-label">Reference</div><div class="info-value" style="font-family:monospace;font-size:13px">${data.reference}</div></div></div></div><div class="footer">Powered by Flutterwave · Secured by NIBSS</div></div></body></html>`;
+    return createUIResource({ uri: `ui://bvn-details/${data.reference}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createBankAccountUI(data: BankAccountUIData) {
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Account Verified</title>${baseStyles}<style>.verify-header{background:linear-gradient(135deg,#00695C 0%,#00897B 100%);color:white;padding:28px 24px;text-align:center}.verify-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.verify-header p{font-size:13px;opacity:0.85}.account-box{background:linear-gradient(135deg,#F1F8E9 0%,#E8F5E9 100%);border:2px solid #A5D6A7;border-radius:14px;padding:24px;text-align:center;margin:20px 0}.account-name{font-size:24px;font-weight:700;color:#1B5E20;margin-bottom:8px}.account-num{font-size:16px;font-family:monospace;color:#33691E;letter-spacing:2px}.check-icon{font-size:48px;margin-bottom:16px}</style></head><body><div class="container"><div class="verify-header"><h1>Account Verified</h1><p>Bank Account Resolution</p></div><div class="content"><div class="account-box"><div class="check-icon">✓</div><div class="account-name">${data.account_name}</div><div class="account-num">${data.account_number}</div></div><div class="info-grid"><div class="info-item"><div class="info-label">Account Number</div><div class="info-value" style="font-family:monospace">${data.account_number}</div></div><div class="info-item"><div class="info-label">Account Name</div><div class="info-value">${data.account_name}</div></div><div class="info-item"><div class="info-label">Bank Code</div><div class="info-value">${data.bank_code}</div></div></div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://bank-account/${data.account_number}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createCardBinUI(data: CardBinUIData) {
+    const brandColor = data.brand?.toUpperCase() === 'VISA' ? '#1A1F71' : data.brand?.toUpperCase() === 'MASTERCARD' ? '#EB001B' : data.brand?.toUpperCase().includes('AMEX') ? '#007BC1' : COLORS.dark;
+    const typeClass = data.type?.toUpperCase() === 'CREDIT' ? 'success' : 'pending';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Card BIN Info</title>${baseStyles}<style>.bin-header{background:linear-gradient(135deg,${brandColor} 0%,${COLORS.dark} 100%);color:white;padding:28px 24px;text-align:center}.bin-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.bin-header p{font-size:13px;opacity:0.85}.bin-badge{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:6px 16px;border-radius:20px;font-size:15px;font-weight:700;letter-spacing:3px;font-family:monospace}.brand-logo{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;opacity:0.95}</style></head><body><div class="container"><div class="bin-header"><div class="brand-logo">${data.brand ?? 'CARD'}</div><h1>Card BIN Details</h1><div class="bin-badge">${data.bin}</div></div><div class="content"><div style="text-align:center;margin-bottom:20px">${data.type ? `<div class="status ${typeClass}">${data.type}</div>` : ''}</div><div class="info-grid"><div class="info-item"><div class="info-label">BIN</div><div class="info-value" style="font-family:monospace;letter-spacing:2px">${data.bin}</div></div>${data.brand ? `<div class="info-item"><div class="info-label">Brand</div><div class="info-value">${data.brand}</div></div>` : ''}${data.type ? `<div class="info-item"><div class="info-label">Card Type</div><div class="info-value">${data.type}</div></div>` : ''}${data.issuer ? `<div class="info-item"><div class="info-label">Issuer</div><div class="info-value">${data.issuer}</div></div>` : ''}${data.country ? `<div class="info-item"><div class="info-label">Country</div><div class="info-value">${data.country}${data.country_code ? ` (${data.country_code})` : ''}</div></div>` : ''}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://card-bin/${data.bin}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export interface FxQuoteUIData { quote_id: string; reference: string; instrument: string; quantity: number; status: string; rate?: string; approved_quantity?: number; total_value?: number; expiry?: string; complete_message?: string; created_at?: string; }
+export interface FxTradeUIData { trade_id: string; reference: string; instrument: string; quantity: number; approved_quantity?: number; price: number; status: string; narration?: string; recipient?: { id?: string; name?: string }; response_message?: string; created_at?: string; }
+
+export function createFxQuoteUI(data: FxQuoteUIData) {
+    const statusColor = data.status === 'READY' ? '#00C853' : data.status === 'FAILED' || data.status === 'EXPIRED' ? '#D32F2F' : data.status === 'PROCESSING' ? '#006AFF' : '#FFA726';
+    const [baseCcy, targetCcy] = data.instrument.split('/');
+    const rateHtml = data.rate
+        ? `<div class="info-item"><div class="info-label">Exchange Rate</div><div class="info-value" style="font-size:20px;font-weight:700;color:#0A0E27">1 ${baseCcy} = ${data.rate} ${targetCcy}</div></div>`
+        : '';
+    const totalHtml = data.total_value != null
+        ? `<div class="info-item"><div class="info-label">You Receive (${targetCcy})</div><div class="amount" style="text-align:left;margin:6px 0 0;font-size:28px">${targetCcy} ${data.total_value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</div></div>`
+        : '';
+    const approvedHtml = data.approved_quantity != null && data.approved_quantity !== data.quantity
+        ? `<div class="info-item"><div class="info-label">Approved Quantity (${baseCcy})</div><div class="info-value">${data.approved_quantity.toLocaleString()} <span style="font-size:12px;color:#757575">(requested: ${data.quantity.toLocaleString()})</span></div></div>`
+        : `<div class="info-item"><div class="info-label">Quantity (${baseCcy})</div><div class="info-value">${data.quantity.toLocaleString()}</div></div>`;
+    const expiryHtml = data.expiry
+        ? `<div class="info-item"><div class="info-label">Quote Expires</div><div class="info-value" style="color:#D32F2F;font-weight:600">${new Date(data.expiry).toLocaleString()}</div></div>`
+        : '';
+    const msgHtml = data.complete_message && data.status === 'FAILED'
+        ? `<div style="background:#FFEBEE;border:1px solid #EF9A9A;border-radius:8px;padding:12px 16px;font-size:13px;color:#B71C1C;margin-top:16px">${data.complete_message}</div>`
+        : '';
+    const readyNote = data.status === 'READY'
+        ? `<div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:8px;padding:12px 16px;font-size:13px;color:#1B5E20;margin-top:16px">Quote is READY. Call <strong>initiate_fx_trade</strong> with quote_id <code style="background:#C8E6C9;padding:2px 6px;border-radius:4px">${data.quote_id}</code> before it expires.</div>`
+        : data.status === 'NEW' || data.status === 'PROCESSING'
+        ? `<div style="background:#FFF8E1;border:1px solid #FFE082;border-radius:8px;padding:12px 16px;font-size:13px;color:#5D4037;margin-top:16px">Quote is being processed. Call <strong>get_fx_quote</strong> again to check for updated status.</div>`
+        : '';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>FX Quote</title>${baseStyles}<style>.fx-header{background:linear-gradient(135deg,#0A0E27 0%,#1A2455 100%);color:white;padding:28px 24px;text-align:center}.fx-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.fx-header p{font-size:13px;opacity:0.85}.pair-badge{display:inline-block;background:rgba(245,166,35,0.2);border:1px solid ${COLORS.primary};color:${COLORS.primary};padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:16px}.status-pill{display:inline-block;padding:8px 18px;border-radius:24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;background:${statusColor};color:white}</style></head><body><div class="container"><div class="fx-header"><h1>FX Quote</h1><p>Request For Quote · Flutterwave</p></div><div class="content"><div style="text-align:center;margin-bottom:20px"><div class="pair-badge">${data.instrument}</div><br><div class="status-pill" style="margin-top:10px">${data.status}</div></div><div class="info-grid">${rateHtml}${totalHtml}${approvedHtml}<div class="info-item"><div class="info-label">Quote ID</div><div class="info-value" style="font-family:monospace;font-size:13px">${data.quote_id}</div></div><div class="info-item"><div class="info-label">Reference</div><div class="info-value">${data.reference}</div></div>${expiryHtml}</div>${readyNote}${msgHtml}</div><div class="footer">Powered by Flutterwave FX</div></div></body></html>`;
+    return createUIResource({ uri: `ui://fx-quote/${data.quote_id}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createFxTradeUI(data: FxTradeUIData) {
+    const statusColor = data.status === 'SETTLED' ? '#00C853' : data.status === 'FAILED' ? '#D32F2F' : data.status === 'PENDING' ? '#FFA726' : '#757575';
+    const [baseCcy, targetCcy] = data.instrument.split('/');
+    const settledNote = data.status === 'SETTLED'
+        ? `<div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:8px;padding:12px 16px;font-size:13px;color:#1B5E20;margin-top:16px">Trade settled. ${targetCcy} funds have been credited to your ${targetCcy} wallet.</div>`
+        : data.status === 'FAILED'
+        ? `<div style="background:#FFEBEE;border:1px solid #EF9A9A;border-radius:8px;padding:12px 16px;font-size:13px;color:#B71C1C;margin-top:16px">${data.response_message ?? 'Trade failed. Check wallet balance and try again.'}</div>`
+        : `<div style="background:#FFF8E1;border:1px solid #FFE082;border-radius:8px;padding:12px 16px;font-size:13px;color:#5D4037;margin-top:16px">Trade is processing. Call <strong>get_fx_trade</strong> with trade_id to check settlement status.</div>`;
+    const approvedHtml = data.approved_quantity != null && data.approved_quantity !== data.quantity
+        ? `<div class="info-item"><div class="info-label">Approved (${baseCcy})</div><div class="info-value">${data.approved_quantity.toLocaleString()} <span style="font-size:12px;color:#757575">(requested: ${data.quantity.toLocaleString()})</span></div></div>`
+        : `<div class="info-item"><div class="info-label">Amount (${baseCcy})</div><div class="info-value">${data.quantity.toLocaleString()}</div></div>`;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>FX Trade</title>${baseStyles}<style>.fx-header{background:linear-gradient(135deg,#0A0E27 0%,#1A2455 100%);color:white;padding:28px 24px;text-align:center}.fx-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.fx-header p{font-size:13px;opacity:0.85}.pair-badge{display:inline-block;background:rgba(245,166,35,0.2);border:1px solid ${COLORS.primary};color:${COLORS.primary};padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:16px}.status-pill{display:inline-block;padding:8px 18px;border-radius:24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;background:${statusColor};color:white}</style></head><body><div class="container"><div class="fx-header"><h1>FX Trade</h1><p>Currency Exchange · Flutterwave</p></div><div class="content"><div style="text-align:center;margin-bottom:20px"><div class="pair-badge">${data.instrument}</div><br><div class="status-pill" style="margin-top:10px">${data.status}</div></div><div class="amount" style="text-align:center">${targetCcy} ${data.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</div><div class="info-grid">${approvedHtml}<div class="info-item"><div class="info-label">Trade ID</div><div class="info-value" style="font-family:monospace;font-size:13px">${data.trade_id}</div></div><div class="info-item"><div class="info-label">Reference</div><div class="info-value">${data.reference}</div></div>${data.narration ? `<div class="info-item"><div class="info-label">Narration</div><div class="info-value">${data.narration}</div></div>` : ''}${data.recipient?.name ? `<div class="info-item"><div class="info-label">Recipient</div><div class="info-value">${data.recipient.name}</div></div>` : ''}${data.created_at ? `<div class="info-item"><div class="info-label">Created At</div><div class="info-value">${new Date(data.created_at).toLocaleString()}</div></div>` : ''}</div>${settledNote}</div><div class="footer">Powered by Flutterwave FX</div></div></body></html>`;
+    return createUIResource({ uri: `ui://fx-trade/${data.trade_id}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export interface BillPaymentUIData { reference: string; biller_code: string; item_code: string; customer_id: string; amount: number; status: string; network?: string; token?: string; }
+export interface BillStatusUIData { reference: string; amount: number; status: string; biller?: string; customer?: string; token?: string; completed_at?: string; }
+
+export function createBillPaymentUI(data: BillPaymentUIData) {
+    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
+    const tokenHtml = data.token
+        ? `<div class="info-item"><div class="info-label">Prepaid Token</div><div style="background:#1E1E1E;color:#A8FF78;padding:14px 18px;border-radius:10px;font-family:monospace;font-size:18px;font-weight:700;letter-spacing:4px;text-align:center;margin-top:6px">${data.token}</div></div>`
+        : '';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Bill Payment</title>${baseStyles}<style>.bill-header{background:linear-gradient(135deg,#006841 0%,#009656 100%);color:white;padding:28px 24px;text-align:center}.bill-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.bill-header p{font-size:13px;opacity:0.9}</style></head><body><div class="container"><div class="bill-header"><h1>Bill Payment</h1><p>Flutterwave Bills</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="status ${statusClass}">${data.status}</div></div><div class="amount" style="text-align:center">NGN ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Reference</div><div class="info-value">${data.reference}</div></div><div class="info-item"><div class="info-label">Biller Code</div><div class="info-value">${data.biller_code}</div></div><div class="info-item"><div class="info-label">Item Code</div><div class="info-value">${data.item_code}</div></div><div class="info-item"><div class="info-label">Customer ID</div><div class="info-value">${data.customer_id}</div></div>${data.network?`<div class="info-item"><div class="info-label">Network</div><div class="info-value">${data.network}</div></div>`:''}${tokenHtml}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://bill-payment/${data.reference}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
+}
+
+export function createBillStatusUI(data: BillStatusUIData) {
+    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
+    const tokenHtml = data.token
+        ? `<div class="info-item"><div class="info-label">Prepaid Token</div><div style="background:#1E1E1E;color:#A8FF78;padding:14px 18px;border-radius:10px;font-family:monospace;font-size:18px;font-weight:700;letter-spacing:4px;text-align:center;margin-top:6px">${data.token}</div></div><div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:8px;padding:12px 16px;font-size:13px;color:#1B5E20;margin-top:12px">Share this token with the customer to load their electricity meter.</div>`
+        : '';
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Bill Status</title>${baseStyles}<style>.bill-header{background:linear-gradient(135deg,#006841 0%,#009656 100%);color:white;padding:28px 24px;text-align:center}.bill-header h1{font-size:22px;font-weight:600;margin-bottom:6px}.bill-header p{font-size:13px;opacity:0.9}</style></head><body><div class="container"><div class="bill-header"><h1>Bill Payment Status</h1><p>Flutterwave Bills</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="status ${statusClass}">${data.status}</div></div><div class="amount" style="text-align:center">NGN ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Reference</div><div class="info-value">${data.reference}</div></div>${data.biller?`<div class="info-item"><div class="info-label">Biller</div><div class="info-value">${data.biller}</div></div>`:''} ${data.customer?`<div class="info-item"><div class="info-label">Customer</div><div class="info-value">${data.customer}</div></div>`:''} ${data.completed_at?`<div class="info-item"><div class="info-label">Completed At</div><div class="info-value">${data.completed_at}</div></div>`:''}${tokenHtml}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://bill-status/${data.reference}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
 }
 
 export function createTimelineUI(tx_id: string, timeline: any) {
-    // Format timeline data into HTML items
+    if (!timeline || (Array.isArray(timeline) && timeline.length === 0)) {
+        return createUIResource({ uri: `ui://timeline/${tx_id}` as URI, content: { type: 'rawHtml', htmlString: '<p style="padding:20px;color:#757575;">No timeline data available.</p>' }, encoding: 'text' }).resource;
+    }
     let timelineItems = '';
-    
     if (Array.isArray(timeline)) {
         timelineItems = timeline.map((item: any) => {
             const time = item.created_at || item.timestamp || item.time || 'N/A';
             const event = item.event || item.action || item.status || 'Event';
             const details = item.message || item.description || '';
-            
-            return `
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <div class="timeline-time">${new Date(time).toLocaleString()}</div>
-                        <div class="timeline-event">${event}</div>
-                        ${details ? `<div style="font-size: 14px; color: #666; margin-top: 4px;">${details}</div>` : ''}
-                    </div>
-                </div>
-            `;
+            return `<div class="timeline-item"><div class="timeline-content"><div class="timeline-time">${new Date(time).toLocaleString()}</div><div class="timeline-event">${event}</div>${details?`<div style="font-size:14px;color:#666;margin-top:4px">${details}</div>`:''}</div></div>`;
         }).join('');
     } else if (typeof timeline === 'object' && timeline !== null) {
-        // If timeline is an object, convert it to an array of entries
-        timelineItems = Object.entries(timeline).map(([key, value]: [string, any]) => {
-            return `
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <div class="timeline-event">${key}</div>
-                        <div style="font-size: 14px; color: #666; margin-top: 4px;">${typeof value === 'object' ? JSON.stringify(value, null, 2) : value}</div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+        timelineItems = Object.entries(timeline).map(([key, value]: [string, any]) =>
+            `<div class="timeline-item"><div class="timeline-content"><div class="timeline-event">${key}</div><div style="font-size:14px;color:#666;margin-top:4px">${typeof value==='object'?JSON.stringify(value,null,2):value}</div></div></div>`
+        ).join('');
     } else {
-        // Fallback to displaying the raw data
-        timelineItems = `
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <pre style="margin: 0; font-size: 12px; overflow-x: auto;">${JSON.stringify(timeline, null, 2)}</pre>
-                </div>
-            </div>
-        `;
+        timelineItems = `<div class="timeline-item"><div class="timeline-content"><pre style="margin:0;font-size:12px;overflow-x:auto">${JSON.stringify(timeline,null,2)}</pre></div></div>`;
     }
-
-    const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Transaction Timeline</title>
-            ${baseStyles}
-            <style>
-                .timeline {
-                    position: relative;
-                    padding-left: 30px;
-                }
-                .timeline-item {
-                    position: relative;
-                    padding-bottom: 24px;
-                }
-                .timeline-item:before {
-                    content: '';
-                    position: absolute;
-                    left: -30px;
-                    top: 8px;
-                    width: 12px;
-                    height: 12px;
-                    border-radius: 50%;
-                    background: ${COLORS.primary};
-                    border: 3px solid white;
-                    box-shadow: 0 0 0 2px ${COLORS.primary};
-                }
-                .timeline-item:after {
-                    content: '';
-                    position: absolute;
-                    left: -24px;
-                    top: 20px;
-                    width: 2px;
-                    height: calc(100% - 12px);
-                    background: ${COLORS.border};
-                }
-                .timeline-item:last-child:after {
-                    display: none;
-                }
-                .timeline-content {
-                    background: #F9FAFB;
-                    padding: 16px;
-                    border-radius: 8px;
-                }
-                .timeline-time {
-                    font-size: 12px;
-                    color: ${COLORS.textLight};
-                    margin-bottom: 8px;
-                }
-                .timeline-event {
-                    font-weight: 600;
-                    color: ${COLORS.text};
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>📊 Transaction Timeline</h1>
-                    <p>${tx_id}</p>
-                </div>
-                <div class="content">
-                    <div class="timeline">
-                        ${timelineItems}
-                    </div>
-                </div>
-                <div class="footer">
-                    Powered by Flutterwave
-                </div>
-            </div>
-        </body>
-        </html>
-    `;
-
-    const uiResource = createUIResource({
-        uri: `ui://timeline/${tx_id}` as URI,
-        content: {
-            type: 'rawHtml',
-            htmlString: html,
-        },
-        encoding: 'text',
-    });
-
-    return uiResource.resource;
+    const timelineStyles = `<style>.timeline{position:relative;padding-left:30px}.timeline-item{position:relative;padding-bottom:24px}.timeline-item:before{content:'';position:absolute;left:-30px;top:8px;width:12px;height:12px;border-radius:50%;background:${COLORS.primary};border:3px solid white;box-shadow:0 0 0 2px ${COLORS.primary}}.timeline-item:after{content:'';position:absolute;left:-24px;top:20px;width:2px;height:calc(100% - 12px);background:${COLORS.border}}.timeline-item:last-child:after{display:none}.timeline-content{background:#F9FAFB;padding:16px;border-radius:8px}.timeline-time{font-size:12px;color:${COLORS.textLight};margin-bottom:8px}.timeline-event{font-weight:600;color:${COLORS.text}}</style>`;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Transaction Timeline</title>${baseStyles}${timelineStyles}</head><body><div class="container"><div class="header"><h1>Transaction Timeline</h1><p>${tx_id}</p></div><div class="content"><div class="timeline">${timelineItems}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    return createUIResource({ uri: `ui://timeline/${tx_id}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
 }

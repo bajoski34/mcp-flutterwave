@@ -154,11 +154,32 @@ async function bulk(payload: BulkTransferPayload) {
     return data;
 }
 
+async function getTransferFee(params: {
+    amount: number;
+    currency: string;
+    type?: string;
+    debit_currency?: string;
+}): Promise<{ data?: any; status?: string } | undefined> {
+    const { data, error } = await client.GET("/transfers/fee", {
+        params: {
+            query: {
+                amount: params.amount,
+                currency: params.currency,
+                type: params.type,
+                debit_currency: params.debit_currency,
+            } as any,
+        },
+    });
+    if (error) { console.error(error); return; }
+    return data;
+}
+
 export default {
     create,
     get,
     retry,
     bulk,
     createBeneficiary,
-    listBeneficiaries
+    listBeneficiaries,
+    getTransferFee,
 }

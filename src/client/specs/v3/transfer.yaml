@@ -222,6 +222,85 @@ paths:
               required:
                 - currency
                 - bulk_data
+  /transfers/fee:
+    get:
+      summary: Get transfer fee
+      description: >
+        Get the fee for a transfer before initiating it.
+        For stablecoin (crypto) transfers, pass type=crypto.
+        For cross-currency (fiat → stablecoin), also pass debit_currency.
+      operationId: getTransferFee
+      parameters:
+        - name: amount
+          in: query
+          required: true
+          schema:
+            type: number
+          description: Transfer amount.
+          example: 50
+        - name: currency
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Target currency (e.g. USDC, USDT, NGN).
+          example: USDC
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Transfer type. Use "crypto" for stablecoin transfers.
+          example: crypto
+        - name: debit_currency
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Source currency for cross-currency transfers (e.g. NGN, USD).
+          example: NGN
+      responses:
+        '200':
+          description: Transfer fee details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Transfer fee fetched
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        currency:
+                          type: string
+                          example: USDC
+                        fee_type:
+                          type: string
+                          example: value
+                        fee:
+                          type: number
+                          example: 1.5
+                        fee_amount_in_fiat_currency:
+                          type: number
+                          nullable: true
+                        fee_amount_in_crypto_currency:
+                          type: number
+                          nullable: true
+                        amount_minus_fee:
+                          type: number
+                          nullable: true
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
   /beneficiaries:
     get:
       summary: List beneficiaries

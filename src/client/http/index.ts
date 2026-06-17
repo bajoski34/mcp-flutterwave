@@ -3,6 +3,11 @@ import type { paths as checkoutPaths } from "../types/v3/checkout.js";
 import type { paths as transactionPaths } from "../types/v3/transactions.js";
 import type { paths as transferPaths } from "../types/v3/transfer.js";
 import type { paths as planPaths } from "../types/v3/plans.js";
+import type { paths as chargePaths } from "../types/v3/charge.js";
+import type { paths as virtualAccountPaths } from "../types/v3/virtual-account.js";
+import type { paths as billPaymentPaths } from "../types/v3/bill-payment.js";
+import type { paths as fxTradePaths } from "../types/v3/fx-trade.js";
+import type { paths as verificationPaths } from "../types/v3/verification.js";
 import authMiddlewareV3 from "../middleware/authMiddlewareV3.js";
 import { config } from "../../config/index.js";
 
@@ -28,10 +33,31 @@ planClient.use(authMiddlewareV3);
 
 const transferClient = createClient<transferPaths>(clientConfig);
 transferClient.use(authMiddlewareV3);
+
+const chargeClient = createClient<chargePaths>(clientConfig);
+chargeClient.use(authMiddlewareV3);
+
+const virtualAccountClient = createClient<virtualAccountPaths>(clientConfig);
+virtualAccountClient.use(authMiddlewareV3);
+
+const billPaymentClient = createClient<billPaymentPaths>(clientConfig);
+billPaymentClient.use(authMiddlewareV3);
+
+const fxTradeClient = createClient<fxTradePaths>(clientConfig);
+fxTradeClient.use(authMiddlewareV3);
+
+const verificationClient = createClient<verificationPaths>(clientConfig);
+verificationClient.use(authMiddlewareV3);
+
 export {
     transactionClient,
     checkoutClient,
     planClient,
-    transferClient
+    transferClient,
+    chargeClient,
+    virtualAccountClient,
+    billPaymentClient,
+    fxTradeClient,
+    verificationClient,
 };
 

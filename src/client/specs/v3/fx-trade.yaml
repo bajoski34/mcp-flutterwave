@@ -1,0 +1,305 @@
+openapi: 3.0.3
+info:
+  title: Flutterwave FX Trade API
+  description: >
+    Currency conversion (FX) service. Submit a Request For Quote (RFQ),
+    poll until it is READY, then initiate a trade. Quotes are valid for
+    5 minutes. Available on weekdays (Monday–Friday) only.
+  version: 1.0.0
+servers:
+  - url: https://api.flutterwave.com/v3
+paths:
+
+  /rfq:
+    post:
+      summary: Request an FX Quote (RFQ)
+      description: >
+        Submit a request for an exchange-rate quote for the given currency pair
+        and quantity. The quote is processed asynchronously — poll GET /rfq/{id}
+        or wait for the quote.completed webhook. Minimum trade is $1,000 USD
+        equivalent. Quotes with duplicate references will error.
+      operationId: requestFxQuote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - base_currency
+                - target_currency
+                - quantity
+              properties:
+                base_currency:
+                  type: string
+                  enum: [NGN, GHS, USD]
+                  description: Currency being sold / converted from.
+                  example: NGN
+                target_currency:
+                  type: string
+                  enum: [NGN, GHS, USD]
+                  description: Currency being received / converted into.
+                  example: USD
+                quantity:
+                  type: number
+                  description: Amount of base_currency to convert.
+                  example: 1617759
+                reference:
+                  type: string
+                  description: >
+                    Your unique reference for this quote. Auto-generated if omitted.
+                    Must be unique — a duplicate reference returns an error.
+                  example: FX-NGN-USD-001
+                scenario:
+                  type: string
+                  enum: [ready, expired, invalid_amount, invalid_currency_pair, exceeded_limit]
+                  description: Test mode only. Do not use in production.
+      responses:
+        '200':
+          description: Quote request accepted. Poll GET /rfq/{id} for status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxQuoteResponse'
+        '400':
+          description: Bad request — missing fields, duplicate reference, or unsupported pair.
+        '401':
+          description: Unauthorized.
+
+  /rfq/{quote_id}:
+    get:
+      summary: Get FX Quote status
+      description: >
+        Retrieve the current status and pricing of an RFQ. Poll this until
+        status is READY (then initiate a trade) or FAILED. READY quotes expire
+        after 5 minutes.
+      operationId: getFxQuote
+      parameters:
+        - name: quote_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The id returned from POST /rfq.
+          example: c085aab5-5938-46a7-90a9-22420c2a8d6e
+      responses:
+        '200':
+          description: Quote details with current status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxQuoteResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+  /trade:
+    post:
+      summary: Initiate an FX Trade
+      description: >
+        Execute a trade using a READY quote. Locks in the rate and debits the
+        base currency from your wallet. The quote must be in READY status and
+        not yet expired. A quote can only be used once.
+      operationId: initiateFxTrade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - quote_id
+                - narration
+              properties:
+                quote_id:
+                  type: string
+                  description: ID of a READY quote from GET /rfq/{id}.
+                  example: c085aab5-5938-46a7-90a9-22420c2a8d6e
+                narration:
+                  type: string
+                  description: Short note describing the purpose of the trade.
+                  example: Q1 vendor payment conversion
+      responses:
+        '200':
+          description: Trade initiated. Poll GET /trade/{id} for settlement status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxTradeResponse'
+        '400':
+          description: Bad request — quote does not exist, expired, or already used.
+        '401':
+          description: Unauthorized.
+
+  /trade/{trade_id}:
+    get:
+      summary: Get FX Trade status
+      description: >
+        Retrieve the current status of a trade. Poll until status is SETTLED
+        (funds exchanged) or FAILED. Upon settlement, converted funds land
+        instantly in the target currency wallet.
+      operationId: getFxTrade
+      parameters:
+        - name: trade_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The id returned from POST /trade.
+          example: 30b85c03-9124-4418-b30b-0495ffbdc633
+      responses:
+        '200':
+          description: Trade details with current status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxTradeResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+
+components:
+  schemas:
+
+    FxQuoteData:
+      type: object
+      properties:
+        best_available_rate:
+          type: string
+          description: Real-time exchange rate applied to the conversion.
+          example: '0.000659'
+        approved_quantity:
+          type: number
+          description: >
+            Actual base_currency amount approved for the trade. May differ
+            from requested quantity due to liquidity or account limits.
+          example: 1517759
+        total_value:
+          type: number
+          description: Final converted amount in target_currency (approved_quantity × rate).
+          example: 1000.203181
+        expiry:
+          type: string
+          format: date-time
+          description: Timestamp after which the quote can no longer be used.
+          example: '2026-02-06T10:12:02.990Z'
+
+    FxQuoteResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Request for quote submitted.
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Unique quote ID — use this with GET /rfq/{id} and POST /trade.
+              example: c085aab5-5938-46a7-90a9-22420c2a8d6e
+            reference:
+              type: string
+              example: c9f6539747ef11f1
+            quantity:
+              type: number
+              description: Requested base_currency amount.
+              example: 1617759
+            instrument:
+              type: string
+              description: Currency pair (e.g. NGN/USD).
+              example: NGN/USD
+            quote:
+              allOf:
+                - $ref: '#/components/schemas/FxQuoteData'
+              nullable: true
+              description: Null until status is READY.
+            status:
+              type: string
+              enum: [NEW, READY, PROCESSING, EXPIRED, FAILED]
+              example: READY
+            complete_message:
+              type: string
+              nullable: true
+              example: Your RFQ is ready
+            created_at:
+              type: string
+              format: date-time
+              example: '2026-02-06T10:03:22.000Z'
+
+    FxRecipient:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '200004751'
+        name:
+          type: string
+          example: MythCo.
+
+    FxTradeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Trade initiated successfully.
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Unique trade ID — use with GET /trade/{id} to poll status.
+              example: 30b85c03-9124-4418-b30b-0495ffbdc633
+            quantity:
+              type: number
+              description: Original requested base_currency amount.
+              example: 1617759
+            approved_quantity:
+              type: number
+              description: Actual base_currency amount approved for the trade.
+              example: 1517759
+            price:
+              type: number
+              description: Final converted amount in target_currency.
+              example: 1000.203181
+            instrument:
+              type: string
+              description: Currency pair.
+              example: NGN/USD
+            status:
+              type: string
+              enum: [NEW, PENDING, FAILED, SETTLED]
+              example: SETTLED
+            response_message:
+              type: string
+              nullable: true
+              example: Transfer was Successful
+            recipient:
+              $ref: '#/components/schemas/FxRecipient'
+            narration:
+              type: string
+              example: Q1 vendor payment conversion
+            reference:
+              type: string
+              example: TRD-86ade016977958e2
+            callback_url:
+              type: string
+              nullable: true
+              example: 'https://myapp.com/webhooks/fx'
+            created_at:
+              type: string
+              format: date-time
+              example: '2026-02-06T10:08:54.000Z'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
