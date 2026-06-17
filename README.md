@@ -73,14 +73,31 @@ npx mcp-flutterwave --tools=all
 
 ### Docker
 
+Pull the image:
+
 ```bash
 docker pull ghcr.io/bajoski34/mcp-flutterwave:latest
-
-docker run --rm \
-  -e FLW_SECRET_KEY=your_secret_key \
-  -e FLW_ENCRYPTION_KEY=your_encryption_key \
-  ghcr.io/bajoski34/mcp-flutterwave:latest
 ```
+
+The server communicates over stdio, so it must be launched by an MCP client — not run standalone. Configure Claude Desktop to use the Docker image as the MCP server:
+
+```json
+{
+  "mcpServers": {
+    "flutterwave": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-e", "FLW_SECRET_KEY=YOUR_SECRET_KEY",
+        "-e", "FLW_ENCRYPTION_KEY=YOUR_ENCRYPTION_KEY",
+        "ghcr.io/bajoski34/mcp-flutterwave:latest"
+      ]
+    }
+  }
+}
+```
+
+The `-i` flag keeps stdin open so Claude Desktop can communicate with the server over stdio.
 
 **Requirements:** Node.js 20 or later (for npm/npx).
 

@@ -118,10 +118,23 @@ jobs:
 
       - name: Install MCP Publisher
         run: |
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/download/v1.0.0/mcp-publisher_1.0.0_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+          LATEST=$(curl -s https://api.github.com/repos/modelcontextprotocol/registry/releases/latest | jq -r '.tag_name')
+          VERSION=${LATEST#v}
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/download/${LATEST}/mcp-publisher_${VERSION}_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      - name: Get OIDC token for MCP Registry
+        id: oidc
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('https://registry.modelcontextprotocol.io')
+            core.setSecret(token)
+            core.exportVariable('MCP_OIDC_TOKEN', token)
 
       - name: Login to MCP Registry
         run: ./mcp-publisher login github-oidc
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.MCP_OIDC_TOKEN }}
 
       - name: Publish to MCP Registry
         run: ./mcp-publisher publish

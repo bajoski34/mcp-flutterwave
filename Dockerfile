@@ -1,41 +1,28 @@
-FROM node:20.20.0-alpine3.22 AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 ENV DOCKER=true
 
-# Copy package files and install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 
-# Copy source code AND bin directory
 COPY tsconfig.json ./
 COPY bin/ ./bin/
 COPY src/ ./src/
 
-# Build the application
 RUN npm run build
 
-# Start a new stage for a smaller production image
-FROM node:20.20.0-alpine3.22
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Set environment variables
-ARG FLW_SECRET_KEY
-ARG FLW_ENCRYPTION_KEY
-
 ENV DOCKER=true
 ENV NODE_ENV=production
-ENV FLW_SECRET_KEY=${FLW_SECRET_KEY}
-ENV FLW_ENCRYPTION_KEY=${FLW_ENCRYPTION_KEY}
 
-# Copy package files and install production dependencies only
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force
 
-# Copy the built application from the builder stage
 COPY --from=builder /app/build ./build
 
-# Run the application
-CMD ["node", "build/index.js", "--tools=all"] 
+CMD ["node", "build/index.js", "--tools=all"]
