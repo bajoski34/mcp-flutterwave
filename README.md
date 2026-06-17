@@ -1,5 +1,12 @@
 # mcp-flutterwave
 
+[![CI](https://github.com/bajoski34/mcp-flutterwave/actions/workflows/ci.yml/badge.svg)](https://github.com/bajoski34/mcp-flutterwave/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/mcp-flutterwave.svg)](https://www.npmjs.com/package/mcp-flutterwave)
+[![npm downloads](https://img.shields.io/npm/dm/mcp-flutterwave.svg)](https://www.npmjs.com/package/mcp-flutterwave)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Node.js](https://img.shields.io/node/v/mcp-flutterwave.svg)](https://www.npmjs.com/package/mcp-flutterwave)
+[![MCP](https://img.shields.io/badge/MCP-compatible-blue.svg)](https://modelcontextprotocol.io)
+
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that enables AI assistants to interact with the Flutterwave API — create payment links, charge customers directly, manage transfers, collect via virtual accounts, pay bills, and more.
 
 > **Note:** This server currently targets the Flutterwave v3 API. Support for v4 is coming soon.
@@ -11,6 +18,7 @@ Also ships with a **built-in web app** that connects to the MCP server and lets 
 ## Contents
 
 - [Features](#features)
+- [Installation](#installation)
 - [Available Tools](#available-tools)
 - [Card Charge Flow](#card-charge-flow)
 - [Virtual Accounts](#virtual-accounts)
@@ -23,6 +31,9 @@ Also ships with a **built-in web app** that connects to the MCP server and lets 
 - [Usage with Claude Desktop](#usage-with-claude-desktop)
 - [MCP-UI Components](#mcp-ui-components)
 - [Contributing](#contributing)
+- [Changelog](#changelog)
+- [Security](#security)
+- [License](#license)
 
 ---
 
@@ -42,6 +53,22 @@ Also ships with a **built-in web app** that connects to the MCP server and lets 
 - **Stablecoins** — Send USDC/USDT to Polygon wallets, or convert NGN/USD fiat into stablecoins
 - **Rich UI** — Every tool returns a branded HTML card rendered inline in supported clients
 - **Web App** — A standalone browser chat interface powered by Claude + this MCP server
+
+---
+
+## Installation
+
+```bash
+npm install -g mcp-flutterwave
+```
+
+Or run directly with npx (no install needed):
+
+```bash
+npx mcp-flutterwave --tools=all
+```
+
+**Requirements:** Node.js 18 or later.
 
 ---
 
@@ -629,3 +656,23 @@ Cards are compatible with:
 ## Contributing
 
 We welcome contributions! Please read our [Contributing Guide](./CONTRIBUTING.md) for details on how to get started, development guidelines, and how to submit pull requests.
+
+---
+
+## Changelog
+
+All notable changes are documented in [GitHub Releases](https://github.com/bajoski34/mcp-flutterwave/releases).
+
+---
+
+## Security
+
+If you discover a security vulnerability, please **do not** open a public issue. Instead, email [olaobajua@gmail.com](mailto:olaobajua@gmail.com) directly. We will respond as quickly as possible.
+
+---
+
+## License
+
+MIT © [Abraham Olaobaju](https://github.com/bajoski34)
+
+See [LICENSE](./LICENSE) for the full text.
