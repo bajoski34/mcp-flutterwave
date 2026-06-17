@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
@@ -104,8 +104,10 @@ jobs:
               "mcpServers": {
                 "flutterwave": {
                   "command": "mcp-flutterwave",
+                  "args": ["--tools=all"],
                   "env": {
-                    "FLW_SECRET_KEY": "YOUR_SECRET_KEY"
+                    "FLW_SECRET_KEY": "YOUR_SECRET_KEY",
+                    "FLW_ENCRYPTION_KEY": "YOUR_ENCRYPTION_KEY"
                   }
                 }
               }
