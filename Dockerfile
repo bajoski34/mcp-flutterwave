@@ -25,4 +25,8 @@ RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force
 
 COPY --from=builder /app/build ./build
 
-CMD ["node", "build/index.js", "--tools=all"]
+EXPOSE 8080
+
+# Remote MCP over Streamable HTTP (requires FLW_SECRET_KEY and MCP_AUTH_TOKEN).
+# For local stdio usage, run instead: node build/index.js --tools=all
+CMD ["node", "build/http.js"]
