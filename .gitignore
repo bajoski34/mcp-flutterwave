@@ -4,3 +4,5 @@ src/example.ts
 .mcpre*
 .idea/
 .claude/
+.env
+shemaiah/
