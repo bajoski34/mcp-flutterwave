@@ -1,8 +1,8 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
-    test: {
-        environment: 'node',
-        exclude: ['**/node_modules/**', '**/build/**'],
-    },
+  test: {
+    environment: 'node',
+    exclude: [...configDefaults.exclude, '**/build/**'],
+  },
 });

@@ -4,7 +4,7 @@ import {
   encryptCardFields,
   encryptField,
   generateNonce,
-} from '../../client/encryptionV4.js';
+} from '../../client/v4/encryption.js';
 
 const TEST_BASE64_KEY = Buffer.alloc(32, 7).toString('base64');
 const TEST_NONCE = 'Ab12Cd34Ef56';
@@ -63,12 +63,20 @@ describe('v4 encryption', () => {
     ).toThrow('Plaintext value must not be empty');
   });
 
+  it('rejects keys that do not decode to 32 bytes', () => {
+    const shortKey = Buffer.alloc(24, 1).toString('base64');
+
+    expect(() =>
+      encryptField('secret', shortKey, TEST_NONCE),
+    ).toThrow('Encryption key must decode to 32 bytes for AES-256');
+  });
+
   it('encryptCardFields produces all expected keys and decrypts with shared nonce', () => {
     const card = {
       cardNumber: '4111111111111111',
       cvv: '123',
       expiryMonth: '09',
-      expiryYear: '2028',
+      expiryYear: '32',
     };
 
     const encrypted = encryptCardFields(card, TEST_BASE64_KEY);

@@ -4,6 +4,7 @@ const REFRESH_THRESHOLD_SECONDS = 60;
 
 let cachedAccessToken: string | null = null;
 let tokenExpiresAt = 0;
+let inflightTokenRequest: Promise<string> | null = null;
 
 interface TokenResponse {
   access_token?: string;
@@ -21,6 +22,12 @@ function getCredentials(): { clientId: string; clientSecret: string } {
   }
 
   return { clientId, clientSecret };
+}
+
+export function invalidateAccessTokenCache(): void {
+  cachedAccessToken = null;
+  tokenExpiresAt = 0;
+  inflightTokenRequest = null;
 }
 
 async function fetchAccessToken(): Promise<string> {
@@ -48,8 +55,15 @@ async function fetchAccessToken(): Promise<string> {
   }
 
   if (!response.ok) {
+    let body = '';
+    try {
+      body = (await response.text()).trim();
+    } catch {
+      body = '';
+    }
+    const bodySuffix = body ? `: ${body}` : '';
     throw new Error(
-      `Failed to obtain v4 access token: ${response.status} ${response.statusText}`,
+      `Failed to obtain v4 access token: ${response.status} ${response.statusText}${bodySuffix}`,
     );
   }
 
@@ -79,11 +93,13 @@ export async function getAccessToken(): Promise<string> {
     return cachedAccessToken;
   }
 
-  return fetchAccessToken();
-}
+  if (inflightTokenRequest) {
+    return inflightTokenRequest;
+  }
 
-/** Clears in-memory token cache (for tests only). */
-export function resetAccessTokenCacheForTesting(): void {
-  cachedAccessToken = null;
-  tokenExpiresAt = 0;
+  inflightTokenRequest = fetchAccessToken().finally(() => {
+    inflightTokenRequest = null;
+  });
+
+  return inflightTokenRequest;
 }
