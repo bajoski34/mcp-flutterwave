@@ -55,15 +55,18 @@ Thank you for your interest in contributing to mcp-flutterwave! This document pr
 
 ```
 src/
-├── client/           # Flutterwave API client
-│   ├── http/        # HTTP client configuration
-│   ├── lib/         # API endpoint implementations
-│   ├── specs/       # OpenAPI specifications
-│   └── types/       # Generated TypeScript types
-├── config/          # Configuration files
-├── tools/           # MCP tool implementations
-├── types/           # Type definitions and schemas
-└── server.ts        # MCP server setup
+├── client/              # Flutterwave API client
+│   ├── http/            # v3 HTTP client configuration
+│   ├── lib/             # v3 API endpoint implementations
+│   ├── middleware/      # Auth middleware (e.g. authMiddlewareV3)
+│   ├── v4/              # v4 auth, encryption, environment, http
+│   ├── specs/           # OpenAPI specifications (v3/ and v4/)
+│   ├── types/           # Generated v3 TypeScript types
+│   └── generated/       # Generated v4 Zod schemas (Orval)
+├── config/              # Configuration files
+├── tools/               # MCP tool implementations
+├── types/               # Type definitions and schemas
+└── server.ts            # MCP server setup
 ```
 
 ### Adding New Tools
@@ -111,10 +114,27 @@ src/
 
 When adding new Flutterwave API endpoints:
 
+**v3**
+
 1. **Add OpenAPI spec** in `src/client/specs/v3/`
 2. **Generate types** using `npm run build:types`
 3. **Implement client class** in `src/client/lib/`
 4. **Export from main client** in `src/client/index.ts`
+
+**v4**
+
+1. **Vendor an OpenAPI fragment** in `src/client/specs/v4/` (extracted from Flutterwave's `reference/*.md` pages — see that folder's README)
+2. **Register the fragment** in `orval.config.ts`
+3. **Regenerate Zod schemas** using `npm run generate:v4` (also runs as part of `npm run build`, after `build:types`)
+4. Wire the generated schemas into MCP tools / the v4 client as needed
+
+v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
+
+Notes on the current v4 codegen state:
+
+- Generated files under `src/client/generated/v4/` are **not consumed by MCP tools yet** — that lands with tool registration.
+- Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
+- After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 
 ### Testing
 
@@ -167,8 +187,9 @@ Current tools that can be extended or improved:
 ### API Client Issues
 
 - Verify OpenAPI specifications are accurate
-- Regenerate types after spec changes: `npm run build:types`
-- Check HTTP client configuration in `src/client/http/`
+- Regenerate v3 types after spec changes: `npm run build:types`
+- Regenerate v4 Zod schemas after spec changes: `npm run generate:v4` (also included in `npm run build`)
+- Check HTTP client configuration in `src/client/http/` (v3) or `src/client/v4/` (v4)
 
 ## Submitting Changes
 
