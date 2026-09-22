@@ -13,11 +13,12 @@
   "description": "MCP Server to interact with Flutterwave APIs.",
   "main": "build/index.js",
   "scripts": {
-    "build": "npm run build:types &&tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build": "npm run build:types && npm run generate:v4 && tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "build:app": "tsc -p app/tsconfig.json && cp -r app/public build/app/public",
     "build:all": "npm run build && npm run build:app",
     "clean": "rm -rf build",
     "build:types": "./bin/generate-openapi-typescript",
+    "generate:v4": "orval --config orval.config.ts",
     "start:app": "node build/app/index.js",
     "dev:app": "npm run build:all && npm run start:app",
     "test": "vitest run"
@@ -51,8 +52,12 @@
     "@types/node": "^22.19.21",
     "nodemon": "^3.1.9",
     "openapi-typescript": "^7.6.1",
+    "orval": "^8.36.0",
     "typescript": "^5.8.2",
     "vitest": "^4.1.9",
     "zod-to-json-schema": "^3.24.6"
+  },
+  "overrides": {
+    "undici": ">=7.29.0"
   }
 }
