@@ -1,25 +1,12 @@
-import {registerCheckoutTools} from './checkout.js';
-import { registerTransactionTools } from './transaction.js';
-import { registerRequiredTools } from './required.js';
-import { registerPlanTools } from './plan.js';
-import {registerTransferTools} from "./transfer.js";
-import { registerChargeTools } from "./charge.js";
-import { registerVirtualAccountTools } from "./virtual-account.js";
-import { registerBillPaymentTools } from "./bill-payment.js";
-import { registerFxTradeTools } from "./fx-trade.js";
-import { registerVerificationTools } from "./verification.js";
-import { registerStablecoinTools } from "./stablecoin.js";
+import { registerV4PaymentMethodTools } from './v4/register.js';
+import { getApiVersion } from '../config/apiVersion.js';
 
-export function registerTools() {
-  registerRequiredTools();
-  registerTransactionTools();
-  registerCheckoutTools();
-  registerPlanTools();
-  registerTransferTools();
-  registerChargeTools();
-  registerVirtualAccountTools();
-  registerBillPaymentTools();
-  registerFxTradeTools();
-  registerVerificationTools();
-  registerStablecoinTools();
+export async function registerTools() {
+  if (getApiVersion() === 'v4') {
+    registerV4PaymentMethodTools();
+    return;
+  }
+
+  const { registerV3Tools } = await import('./registerV3.js');
+  registerV3Tools();
 }

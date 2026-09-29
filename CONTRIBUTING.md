@@ -130,9 +130,11 @@ When adding new Flutterwave API endpoints:
 
 v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
 
+`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register only the v4 tool set. The first v4 tool is `create_card_payment_method`: plaintext card fields in, AES-256-GCM encryption, then `POST /payment-methods`. The outgoing body is checked with the generated `PaymentMethodsPostBody` schema. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
+
 Notes on the current v4 codegen state:
 
-- Generated files under `src/client/generated/v4/` are **not consumed by MCP tools yet** — that lands with tool registration.
+- `create_card_payment_method` validates the encrypted request body with `PaymentMethodsPostBody` from `src/client/generated/v4/payment-methods.zod.ts`. The tool's public arguments stay plaintext; the generated schema describes the wire payload.
 - Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
 - After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 
