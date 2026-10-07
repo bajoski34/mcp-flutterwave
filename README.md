@@ -452,7 +452,7 @@ Send USDC or USDT over the **Polygon network**, or convert NGN/USD fiat balances
 
 The `app/` directory contains a standalone browser chat interface that wraps this MCP server with a Claude-powered conversation loop.
 
-![Flutterwave MCP-UI Components](https://github.com/user-attachments/assets/d3996cdf-acfd-4bea-81cf-aa7d454a59a6)
+![Flutterwave MCP-UI components: transaction, payment link and transfer cards](./docs/images/mcp-ui-components.png)
 
 ### How it works
 
