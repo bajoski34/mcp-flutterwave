@@ -45,4 +45,8 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/payment-methods.yaml" },
     output: zodOutput("./src/client/generated/v4/payment-methods.zod.ts"),
   },
+  flutterwaveV4Customers: {
+    input: { target: "./src/client/specs/v4/customers.yaml" },
+    output: zodOutput("./src/client/generated/v4/customers.zod.ts"),
+  },
 });

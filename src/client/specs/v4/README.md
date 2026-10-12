@@ -6,6 +6,7 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 |---|---|
 | `charge.yaml` | `reference/charges_post.md` |
 | `payment-methods.yaml` | `reference/payment_methods_post.md` |
+| `customers.yaml` | `v4/reference/customers_create` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 

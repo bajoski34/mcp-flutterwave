@@ -12,7 +12,11 @@ describe('v4 api version selection', () => {
 
   it('selects the v4 tool allowlist only', () => {
     expect(getApiVersion({ FLW_API_VERSION: 'v4' })).toBe('v4');
-    expect(acceptedToolsFor('v4')).toEqual(['create_card_payment_method']);
+    expect(acceptedToolsFor('v4')).toEqual([
+      'create_customer',
+      'create_card_payment_method',
+      'create_charge',
+    ]);
   });
 
   it('falls back to v3 for an unrecognized version', () => {
