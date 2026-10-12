@@ -45,6 +45,8 @@ export const V4_ACCEPTED_TOOLS = [
   'create_customer',
   'create_card_payment_method',
   'create_charge',
+  'get_charge',
+  'create_refund',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {

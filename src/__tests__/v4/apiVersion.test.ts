@@ -16,6 +16,8 @@ describe('v4 api version selection', () => {
       'create_customer',
       'create_card_payment_method',
       'create_charge',
+      'get_charge',
+      'create_refund',
     ]);
   });
 
