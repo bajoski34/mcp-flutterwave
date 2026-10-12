@@ -47,6 +47,8 @@ export const V4_ACCEPTED_TOOLS = [
   'create_charge',
   'get_charge',
   'create_refund',
+  'get_customer',
+  'get_refund',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {

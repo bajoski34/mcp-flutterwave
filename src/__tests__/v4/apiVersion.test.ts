@@ -18,6 +18,8 @@ describe('v4 api version selection', () => {
       'create_charge',
       'get_charge',
       'create_refund',
+      'get_customer',
+      'get_refund',
     ]);
   });
 
