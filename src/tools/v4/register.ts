@@ -34,6 +34,11 @@ import {
   GetRefundSchema,
   type GetRefundArgs,
 } from './getRefund.js';
+import {
+  getPaymentMethod,
+  GetPaymentMethodSchema,
+  type GetPaymentMethodArgs,
+} from './getPaymentMethod.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -106,6 +111,15 @@ export async function handleGetRefund(args: GetRefundArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error retrieving refund: ${message}`);
+  }
+}
+
+export async function handleGetPaymentMethod(args: GetPaymentMethodArgs) {
+  try {
+    return await getPaymentMethod(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving payment method: ${message}`);
   }
 }
 
@@ -188,5 +202,15 @@ export function registerV4Tools() {
     ].join(' '),
     GetRefundSchema,
     async (args) => handleGetRefund(args),
+  );
+
+  server.tool(
+    'get_payment_method',
+    [
+      'Retrieve a Flutterwave v4 payment method by id (GET /payment-methods/{id}).',
+      'Use after create_card_payment_method. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetPaymentMethodSchema,
+    async (args) => handleGetPaymentMethod(args),
   );
 }
