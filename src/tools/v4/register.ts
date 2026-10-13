@@ -14,6 +14,16 @@ import {
   CreateChargeSchema,
   type CreateChargeArgs,
 } from './createCharge.js';
+import {
+  getCharge,
+  GetChargeSchema,
+  type GetChargeArgs,
+} from './getCharge.js';
+import {
+  createRefund,
+  CreateRefundSchema,
+  type CreateRefundArgs,
+} from './createRefund.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -50,6 +60,24 @@ export async function handleCreateCharge(args: CreateChargeArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error creating charge: ${message}`);
+  }
+}
+
+export async function handleGetCharge(args: GetChargeArgs) {
+  try {
+    return await getCharge(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving charge: ${message}`);
+  }
+}
+
+export async function handleCreateRefund(args: CreateRefundArgs) {
+  try {
+    return await createRefund(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating refund: ${message}`);
   }
 }
 
@@ -90,5 +118,27 @@ export function registerV4Tools() {
     ].join(' '),
     CreateChargeSchema,
     async (args) => handleCreateCharge(args),
+  );
+
+  server.tool(
+    'get_charge',
+    [
+      'Retrieve a Flutterwave v4 charge by id (GET /charges/{id}).',
+      'Use after create_charge to poll status. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetChargeSchema,
+    async (args) => handleGetCharge(args),
+  );
+
+  server.tool(
+    'create_refund',
+    [
+      'Create a Flutterwave v4 refund (POST /refunds).',
+      'Requires charge_id from create_charge, amount, and reason',
+      '(duplicate | fraudulent | requested_by_customer | expired_uncaptured_charge).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateRefundSchema,
+    async (args) => handleCreateRefund(args),
   );
 }

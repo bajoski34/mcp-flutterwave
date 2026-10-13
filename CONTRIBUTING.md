@@ -130,13 +130,15 @@ When adding new Flutterwave API endpoints:
 
 v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
 
-`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register only the v4 tool set: `create_customer`, `create_card_payment_method`, and `create_charge`. The usual flow is customer → card payment method → charge. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
+`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register only the v4 tool set: `create_customer`, `create_card_payment_method`, `create_charge`, `get_charge`, and `create_refund`. The usual flow is customer → card payment method → charge → (optional) get_charge / create_refund. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
 
 Notes on the current v4 codegen state:
 
 - `create_customer` validates with `CustomersCreateBody` from `src/client/generated/v4/customers.zod.ts`.
 - `create_card_payment_method` validates the encrypted request body with `PaymentMethodsPostBody` from `src/client/generated/v4/payment-methods.zod.ts`. The tool's public arguments stay plaintext; the generated schema describes the wire payload.
 - `create_charge` validates with `ChargesPostBody` from `src/client/generated/v4/charge.zod.ts`.
+- `get_charge` validates the path id with `ChargesGetParams` from `src/client/generated/v4/charges-get.zod.ts`.
+- `create_refund` validates with `RefundsPostBody` from `src/client/generated/v4/refunds.zod.ts`.
 - Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
 - After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 
