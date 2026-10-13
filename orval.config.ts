@@ -65,4 +65,8 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/refunds-get.yaml" },
     output: zodOutput("./src/client/generated/v4/refunds-get.zod.ts"),
   },
+  flutterwaveV4PaymentMethodsGet: {
+    input: { target: "./src/client/specs/v4/payment-methods-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/payment-methods-get.zod.ts"),
+  },
 });

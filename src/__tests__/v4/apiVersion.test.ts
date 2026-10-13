@@ -20,6 +20,7 @@ describe('v4 api version selection', () => {
       'create_refund',
       'get_customer',
       'get_refund',
+      'get_payment_method',
     ]);
   });
 

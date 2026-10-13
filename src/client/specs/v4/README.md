@@ -7,6 +7,7 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `charge.yaml` | `reference/charges_post.md` |
 | `charges-get.yaml` | `v4/reference/charges_get` |
 | `payment-methods.yaml` | `reference/payment_methods_post.md` |
+| `payment-methods-get.yaml` | `v4/reference/payment_methods_get` |
 | `customers.yaml` | `v4/reference/customers_create` |
 | `customers-get.yaml` | `v4/reference/customers_get` |
 | `refunds.yaml` | `v4/reference/refunds_post` |
