@@ -41,7 +41,11 @@ export const V3_ACCEPTED_TOOLS = [
   'convert_to_stablecoin',
 ] as const;
 
-export const V4_ACCEPTED_TOOLS = ['create_card_payment_method'] as const;
+export const V4_ACCEPTED_TOOLS = [
+  'create_customer',
+  'create_card_payment_method',
+  'create_charge',
+] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {
   return version === 'v4' ? V4_ACCEPTED_TOOLS : V3_ACCEPTED_TOOLS;

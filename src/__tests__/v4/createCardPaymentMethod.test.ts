@@ -141,7 +141,7 @@ describe('createCardPaymentMethod', () => {
 
     const result = await handleCreateCardPaymentMethod(CARD);
 
-    expect(result.isError).toBe(true);
+    expect('isError' in result && result.isError).toBe(true);
     expect(result.content[0]?.text).toContain('FLW_ENCRYPTION_KEY_V4');
     expect(mockFlwV4Fetch).not.toHaveBeenCalled();
   });

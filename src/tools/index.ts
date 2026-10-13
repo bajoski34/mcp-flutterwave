@@ -1,9 +1,9 @@
-import { registerV4PaymentMethodTools } from './v4/register.js';
+import { registerV4Tools } from './v4/register.js';
 import { getApiVersion } from '../config/apiVersion.js';
 
 export async function registerTools() {
   if (getApiVersion() === 'v4') {
-    registerV4PaymentMethodTools();
+    registerV4Tools();
     return;
   }
 

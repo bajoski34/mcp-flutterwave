@@ -4,6 +4,16 @@ import {
   CreateCardPaymentMethodSchema,
   type CreateCardPaymentMethodArgs,
 } from './createCardPaymentMethod.js';
+import {
+  createCustomer,
+  CreateCustomerSchema,
+  type CreateCustomerArgs,
+} from './createCustomer.js';
+import {
+  createCharge,
+  CreateChargeSchema,
+  type CreateChargeArgs,
+} from './createCharge.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -25,7 +35,41 @@ export async function handleCreateCardPaymentMethod(
   }
 }
 
+export async function handleCreateCustomer(args: CreateCustomerArgs) {
+  try {
+    return await createCustomer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating customer: ${message}`);
+  }
+}
+
+export async function handleCreateCharge(args: CreateChargeArgs) {
+  try {
+    return await createCharge(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating charge: ${message}`);
+  }
+}
+
 export function registerV4PaymentMethodTools() {
+  registerV4Tools();
+}
+
+export function registerV4Tools() {
+  server.tool(
+    'create_customer',
+    [
+      'Create a Flutterwave v4 customer (POST /customers).',
+      'Email is required. Optional name, phone, and address improve later charge flows.',
+      'Use the returned customer id with create_card_payment_method and create_charge.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateCustomerSchema,
+    async (args) => handleCreateCustomer(args),
+  );
+
   server.tool(
     'create_card_payment_method',
     [
@@ -35,5 +79,16 @@ export function registerV4PaymentMethodTools() {
     ].join(' '),
     CreateCardPaymentMethodSchema,
     async (args) => handleCreateCardPaymentMethod(args),
+  );
+
+  server.tool(
+    'create_charge',
+    [
+      'Create a Flutterwave v4 charge (POST /charges).',
+      'Requires customer_id from create_customer and payment_method_id from create_card_payment_method.',
+      'Also pass amount, currency, and a unique reference. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateChargeSchema,
+    async (args) => handleCreateCharge(args),
   );
 }
