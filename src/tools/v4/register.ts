@@ -24,6 +24,16 @@ import {
   CreateRefundSchema,
   type CreateRefundArgs,
 } from './createRefund.js';
+import {
+  getCustomer,
+  GetCustomerSchema,
+  type GetCustomerArgs,
+} from './getCustomer.js';
+import {
+  getRefund,
+  GetRefundSchema,
+  type GetRefundArgs,
+} from './getRefund.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -78,6 +88,24 @@ export async function handleCreateRefund(args: CreateRefundArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error creating refund: ${message}`);
+  }
+}
+
+export async function handleGetCustomer(args: GetCustomerArgs) {
+  try {
+    return await getCustomer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving customer: ${message}`);
+  }
+}
+
+export async function handleGetRefund(args: GetRefundArgs) {
+  try {
+    return await getRefund(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving refund: ${message}`);
   }
 }
 
@@ -140,5 +168,25 @@ export function registerV4Tools() {
     ].join(' '),
     CreateRefundSchema,
     async (args) => handleCreateRefund(args),
+  );
+
+  server.tool(
+    'get_customer',
+    [
+      'Retrieve a Flutterwave v4 customer by id (GET /customers/{id}).',
+      'Use after create_customer. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetCustomerSchema,
+    async (args) => handleGetCustomer(args),
+  );
+
+  server.tool(
+    'get_refund',
+    [
+      'Retrieve a Flutterwave v4 refund by id (GET /refunds/{id}).',
+      'Use after create_refund to poll status. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetRefundSchema,
+    async (args) => handleGetRefund(args),
   );
 }
