@@ -101,6 +101,36 @@ import {
   ResolveWalletAccountSchema,
   type ResolveWalletAccountArgs,
 } from './resolveWalletAccount.js';
+import {
+  listSettlements,
+  ListSettlementsSchema,
+  type ListSettlementsArgs,
+} from './listSettlements.js';
+import {
+  getSettlement,
+  GetSettlementSchema,
+  type GetSettlementArgs,
+} from './getSettlement.js';
+import {
+  listChargebacks,
+  ListChargebacksSchema,
+  type ListChargebacksArgs,
+} from './listChargebacks.js';
+import {
+  getChargeback,
+  GetChargebackSchema,
+  type GetChargebackArgs,
+} from './getChargeback.js';
+import {
+  createChargeback,
+  CreateChargebackSchema,
+  type CreateChargebackArgs,
+} from './createChargeback.js';
+import {
+  updateChargeback,
+  UpdateChargebackSchema,
+  type UpdateChargebackArgs,
+} from './updateChargeback.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -299,6 +329,60 @@ export async function handleResolveWalletAccount(args: ResolveWalletAccountArgs)
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error resolving wallet account: ${message}`);
+  }
+}
+
+export async function handleListSettlements(args: ListSettlementsArgs) {
+  try {
+    return await listSettlements(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing settlements: ${message}`);
+  }
+}
+
+export async function handleGetSettlement(args: GetSettlementArgs) {
+  try {
+    return await getSettlement(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving settlement: ${message}`);
+  }
+}
+
+export async function handleListChargebacks(args: ListChargebacksArgs) {
+  try {
+    return await listChargebacks(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing chargebacks: ${message}`);
+  }
+}
+
+export async function handleGetChargeback(args: GetChargebackArgs) {
+  try {
+    return await getChargeback(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving chargeback: ${message}`);
+  }
+}
+
+export async function handleCreateChargeback(args: CreateChargebackArgs) {
+  try {
+    return await createChargeback(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating chargeback: ${message}`);
+  }
+}
+
+export async function handleUpdateChargeback(args: UpdateChargebackArgs) {
+  try {
+    return await updateChargeback(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating chargeback: ${message}`);
   }
 }
 
@@ -546,5 +630,69 @@ export function registerV4Tools() {
     ].join(' '),
     ResolveWalletAccountSchema,
     async (args) => handleResolveWalletAccount(args),
+  );
+
+  server.tool(
+    'list_settlements',
+    [
+      'List Flutterwave v4 settlements (GET /settlements).',
+      'Optional from/to range. Page size must be 10 to 50.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListSettlementsSchema,
+    async (args) => handleListSettlements(args),
+  );
+
+  server.tool(
+    'get_settlement',
+    [
+      'Retrieve a Flutterwave v4 settlement by id (GET /settlements/{id}).',
+      'Optional page and size select settlement lines.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetSettlementSchema,
+    async (args) => handleGetSettlement(args),
+  );
+
+  server.tool(
+    'list_chargebacks',
+    [
+      'List Flutterwave v4 chargebacks (GET /chargebacks).',
+      'Optional from/to range. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListChargebacksSchema,
+    async (args) => handleListChargebacks(args),
+  );
+
+  server.tool(
+    'get_chargeback',
+    [
+      'Retrieve a Flutterwave v4 chargeback by id (GET /chargebacks/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetChargebackSchema,
+    async (args) => handleGetChargeback(args),
+  );
+
+  server.tool(
+    'create_chargeback',
+    [
+      'Create a Flutterwave v4 chargeback (POST /chargebacks).',
+      'Requires charge_id, amount, type (local | international), and expiry in hours.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateChargebackSchema,
+    async (args) => handleCreateChargeback(args),
+  );
+
+  server.tool(
+    'update_chargeback',
+    [
+      'Update a Flutterwave v4 chargeback (PUT /chargebacks/{id}).',
+      'Status is accepted, declined, or partially-accepted.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateChargebackSchema,
+    async (args) => handleUpdateChargeback(args),
   );
 }
