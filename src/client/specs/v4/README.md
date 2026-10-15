@@ -18,6 +18,10 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `charges-list.yaml` | `v4/reference/charges_list` |
 | `charges-update.yaml` | `v4/reference/charges_put` |
 | `refunds-list.yaml` | `v4/reference/refunds_list` |
+| `payment-methods-list.yaml` | `v4/reference/payment_methods_list` |
+| `fees.yaml` | `v4/reference/fees_get` |
+| `banks.yaml` | `v4/reference/banks_get` |
+| `mobile-networks.yaml` | `v4/reference/mobile_networks_get` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 

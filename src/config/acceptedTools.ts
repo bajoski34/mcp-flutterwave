@@ -56,6 +56,10 @@ export const V4_ACCEPTED_TOOLS = [
   'list_charges',
   'update_charge',
   'list_refunds',
+  'list_payment_methods',
+  'get_fees',
+  'get_banks',
+  'get_mobile_networks',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {
