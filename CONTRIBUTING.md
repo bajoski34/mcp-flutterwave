@@ -130,7 +130,7 @@ When adding new Flutterwave API endpoints:
 
 v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
 
-`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register only the v4 tool set: `create_customer`, `create_card_payment_method`, `create_charge`, `get_charge`, `create_refund`, `get_customer`, `get_refund`, and `get_payment_method`. The usual flow is customer → card payment method → charge → (optional) get_* / create_refund. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
+`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, and refund, plus `list_customers`, `search_customers`, `update_customer`, `list_charges`, `update_charge`, and `list_refunds`. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
 
 Notes on the current v4 codegen state:
 
@@ -142,6 +142,12 @@ Notes on the current v4 codegen state:
 - `get_customer` validates the path id with `CustomersGetParams` from `src/client/generated/v4/customers-get.zod.ts`.
 - `get_refund` validates the path id with `RefundsGetParams` from `src/client/generated/v4/refunds-get.zod.ts`.
 - `get_payment_method` validates the path id with `PaymentMethodsGetParams` from `src/client/generated/v4/payment-methods-get.zod.ts`.
+- `list_customers` validates with `CustomersListQueryParams` from `src/client/generated/v4/customers-list.zod.ts`.
+- `search_customers` validates with `CustomersSearchBody` and `CustomersSearchQueryParams` from `src/client/generated/v4/customers-search.zod.ts`.
+- `update_customer` validates with `CustomersPutBody` from `src/client/generated/v4/customers-update.zod.ts`.
+- `list_charges` validates with `ChargesListQueryParams` from `src/client/generated/v4/charges-list.zod.ts`.
+- `update_charge` validates with `ChargesPutBody` from `src/client/generated/v4/charges-update.zod.ts`.
+- `list_refunds` validates with `RefundsListQueryParams` from `src/client/generated/v4/refunds-list.zod.ts`.
 - Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
 - After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 

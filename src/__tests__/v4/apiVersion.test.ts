@@ -21,6 +21,12 @@ describe('v4 api version selection', () => {
       'get_customer',
       'get_refund',
       'get_payment_method',
+      'list_customers',
+      'search_customers',
+      'update_customer',
+      'list_charges',
+      'update_charge',
+      'list_refunds',
     ]);
   });
 

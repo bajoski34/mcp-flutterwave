@@ -50,6 +50,12 @@ export const V4_ACCEPTED_TOOLS = [
   'get_customer',
   'get_refund',
   'get_payment_method',
+  'list_customers',
+  'search_customers',
+  'update_customer',
+  'list_charges',
+  'update_charge',
+  'list_refunds',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {
