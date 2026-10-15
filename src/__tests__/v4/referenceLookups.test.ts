@@ -56,6 +56,7 @@ describe('reference lookups', () => {
     await expect(getBanks({ country: 'GB' })).rejects.toThrow(
       'generated schema validation',
     );
+    expect(mockFlwV4Fetch).not.toHaveBeenCalled();
   });
 
   it('lists mobile networks for a supported country', async () => {
@@ -69,8 +70,46 @@ describe('reference lookups', () => {
     );
   });
 
+  it('rejects a mobile network country outside the spec enum', async () => {
+    const { getMobileNetworks } = await import(
+      '../../tools/v4/getMobileNetworks.js'
+    );
+    await expect(getMobileNetworks({ country: 'NG' })).rejects.toThrow(
+      'generated schema validation',
+    );
+    expect(mockFlwV4Fetch).not.toHaveBeenCalled();
+  });
+
+  it('throws when listing payment methods returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+    const { listPaymentMethods } = await import(
+      '../../tools/v4/listPaymentMethods.js'
+    );
+    await expect(listPaymentMethods({})).rejects.toThrow(
+      'Flutterwave v4 list payment methods request failed: 500',
+    );
+  });
+
+  it('returns isError when listing payment methods fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+    const { handleListPaymentMethods } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleListPaymentMethods({});
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('500');
+  });
+
+  it('throws when the fee call returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 501 }));
+    const { getFees } = await import('../../tools/v4/getFees.js');
+    await expect(
+      getFees({ amount: 100, currency: 'NGN', payment_method: 'card' }),
+    ).rejects.toThrow('Flutterwave v4 get fees request failed: 501');
+  });
+
   it('returns isError when the fee call fails', async () => {
-    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 501 }));
     const { handleGetFees } = await import('../../tools/v4/register.js');
     const result = await handleGetFees({
       amount: 100,
@@ -78,5 +117,42 @@ describe('reference lookups', () => {
       payment_method: 'card',
     });
     expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('501');
+  });
+
+  it('throws when listing banks returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+    const { getBanks } = await import('../../tools/v4/getBanks.js');
+    await expect(getBanks({ country: 'NG' })).rejects.toThrow(
+      'Flutterwave v4 get banks request failed: 500',
+    );
+  });
+
+  it('returns isError when listing banks fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+    const { handleGetBanks } = await import('../../tools/v4/register.js');
+    const result = await handleGetBanks({ country: 'NG' });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('500');
+  });
+
+  it('throws when listing mobile networks returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+    const { getMobileNetworks } = await import(
+      '../../tools/v4/getMobileNetworks.js'
+    );
+    await expect(getMobileNetworks({ country: 'GH' })).rejects.toThrow(
+      'Flutterwave v4 get mobile networks request failed: 500',
+    );
+  });
+
+  it('returns isError when listing mobile networks fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+    const { handleGetMobileNetworks } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleGetMobileNetworks({ country: 'GH' });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('500');
   });
 });
