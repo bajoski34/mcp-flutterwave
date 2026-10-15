@@ -63,6 +63,7 @@ describe('wallet tools', () => {
     await expect(
       getWalletStatement({ currency: 'XXX' as 'NGN' }),
     ).rejects.toThrow('generated schema validation');
+    expect(mockFlwV4Fetch).not.toHaveBeenCalled();
   });
 
   it('resolves a flutterwave wallet identifier', async () => {
@@ -82,6 +83,26 @@ describe('wallet tools', () => {
     });
   });
 
+  it('rejects an empty wallet identifier before calling the API', async () => {
+    const { resolveWalletAccount } = await import(
+      '../../tools/v4/resolveWalletAccount.js'
+    );
+    await expect(
+      resolveWalletAccount({ provider: 'flutterwave', identifier: '' }),
+    ).rejects.toThrow('tool schema validation');
+    expect(mockFlwV4Fetch).not.toHaveBeenCalled();
+  });
+
+  it('throws when fetching a balance returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { getWalletBalance } = await import(
+      '../../tools/v4/getWalletBalance.js'
+    );
+    await expect(getWalletBalance({ currency: 'NGN' })).rejects.toThrow(
+      'Flutterwave v4 get wallet balance request failed: 404',
+    );
+  });
+
   it('returns isError when the balance call fails', async () => {
     mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
     const { handleGetWalletBalance } = await import(
@@ -89,5 +110,71 @@ describe('wallet tools', () => {
     );
     const result = await handleGetWalletBalance({ currency: 'NGN' });
     expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('404');
+  });
+
+  it('throws when listing balances returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+    const { listWalletBalances } = await import(
+      '../../tools/v4/listWalletBalances.js'
+    );
+    await expect(listWalletBalances({})).rejects.toThrow(
+      'Flutterwave v4 list wallet balances request failed: 500',
+    );
+  });
+
+  it('returns isError when listing balances fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+    const { handleListWalletBalances } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleListWalletBalances({});
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('500');
+  });
+
+  it('throws when the statement call returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { getWalletStatement } = await import(
+      '../../tools/v4/getWalletStatement.js'
+    );
+    await expect(getWalletStatement({ currency: 'NGN' })).rejects.toThrow(
+      'Flutterwave v4 get wallet statement request failed: 404',
+    );
+  });
+
+  it('returns isError when the statement call fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { handleGetWalletStatement } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleGetWalletStatement({ currency: 'NGN' });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('404');
+  });
+
+  it('throws when resolving a wallet returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { resolveWalletAccount } = await import(
+      '../../tools/v4/resolveWalletAccount.js'
+    );
+    await expect(
+      resolveWalletAccount({ provider: 'flutterwave', identifier: 'wallet-1' }),
+    ).rejects.toThrow(
+      'Flutterwave v4 resolve wallet account request failed: 400',
+    );
+  });
+
+  it('returns isError when resolving a wallet fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { handleResolveWalletAccount } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleResolveWalletAccount({
+      provider: 'flutterwave',
+      identifier: 'wallet-1',
+    });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('400');
   });
 });
