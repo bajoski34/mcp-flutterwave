@@ -31,6 +31,10 @@ describe('v4 api version selection', () => {
       'get_fees',
       'get_banks',
       'get_mobile_networks',
+      'get_wallet_balance',
+      'list_wallet_balances',
+      'get_wallet_statement',
+      'resolve_wallet_account',
     ]);
   });
 

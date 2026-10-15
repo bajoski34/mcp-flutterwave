@@ -109,4 +109,20 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/mobile-networks.yaml" },
     output: zodOutput("./src/client/generated/v4/mobile-networks.zod.ts"),
   },
+  flutterwaveV4WalletBalance: {
+    input: { target: "./src/client/specs/v4/wallet-balance.yaml" },
+    output: zodOutput("./src/client/generated/v4/wallet-balance.zod.ts"),
+  },
+  flutterwaveV4WalletBalances: {
+    input: { target: "./src/client/specs/v4/wallet-balances.yaml" },
+    output: zodOutput("./src/client/generated/v4/wallet-balances.zod.ts"),
+  },
+  flutterwaveV4WalletStatement: {
+    input: { target: "./src/client/specs/v4/wallet-statement.yaml" },
+    output: zodOutput("./src/client/generated/v4/wallet-statement.zod.ts"),
+  },
+  flutterwaveV4WalletLookup: {
+    input: { target: "./src/client/specs/v4/wallet-lookup.yaml" },
+    output: zodOutput("./src/client/generated/v4/wallet-lookup.zod.ts"),
+  },
 });

@@ -22,6 +22,10 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `fees.yaml` | `v4/reference/fees_get` |
 | `banks.yaml` | `v4/reference/banks_get` |
 | `mobile-networks.yaml` | `v4/reference/mobile_networks_get` |
+| `wallet-balance.yaml` | `v4/reference/fetch_currency_wallet_balance` |
+| `wallet-balances.yaml` | `v4/reference/fetch_wallet_balances` |
+| `wallet-statement.yaml` | `v4/reference/get_wallet_statement` |
+| `wallet-lookup.yaml` | `v4/reference/wallet_account_resolve_post` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 

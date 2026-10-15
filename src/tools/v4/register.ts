@@ -81,6 +81,26 @@ import {
   GetMobileNetworksSchema,
   type GetMobileNetworksArgs,
 } from './getMobileNetworks.js';
+import {
+  getWalletBalance,
+  GetWalletBalanceSchema,
+  type GetWalletBalanceArgs,
+} from './getWalletBalance.js';
+import {
+  listWalletBalances,
+  ListWalletBalancesSchema,
+  type ListWalletBalancesArgs,
+} from './listWalletBalances.js';
+import {
+  getWalletStatement,
+  GetWalletStatementSchema,
+  type GetWalletStatementArgs,
+} from './getWalletStatement.js';
+import {
+  resolveWalletAccount,
+  ResolveWalletAccountSchema,
+  type ResolveWalletAccountArgs,
+} from './resolveWalletAccount.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -243,6 +263,42 @@ export async function handleGetMobileNetworks(args: GetMobileNetworksArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error retrieving mobile networks: ${message}`);
+  }
+}
+
+export async function handleGetWalletBalance(args: GetWalletBalanceArgs) {
+  try {
+    return await getWalletBalance(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving wallet balance: ${message}`);
+  }
+}
+
+export async function handleListWalletBalances(args: ListWalletBalancesArgs) {
+  try {
+    return await listWalletBalances(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing wallet balances: ${message}`);
+  }
+}
+
+export async function handleGetWalletStatement(args: GetWalletStatementArgs) {
+  try {
+    return await getWalletStatement(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving wallet statement: ${message}`);
+  }
+}
+
+export async function handleResolveWalletAccount(args: ResolveWalletAccountArgs) {
+  try {
+    return await resolveWalletAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error resolving wallet account: ${message}`);
   }
 }
 
@@ -448,5 +504,47 @@ export function registerV4Tools() {
     ].join(' '),
     GetMobileNetworksSchema,
     async (args) => handleGetMobileNetworks(args),
+  );
+
+  server.tool(
+    'get_wallet_balance',
+    [
+      'Fetch the Flutterwave v4 wallet balance for one currency (GET /wallets/balances/{currency}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetWalletBalanceSchema,
+    async (args) => handleGetWalletBalance(args),
+  );
+
+  server.tool(
+    'list_wallet_balances',
+    [
+      'Fetch Flutterwave v4 wallet balances for every currency (GET /wallets/balances).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListWalletBalancesSchema,
+    async () => handleListWalletBalances({}),
+  );
+
+  server.tool(
+    'get_wallet_statement',
+    [
+      'Retrieve a Flutterwave v4 wallet statement (GET /wallets/statement).',
+      'Currency is required. Optional from, to, size, and cursors.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetWalletStatementSchema,
+    async (args) => handleGetWalletStatement(args),
+  );
+
+  server.tool(
+    'resolve_wallet_account',
+    [
+      'Resolve a Flutterwave v4 wallet account (POST /wallets/account-resolve).',
+      'Provider is currently flutterwave. Pass the provider identifier.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ResolveWalletAccountSchema,
+    async (args) => handleResolveWalletAccount(args),
   );
 }
