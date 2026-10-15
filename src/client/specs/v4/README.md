@@ -12,6 +12,12 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `customers-get.yaml` | `v4/reference/customers_get` |
 | `refunds.yaml` | `v4/reference/refunds_post` |
 | `refunds-get.yaml` | `v4/reference/refunds_get` |
+| `customers-list.yaml` | `v4/reference/customers_list` |
+| `customers-search.yaml` | `v4/reference/customers_search` |
+| `customers-update.yaml` | `v4/reference/customers_put` |
+| `charges-list.yaml` | `v4/reference/charges_list` |
+| `charges-update.yaml` | `v4/reference/charges_put` |
+| `refunds-list.yaml` | `v4/reference/refunds_list` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 

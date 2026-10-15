@@ -69,4 +69,28 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/payment-methods-get.yaml" },
     output: zodOutput("./src/client/generated/v4/payment-methods-get.zod.ts"),
   },
+  flutterwaveV4CustomersList: {
+    input: { target: "./src/client/specs/v4/customers-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/customers-list.zod.ts"),
+  },
+  flutterwaveV4CustomersSearch: {
+    input: { target: "./src/client/specs/v4/customers-search.yaml" },
+    output: zodOutput("./src/client/generated/v4/customers-search.zod.ts"),
+  },
+  flutterwaveV4CustomersUpdate: {
+    input: { target: "./src/client/specs/v4/customers-update.yaml" },
+    output: zodOutput("./src/client/generated/v4/customers-update.zod.ts"),
+  },
+  flutterwaveV4ChargesList: {
+    input: { target: "./src/client/specs/v4/charges-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/charges-list.zod.ts"),
+  },
+  flutterwaveV4ChargesUpdate: {
+    input: { target: "./src/client/specs/v4/charges-update.yaml" },
+    output: zodOutput("./src/client/generated/v4/charges-update.zod.ts"),
+  },
+  flutterwaveV4RefundsList: {
+    input: { target: "./src/client/specs/v4/refunds-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/refunds-list.zod.ts"),
+  },
 });

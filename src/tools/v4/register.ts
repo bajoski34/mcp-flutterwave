@@ -39,6 +39,36 @@ import {
   GetPaymentMethodSchema,
   type GetPaymentMethodArgs,
 } from './getPaymentMethod.js';
+import {
+  listCustomers,
+  ListCustomersSchema,
+  type ListCustomersArgs,
+} from './listCustomers.js';
+import {
+  searchCustomers,
+  SearchCustomersSchema,
+  type SearchCustomersArgs,
+} from './searchCustomers.js';
+import {
+  updateCustomer,
+  UpdateCustomerSchema,
+  type UpdateCustomerArgs,
+} from './updateCustomer.js';
+import {
+  listCharges,
+  ListChargesSchema,
+  type ListChargesArgs,
+} from './listCharges.js';
+import {
+  updateCharge,
+  UpdateChargeSchema,
+  type UpdateChargeArgs,
+} from './updateCharge.js';
+import {
+  listRefunds,
+  ListRefundsSchema,
+  type ListRefundsArgs,
+} from './listRefunds.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -111,6 +141,60 @@ export async function handleGetRefund(args: GetRefundArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error retrieving refund: ${message}`);
+  }
+}
+
+export async function handleListCustomers(args: ListCustomersArgs) {
+  try {
+    return await listCustomers(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing customers: ${message}`);
+  }
+}
+
+export async function handleSearchCustomers(args: SearchCustomersArgs) {
+  try {
+    return await searchCustomers(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error searching customers: ${message}`);
+  }
+}
+
+export async function handleUpdateCustomer(args: UpdateCustomerArgs) {
+  try {
+    return await updateCustomer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating customer: ${message}`);
+  }
+}
+
+export async function handleListCharges(args: ListChargesArgs) {
+  try {
+    return await listCharges(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing charges: ${message}`);
+  }
+}
+
+export async function handleUpdateCharge(args: UpdateChargeArgs) {
+  try {
+    return await updateCharge(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating charge: ${message}`);
+  }
+}
+
+export async function handleListRefunds(args: ListRefundsArgs) {
+  try {
+    return await listRefunds(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing refunds: ${message}`);
   }
 }
 
@@ -212,5 +296,68 @@ export function registerV4Tools() {
     ].join(' '),
     GetPaymentMethodSchema,
     async (args) => handleGetPaymentMethod(args),
+  );
+
+  server.tool(
+    'list_customers',
+    [
+      'List Flutterwave v4 customers (GET /customers).',
+      'Page size must be 10 to 50. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListCustomersSchema,
+    async (args) => handleListCustomers(args),
+  );
+
+  server.tool(
+    'search_customers',
+    [
+      'Search Flutterwave v4 customers by email (POST /customers/search).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    SearchCustomersSchema,
+    async (args) => handleSearchCustomers(args),
+  );
+
+  server.tool(
+    'update_customer',
+    [
+      'Update a Flutterwave v4 customer (PUT /customers/{id}).',
+      'Pass at least one of name, phone, address, or meta.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateCustomerSchema,
+    async (args) => handleUpdateCustomer(args),
+  );
+
+  server.tool(
+    'list_charges',
+    [
+      'List Flutterwave v4 charges (GET /charges).',
+      'Optional filters: status, reference, customer_id, payment_method_id, from, to.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListChargesSchema,
+    async (args) => handleListCharges(args),
+  );
+
+  server.tool(
+    'update_charge',
+    [
+      'Update a Flutterwave v4 charge (PUT /charges/{id}).',
+      'Pass meta and/or an authorization object (otp, pin, external_3ds, or avs).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateChargeSchema,
+    async (args) => handleUpdateCharge(args),
+  );
+
+  server.tool(
+    'list_refunds',
+    [
+      'List Flutterwave v4 refunds (GET /refunds).',
+      'Optional from/to range. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListRefundsSchema,
+    async (args) => handleListRefunds(args),
   );
 }
