@@ -35,6 +35,12 @@ describe('v4 api version selection', () => {
       'list_wallet_balances',
       'get_wallet_statement',
       'resolve_wallet_account',
+      'list_settlements',
+      'get_settlement',
+      'list_chargebacks',
+      'get_chargeback',
+      'create_chargeback',
+      'update_chargeback',
     ]);
   });
 

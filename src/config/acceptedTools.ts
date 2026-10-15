@@ -64,6 +64,12 @@ export const V4_ACCEPTED_TOOLS = [
   'list_wallet_balances',
   'get_wallet_statement',
   'resolve_wallet_account',
+  'list_settlements',
+  'get_settlement',
+  'list_chargebacks',
+  'get_chargeback',
+  'create_chargeback',
+  'update_chargeback',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {

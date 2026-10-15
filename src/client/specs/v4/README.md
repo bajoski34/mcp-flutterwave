@@ -26,6 +26,12 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `wallet-balances.yaml` | `v4/reference/fetch_wallet_balances` |
 | `wallet-statement.yaml` | `v4/reference/get_wallet_statement` |
 | `wallet-lookup.yaml` | `v4/reference/wallet_account_resolve_post` |
+| `settlements-list.yaml` | `v4/reference/settlement_list` |
+| `settlements-get.yaml` | `v4/reference/settlement_get` |
+| `chargebacks-list.yaml` | `v4/reference/chargebacks_list` |
+| `chargebacks-get.yaml` | `v4/reference/chargebacks_get_by_id` |
+| `chargebacks.yaml` | `v4/reference/chargebacks_post` |
+| `chargebacks-update.yaml` | `v4/reference/chargeback_put` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 

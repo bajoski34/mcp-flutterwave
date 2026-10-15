@@ -130,7 +130,7 @@ When adding new Flutterwave API endpoints:
 
 v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
 
-`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, and refund, plus list/search/update reads, reference lookups, and wallet tools `get_wallet_balance`, `list_wallet_balances`, `get_wallet_statement`, and `resolve_wallet_account`. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
+`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, and refund, plus list/search/update reads, reference lookups, wallet tools, and settlement and chargeback tools. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
 
 Notes on the current v4 codegen state:
 
@@ -155,6 +155,12 @@ Notes on the current v4 codegen state:
 - `get_wallet_balance` validates the path currency with `FetchCurrencyWalletBalanceParams` from `src/client/generated/v4/wallet-balance.zod.ts`.
 - `get_wallet_statement` validates with `GetWalletStatementQueryParams` from `src/client/generated/v4/wallet-statement.zod.ts`.
 - `resolve_wallet_account` validates with `WalletAccountResolvePostBody` from `src/client/generated/v4/wallet-lookup.zod.ts`.
+- `list_settlements` validates with `SettlementListQueryParams` from `src/client/generated/v4/settlements-list.zod.ts`.
+- `get_settlement` validates the path id with `SettlementGetParams` from `src/client/generated/v4/settlements-get.zod.ts`.
+- `list_chargebacks` validates with `ChargebacksListQueryParams` from `src/client/generated/v4/chargebacks-list.zod.ts`.
+- `get_chargeback` validates the path id with `ChargebacksGetByIdParams` from `src/client/generated/v4/chargebacks-get.zod.ts`.
+- `create_chargeback` validates with `ChargebacksPostBody` from `src/client/generated/v4/chargebacks.zod.ts`.
+- `update_chargeback` validates with `ChargebackPutBody` from `src/client/generated/v4/chargebacks-update.zod.ts`.
 - Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
 - After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 

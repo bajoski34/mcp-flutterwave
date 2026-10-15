@@ -125,4 +125,28 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/wallet-lookup.yaml" },
     output: zodOutput("./src/client/generated/v4/wallet-lookup.zod.ts"),
   },
+  flutterwaveV4SettlementsList: {
+    input: { target: "./src/client/specs/v4/settlements-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/settlements-list.zod.ts"),
+  },
+  flutterwaveV4SettlementsGet: {
+    input: { target: "./src/client/specs/v4/settlements-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/settlements-get.zod.ts"),
+  },
+  flutterwaveV4ChargebacksList: {
+    input: { target: "./src/client/specs/v4/chargebacks-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/chargebacks-list.zod.ts"),
+  },
+  flutterwaveV4ChargebacksGet: {
+    input: { target: "./src/client/specs/v4/chargebacks-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/chargebacks-get.zod.ts"),
+  },
+  flutterwaveV4Chargebacks: {
+    input: { target: "./src/client/specs/v4/chargebacks.yaml" },
+    output: zodOutput("./src/client/generated/v4/chargebacks.zod.ts"),
+  },
+  flutterwaveV4ChargebacksUpdate: {
+    input: { target: "./src/client/specs/v4/chargebacks-update.yaml" },
+    output: zodOutput("./src/client/generated/v4/chargebacks-update.zod.ts"),
+  },
 });
