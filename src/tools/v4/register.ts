@@ -69,6 +69,18 @@ import {
   ListRefundsSchema,
   type ListRefundsArgs,
 } from './listRefunds.js';
+import {
+  listPaymentMethods,
+  ListPaymentMethodsSchema,
+  type ListPaymentMethodsArgs,
+} from './listPaymentMethods.js';
+import { getFees, GetFeesSchema, type GetFeesArgs } from './getFees.js';
+import { getBanks, GetBanksSchema, type GetBanksArgs } from './getBanks.js';
+import {
+  getMobileNetworks,
+  GetMobileNetworksSchema,
+  type GetMobileNetworksArgs,
+} from './getMobileNetworks.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -195,6 +207,42 @@ export async function handleListRefunds(args: ListRefundsArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error listing refunds: ${message}`);
+  }
+}
+
+export async function handleListPaymentMethods(args: ListPaymentMethodsArgs) {
+  try {
+    return await listPaymentMethods(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing payment methods: ${message}`);
+  }
+}
+
+export async function handleGetFees(args: GetFeesArgs) {
+  try {
+    return await getFees(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving fees: ${message}`);
+  }
+}
+
+export async function handleGetBanks(args: GetBanksArgs) {
+  try {
+    return await getBanks(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving banks: ${message}`);
+  }
+}
+
+export async function handleGetMobileNetworks(args: GetMobileNetworksArgs) {
+  try {
+    return await getMobileNetworks(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving mobile networks: ${message}`);
   }
 }
 
@@ -359,5 +407,46 @@ export function registerV4Tools() {
     ].join(' '),
     ListRefundsSchema,
     async (args) => handleListRefunds(args),
+  );
+
+  server.tool(
+    'list_payment_methods',
+    [
+      'List Flutterwave v4 payment methods (GET /payment-methods).',
+      'Page size must be 10 to 50. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListPaymentMethodsSchema,
+    async (args) => handleListPaymentMethods(args),
+  );
+
+  server.tool(
+    'get_fees',
+    [
+      'Retrieve Flutterwave v4 transaction fees (GET /fees).',
+      'Requires amount, currency, and payment_method. Optional card6, country, and network.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetFeesSchema,
+    async (args) => handleGetFees(args),
+  );
+
+  server.tool(
+    'get_banks',
+    [
+      'List Flutterwave v4 banks for a country (GET /banks?country=).',
+      'Country is an ISO2 code such as NG. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetBanksSchema,
+    async (args) => handleGetBanks(args),
+  );
+
+  server.tool(
+    'get_mobile_networks',
+    [
+      'List Flutterwave v4 mobile networks for a country (GET /mobile-networks?country=).',
+      'Country is an ISO2 code such as GH. Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetMobileNetworksSchema,
+    async (args) => handleGetMobileNetworks(args),
   );
 }

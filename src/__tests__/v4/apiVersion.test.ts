@@ -27,6 +27,10 @@ describe('v4 api version selection', () => {
       'list_charges',
       'update_charge',
       'list_refunds',
+      'list_payment_methods',
+      'get_fees',
+      'get_banks',
+      'get_mobile_networks',
     ]);
   });
 

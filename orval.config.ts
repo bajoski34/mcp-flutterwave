@@ -93,4 +93,20 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/refunds-list.yaml" },
     output: zodOutput("./src/client/generated/v4/refunds-list.zod.ts"),
   },
+  flutterwaveV4PaymentMethodsList: {
+    input: { target: "./src/client/specs/v4/payment-methods-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/payment-methods-list.zod.ts"),
+  },
+  flutterwaveV4Fees: {
+    input: { target: "./src/client/specs/v4/fees.yaml" },
+    output: zodOutput("./src/client/generated/v4/fees.zod.ts"),
+  },
+  flutterwaveV4Banks: {
+    input: { target: "./src/client/specs/v4/banks.yaml" },
+    output: zodOutput("./src/client/generated/v4/banks.zod.ts"),
+  },
+  flutterwaveV4MobileNetworks: {
+    input: { target: "./src/client/specs/v4/mobile-networks.yaml" },
+    output: zodOutput("./src/client/generated/v4/mobile-networks.zod.ts"),
+  },
 });
