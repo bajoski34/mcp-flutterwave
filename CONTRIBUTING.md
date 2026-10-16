@@ -106,7 +106,7 @@ src/
    });
    ```
 
-3. **Register the tool** in `src/registered-tools.ts`
+3. **Register the tool** in `src/tools/index.ts` (v4 tools go through `src/tools/v4/register.ts` and `V4_ACCEPTED_TOOLS`)
 
 4. **Update documentation** and tool lists in relevant files
 
@@ -219,13 +219,7 @@ docs: update README with new tool examples
 
 ## Supported Tools
 
-Current tools that can be extended or improved:
-
-- **Transactions**: Get transaction details, resend webhooks
-- **Checkout**: Create payment links, disable links
-- **Plans**: Create and retrieve subscription plans
-- **Refunds**: Process transaction refunds
-- **Subscriptions**: Manage customer subscriptions
+The live names are `V3_ACCEPTED_TOOLS` and `V4_ACCEPTED_TOOLS` in `src/config/acceptedTools.ts`. The README lists both. `FLW_API_VERSION` chooses which list the process registers. Default is v3.
 
 ## Common Issues and Solutions
 
