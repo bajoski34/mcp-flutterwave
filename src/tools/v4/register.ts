@@ -131,6 +131,147 @@ import {
   UpdateChargebackSchema,
   type UpdateChargebackArgs,
 } from './updateChargeback.js';
+import {
+  createOrder,
+  CreateOrderSchema,
+  type CreateOrderArgs,
+} from './createOrder.js';
+import { getOrder, GetOrderSchema, type GetOrderArgs } from './getOrder.js';
+import {
+  createVirtualAccount,
+  CreateVirtualAccountSchema,
+  type CreateVirtualAccountArgs,
+} from './createVirtualAccount.js';
+import {
+  getVirtualAccount,
+  GetVirtualAccountSchema,
+  type GetVirtualAccountArgs,
+} from './getVirtualAccount.js';
+import {
+  quoteTransferRate,
+  QuoteTransferRateSchema,
+  type QuoteTransferRateArgs,
+} from './quoteTransferRate.js';
+import {
+  getTransferRate,
+  GetTransferRateSchema,
+  type GetTransferRateArgs,
+} from './getTransferRate.js';
+import {
+  createOrchestratorCharge,
+  CreateOrchestratorChargeSchema,
+  type CreateOrchestratorChargeArgs,
+} from './createOrchestratorCharge.js';
+import {
+  createOrchestratorOrder,
+  CreateOrchestratorOrderSchema,
+  type CreateOrchestratorOrderArgs,
+} from './createOrchestratorOrder.js';
+import {
+  createOrchestratorTransfer,
+  CreateOrchestratorTransferSchema,
+  type CreateOrchestratorTransferArgs,
+} from './createOrchestratorTransfer.js';
+import {
+  resendWebhook,
+  ResendWebhookSchema,
+  type ResendWebhookArgs,
+} from './resendWebhook.js';
+import {
+  getBankBranches,
+  GetBankBranchesSchema,
+  type GetBankBranchesArgs,
+} from './getBankBranches.js';
+import {
+  resolveBankAccount,
+  ResolveBankAccountSchema,
+  type ResolveBankAccountArgs,
+} from './resolveBankAccount.js';
+import {
+  listOrders,
+  ListOrdersSchema,
+  type ListOrdersArgs,
+} from './listOrders.js';
+import {
+  updateOrder,
+  UpdateOrderSchema,
+  type UpdateOrderArgs,
+} from './updateOrder.js';
+import {
+  listVirtualAccounts,
+  ListVirtualAccountsSchema,
+  type ListVirtualAccountsArgs,
+} from './listVirtualAccounts.js';
+import {
+  updateVirtualAccount,
+  UpdateVirtualAccountSchema,
+  type UpdateVirtualAccountArgs,
+} from './updateVirtualAccount.js';
+import {
+  listTransferRecipients,
+  ListTransferRecipientsSchema,
+  type ListTransferRecipientsArgs,
+} from './listTransferRecipients.js';
+import {
+  createTransferRecipient,
+  CreateTransferRecipientSchema,
+  type CreateTransferRecipientArgs,
+} from './createTransferRecipient.js';
+import {
+  getTransferRecipient,
+  GetTransferRecipientSchema,
+  type GetTransferRecipientArgs,
+} from './getTransferRecipient.js';
+import {
+  deleteTransferRecipient,
+  DeleteTransferRecipientSchema,
+  type DeleteTransferRecipientArgs,
+} from './deleteTransferRecipient.js';
+import {
+  listTransferSenders,
+  ListTransferSendersSchema,
+  type ListTransferSendersArgs,
+} from './listTransferSenders.js';
+import {
+  createTransferSender,
+  CreateTransferSenderSchema,
+  type CreateTransferSenderArgs,
+} from './createTransferSender.js';
+import {
+  getTransferSender,
+  GetTransferSenderSchema,
+  type GetTransferSenderArgs,
+} from './getTransferSender.js';
+import {
+  deleteTransferSender,
+  DeleteTransferSenderSchema,
+  type DeleteTransferSenderArgs,
+} from './deleteTransferSender.js';
+import {
+  createTransfer,
+  CreateTransferSchema,
+  type CreateTransferArgs,
+} from './createTransfer.js';
+import {
+  getTransfer,
+  GetTransferSchema,
+  type GetTransferArgs,
+} from './getTransfer.js';
+import {
+  listTransfers,
+  ListTransfersSchema,
+  type ListTransfersArgs,
+} from './listTransfers.js';
+import {
+  updateTransfer,
+  UpdateTransferSchema,
+  type UpdateTransferArgs,
+} from './updateTransfer.js';
+import {
+  retryTransfer,
+  RetryTransferSchema,
+  type RetryTransferArgs,
+} from './retryTransfer.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -383,6 +524,281 @@ export async function handleUpdateChargeback(args: UpdateChargebackArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error updating chargeback: ${message}`);
+  }
+}
+
+export async function handleCreateOrder(args: CreateOrderArgs) {
+  try {
+    return await createOrder(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating order: ${message}`);
+  }
+}
+
+export async function handleGetOrder(args: GetOrderArgs) {
+  try {
+    return await getOrder(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving order: ${message}`);
+  }
+}
+
+export async function handleCreateVirtualAccount(args: CreateVirtualAccountArgs) {
+  try {
+    return await createVirtualAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating virtual account: ${message}`);
+  }
+}
+
+export async function handleGetVirtualAccount(args: GetVirtualAccountArgs) {
+  try {
+    return await getVirtualAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving virtual account: ${message}`);
+  }
+}
+
+export async function handleQuoteTransferRate(args: QuoteTransferRateArgs) {
+  try {
+    return await quoteTransferRate(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error quoting transfer rate: ${message}`);
+  }
+}
+
+export async function handleGetTransferRate(args: GetTransferRateArgs) {
+  try {
+    return await getTransferRate(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving transfer rate: ${message}`);
+  }
+}
+
+export async function handleCreateOrchestratorCharge(
+  args: CreateOrchestratorChargeArgs,
+) {
+  try {
+    return await createOrchestratorCharge(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating orchestrator charge: ${message}`);
+  }
+}
+
+export async function handleCreateOrchestratorOrder(
+  args: CreateOrchestratorOrderArgs,
+) {
+  try {
+    return await createOrchestratorOrder(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating orchestrator order: ${message}`);
+  }
+}
+
+export async function handleCreateOrchestratorTransfer(
+  args: CreateOrchestratorTransferArgs,
+) {
+  try {
+    return await createOrchestratorTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(
+      `Error creating orchestrator transfer: ${message}`,
+    );
+  }
+}
+
+export async function handleResendWebhook(args: ResendWebhookArgs) {
+  try {
+    return await resendWebhook(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error resending webhook: ${message}`);
+  }
+}
+
+export async function handleGetBankBranches(args: GetBankBranchesArgs) {
+  try {
+    return await getBankBranches(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving bank branches: ${message}`);
+  }
+}
+
+export async function handleResolveBankAccount(args: ResolveBankAccountArgs) {
+  try {
+    return await resolveBankAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error resolving bank account: ${message}`);
+  }
+}
+
+export async function handleListOrders(args: ListOrdersArgs) {
+  try {
+    return await listOrders(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing orders: ${message}`);
+  }
+}
+
+export async function handleUpdateOrder(args: UpdateOrderArgs) {
+  try {
+    return await updateOrder(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating order: ${message}`);
+  }
+}
+
+export async function handleListVirtualAccounts(args: ListVirtualAccountsArgs) {
+  try {
+    return await listVirtualAccounts(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing virtual accounts: ${message}`);
+  }
+}
+
+export async function handleUpdateVirtualAccount(args: UpdateVirtualAccountArgs) {
+  try {
+    return await updateVirtualAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating virtual account: ${message}`);
+  }
+}
+
+export async function handleListTransferRecipients(
+  args: ListTransferRecipientsArgs,
+) {
+  try {
+    return await listTransferRecipients(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing transfer recipients: ${message}`);
+  }
+}
+
+export async function handleCreateTransferRecipient(
+  args: CreateTransferRecipientArgs,
+) {
+  try {
+    return await createTransferRecipient(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating transfer recipient: ${message}`);
+  }
+}
+
+export async function handleGetTransferRecipient(args: GetTransferRecipientArgs) {
+  try {
+    return await getTransferRecipient(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving transfer recipient: ${message}`);
+  }
+}
+
+export async function handleDeleteTransferRecipient(
+  args: DeleteTransferRecipientArgs,
+) {
+  try {
+    return await deleteTransferRecipient(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error deleting transfer recipient: ${message}`);
+  }
+}
+
+export async function handleListTransferSenders(args: ListTransferSendersArgs) {
+  try {
+    return await listTransferSenders(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing transfer senders: ${message}`);
+  }
+}
+
+export async function handleCreateTransferSender(args: CreateTransferSenderArgs) {
+  try {
+    return await createTransferSender(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating transfer sender: ${message}`);
+  }
+}
+
+export async function handleGetTransferSender(args: GetTransferSenderArgs) {
+  try {
+    return await getTransferSender(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving transfer sender: ${message}`);
+  }
+}
+
+export async function handleDeleteTransferSender(args: DeleteTransferSenderArgs) {
+  try {
+    return await deleteTransferSender(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error deleting transfer sender: ${message}`);
+  }
+}
+
+export async function handleCreateTransfer(args: CreateTransferArgs) {
+  try {
+    return await createTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating transfer: ${message}`);
+  }
+}
+
+export async function handleGetTransfer(args: GetTransferArgs) {
+  try {
+    return await getTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving transfer: ${message}`);
+  }
+}
+
+export async function handleListTransfers(args: ListTransfersArgs) {
+  try {
+    return await listTransfers(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing transfers: ${message}`);
+  }
+}
+
+export async function handleUpdateTransfer(args: UpdateTransferArgs) {
+  try {
+    return await updateTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating transfer: ${message}`);
+  }
+}
+
+export async function handleRetryTransfer(args: RetryTransferArgs) {
+  try {
+    return await retryTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrying transfer: ${message}`);
   }
 }
 
@@ -694,5 +1110,313 @@ export function registerV4Tools() {
     ].join(' '),
     UpdateChargebackSchema,
     async (args) => handleUpdateChargeback(args),
+  );
+
+  server.tool(
+    'create_order',
+    [
+      'Create a Flutterwave v4 order (POST /orders).',
+      'Requires amount, currency, reference, customer_id, and payment_method_id.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateOrderSchema,
+    async (args) => handleCreateOrder(args),
+  );
+
+  server.tool(
+    'get_order',
+    [
+      'Retrieve a Flutterwave v4 order by id (GET /orders/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetOrderSchema,
+    async (args) => handleGetOrder(args),
+  );
+
+  server.tool(
+    'create_virtual_account',
+    [
+      'Create a Flutterwave v4 virtual account (POST /virtual-accounts).',
+      'Requires customer_id, reference, currency (NGN, GHS, EGP, KES, MAD, or ZAR), and account_type (static or dynamic).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateVirtualAccountSchema,
+    async (args) => handleCreateVirtualAccount(args),
+  );
+
+  server.tool(
+    'get_virtual_account',
+    [
+      'Retrieve a Flutterwave v4 virtual account by id (GET /virtual-accounts/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetVirtualAccountSchema,
+    async (args) => handleGetVirtualAccount(args),
+  );
+
+  server.tool(
+    'quote_transfer_rate',
+    [
+      'Quote a Flutterwave v4 transfer rate (POST /transfers/rates).',
+      'Requires source.currency and destination.currency plus destination.amount.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    QuoteTransferRateSchema,
+    async (args) => handleQuoteTransferRate(args),
+  );
+
+  server.tool(
+    'get_transfer_rate',
+    [
+      'Retrieve a Flutterwave v4 transfer rate by id (GET /transfers/rates/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetTransferRateSchema,
+    async (args) => handleGetTransferRate(args),
+  );
+
+  server.tool(
+    'create_orchestrator_charge',
+    [
+      'Create a Flutterwave v4 charge with inline customer and card details (POST /orchestration/direct-charges).',
+      'Card fields are encrypted with FLW_ENCRYPTION_KEY_V4 before the request is sent.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateOrchestratorChargeSchema,
+    async (args) => handleCreateOrchestratorCharge(args),
+  );
+
+  server.tool(
+    'create_orchestrator_order',
+    [
+      'Create a Flutterwave v4 order with inline customer and card details (POST /orchestration/direct-orders).',
+      'Card fields are encrypted with FLW_ENCRYPTION_KEY_V4 before the request is sent.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateOrchestratorOrderSchema,
+    async (args) => handleCreateOrchestratorOrder(args),
+  );
+
+  server.tool(
+    'create_orchestrator_transfer',
+    [
+      'Create a Flutterwave v4 transfer with inline recipient details (POST /direct-transfers).',
+      'type is bank, mobile_money, wallet, cash_pickup, or crypto. action is instant, deferred, or scheduled.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateOrchestratorTransferSchema,
+    async (args) => handleCreateOrchestratorTransfer(args),
+  );
+
+  server.tool(
+    'resend_webhook',
+    [
+      'Resend a Flutterwave v4 webhook (POST /resend-webhook).',
+      'type is charge.completed, transfer.disburse, transfer.reversal, or order.authorization.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ResendWebhookSchema,
+    async (args) => handleResendWebhook(args),
+  );
+
+  server.tool(
+    'get_bank_branches',
+    [
+      'List Flutterwave v4 branches for a bank (GET /banks/{id}/branches).',
+      'The id comes from get_banks.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetBankBranchesSchema,
+    async (args) => handleGetBankBranches(args),
+  );
+
+  server.tool(
+    'resolve_bank_account',
+    [
+      'Resolve a Flutterwave v4 bank account (POST /banks/account-resolve).',
+      'Currency is NGN, GBP, USD, GHS, or UGX. NGN account requires code and number.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ResolveBankAccountSchema,
+    async (args) => handleResolveBankAccount(args),
+  );
+
+  server.tool(
+    'list_orders',
+    [
+      'List Flutterwave v4 orders (GET /orders).',
+      'Optional filters: status, from, to, customer_id, and payment_method_id.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListOrdersSchema,
+    async (args) => handleListOrders(args),
+  );
+
+  server.tool(
+    'update_order',
+    [
+      'Update a Flutterwave v4 order (PUT /orders/{id}).',
+      'Provide meta, or action void or capture.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateOrderSchema,
+    async (args) => handleUpdateOrder(args),
+  );
+
+  server.tool(
+    'list_virtual_accounts',
+    [
+      'List Flutterwave v4 virtual accounts (GET /virtual-accounts).',
+      'Optional filters: from, to, and reference.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListVirtualAccountsSchema,
+    async (args) => handleListVirtualAccounts(args),
+  );
+
+  server.tool(
+    'update_virtual_account',
+    [
+      'Update a Flutterwave v4 virtual account (PUT /virtual-accounts/{id}).',
+      'action_type is update_bvn or update_status. update_status sets status to inactive.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateVirtualAccountSchema,
+    async (args) => handleUpdateVirtualAccount(args),
+  );
+
+  server.tool(
+    'list_transfer_recipients',
+    [
+      'List Flutterwave v4 transfer recipients (GET /transfers/recipients).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListTransferRecipientsSchema,
+    async (args) => handleListTransferRecipients(args),
+  );
+
+  server.tool(
+    'create_transfer_recipient',
+    [
+      'Create a Flutterwave v4 transfer recipient (POST /transfers/recipients).',
+      'type selects the rail, for example bank_ngn. NGN bank recipients require bank.account_number and bank.code.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateTransferRecipientSchema,
+    async (args) => handleCreateTransferRecipient(args),
+  );
+
+  server.tool(
+    'get_transfer_recipient',
+    [
+      'Retrieve a Flutterwave v4 transfer recipient (GET /transfers/recipients/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetTransferRecipientSchema,
+    async (args) => handleGetTransferRecipient(args),
+  );
+
+  server.tool(
+    'delete_transfer_recipient',
+    [
+      'Delete a Flutterwave v4 transfer recipient (DELETE /transfers/recipients/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    DeleteTransferRecipientSchema,
+    async (args) => handleDeleteTransferRecipient(args),
+  );
+
+  server.tool(
+    'list_transfer_senders',
+    [
+      'List Flutterwave v4 transfer senders (GET /transfers/senders).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListTransferSendersSchema,
+    async (args) => handleListTransferSenders(args),
+  );
+
+  server.tool(
+    'create_transfer_sender',
+    [
+      'Create a Flutterwave v4 transfer sender (POST /transfers/senders).',
+      'type is generic_sender, bank_egp, bank_gbp, bank_eur, or mobile_money_egp. Every sender requires a first and last name.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateTransferSenderSchema,
+    async (args) => handleCreateTransferSender(args),
+  );
+
+  server.tool(
+    'get_transfer_sender',
+    [
+      'Retrieve a Flutterwave v4 transfer sender (GET /transfers/senders/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetTransferSenderSchema,
+    async (args) => handleGetTransferSender(args),
+  );
+
+  server.tool(
+    'delete_transfer_sender',
+    [
+      'Delete a Flutterwave v4 transfer sender (DELETE /transfers/senders/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    DeleteTransferSenderSchema,
+    async (args) => handleDeleteTransferSender(args),
+  );
+
+  server.tool(
+    'create_transfer',
+    [
+      'Create a Flutterwave v4 transfer (POST /transfers).',
+      'Requires action (instant, deferred, or scheduled), recipient_id, source_currency, and amount. sender_id is optional. Scheduled transfers also need disburse_option.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateTransferSchema,
+    async (args) => handleCreateTransfer(args),
+  );
+
+  server.tool(
+    'get_transfer',
+    [
+      'Retrieve a Flutterwave v4 transfer (GET /transfers/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetTransferSchema,
+    async (args) => handleGetTransfer(args),
+  );
+
+  server.tool(
+    'list_transfers',
+    [
+      'List Flutterwave v4 transfers (GET /transfers).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListTransfersSchema,
+    async (args) => handleListTransfers(args),
+  );
+
+  server.tool(
+    'update_transfer',
+    [
+      'Update a deferred or scheduled Flutterwave v4 transfer (PUT /transfers/{id}).',
+      'Provide initiate, close, or disburse_option.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateTransferSchema,
+    async (args) => handleUpdateTransfer(args),
+  );
+
+  server.tool(
+    'retry_transfer',
+    [
+      'Retry or duplicate a Flutterwave v4 transfer (POST /transfers/{id}/retries).',
+      'action is retry or duplicate.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    RetryTransferSchema,
+    async (args) => handleRetryTransfer(args),
   );
 }

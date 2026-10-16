@@ -32,6 +32,35 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `chargebacks-get.yaml` | `v4/reference/chargebacks_get_by_id` |
 | `chargebacks.yaml` | `v4/reference/chargebacks_post` |
 | `chargebacks-update.yaml` | `v4/reference/chargeback_put` |
+| `orders.yaml` | `v4/reference/orders_post` |
+| `orders-get.yaml` | `v4/reference/orders_get` |
+| `virtual-accounts.yaml` | `v4/reference/virtual_accounts_post` |
+| `virtual-accounts-get.yaml` | `v4/reference/virtual_account_get` |
+| `transfer-rates.yaml` | `v4/reference/transfer_rates_post` |
+| `transfer-rates-get.yaml` | `v4/reference/transfer_rates_get` |
+| `orchestration-direct-charge.yaml` | `v4/reference/orchestration_direct_charge_post` |
+| `orchestration-direct-order.yaml` | `v4/reference/orchestration_direct_order_post` |
+| `direct-transfers.yaml` | `v4/reference/direct_transfers_post` |
+| `resend-webhook.yaml` | `v4/reference/resend_webhook` |
+| `bank-branches.yaml` | `v4/reference/bank_branches_get` |
+| `bank-account-resolve.yaml` | `v4/reference/bank_account_resolve_post` |
+| `orders-list.yaml` | `v4/reference/orders_list` |
+| `orders-update.yaml` | `v4/reference/orders_put` |
+| `virtual-accounts-list.yaml` | `v4/reference/virtual_accounts_list` |
+| `virtual-accounts-update.yaml` | `v4/reference/virtual_accounts_put` |
+| `transfer-recipients-list.yaml` | `v4/reference/transfers_recipients_list` |
+| `transfer-recipients.yaml` | `v4/reference/transfers_recipients_create` |
+| `transfer-recipients-get.yaml` | `v4/reference/transfers_recipients_get` |
+| `transfer-recipients-delete.yaml` | `v4/reference/transfers_recipients_delete` |
+| `transfer-senders-list.yaml` | `v4/reference/transfers_senders_list` |
+| `transfer-senders.yaml` | `v4/reference/transfers_senders_create` |
+| `transfer-senders-get.yaml` | `v4/reference/transfers_senders_get` |
+| `transfer-senders-delete.yaml` | `v4/reference/transfers_senders_delete` |
+| `transfers.yaml` | `v4/reference/transfers_post` |
+| `transfers-get.yaml` | `v4/reference/transfer_get` |
+| `transfers-list.yaml` | `v4/reference/transfers_list` |
+| `transfers-update.yaml` | `v4/reference/transfer_put` |
+| `transfers-retry.yaml` | `v4/reference/transfer_post_retry` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 
