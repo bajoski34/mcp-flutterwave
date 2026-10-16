@@ -149,4 +149,120 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/chargebacks-update.yaml" },
     output: zodOutput("./src/client/generated/v4/chargebacks-update.zod.ts"),
   },
+  flutterwaveV4Orders: {
+    input: { target: "./src/client/specs/v4/orders.yaml" },
+    output: zodOutput("./src/client/generated/v4/orders.zod.ts"),
+  },
+  flutterwaveV4OrdersGet: {
+    input: { target: "./src/client/specs/v4/orders-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/orders-get.zod.ts"),
+  },
+  flutterwaveV4VirtualAccounts: {
+    input: { target: "./src/client/specs/v4/virtual-accounts.yaml" },
+    output: zodOutput("./src/client/generated/v4/virtual-accounts.zod.ts"),
+  },
+  flutterwaveV4VirtualAccountsGet: {
+    input: { target: "./src/client/specs/v4/virtual-accounts-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/virtual-accounts-get.zod.ts"),
+  },
+  flutterwaveV4TransferRates: {
+    input: { target: "./src/client/specs/v4/transfer-rates.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-rates.zod.ts"),
+  },
+  flutterwaveV4TransferRatesGet: {
+    input: { target: "./src/client/specs/v4/transfer-rates-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-rates-get.zod.ts"),
+  },
+  flutterwaveV4OrchestrationDirectCharge: {
+    input: { target: "./src/client/specs/v4/orchestration-direct-charge.yaml" },
+    output: zodOutput("./src/client/generated/v4/orchestration-direct-charge.zod.ts"),
+  },
+  flutterwaveV4OrchestrationDirectOrder: {
+    input: { target: "./src/client/specs/v4/orchestration-direct-order.yaml" },
+    output: zodOutput("./src/client/generated/v4/orchestration-direct-order.zod.ts"),
+  },
+  flutterwaveV4DirectTransfers: {
+    input: { target: "./src/client/specs/v4/direct-transfers.yaml" },
+    output: zodOutput("./src/client/generated/v4/direct-transfers.zod.ts"),
+  },
+  flutterwaveV4ResendWebhook: {
+    input: { target: "./src/client/specs/v4/resend-webhook.yaml" },
+    output: zodOutput("./src/client/generated/v4/resend-webhook.zod.ts"),
+  },
+  flutterwaveV4BankBranches: {
+    input: { target: "./src/client/specs/v4/bank-branches.yaml" },
+    output: zodOutput("./src/client/generated/v4/bank-branches.zod.ts"),
+  },
+  flutterwaveV4BankAccountResolve: {
+    input: { target: "./src/client/specs/v4/bank-account-resolve.yaml" },
+    output: zodOutput("./src/client/generated/v4/bank-account-resolve.zod.ts"),
+  },
+  flutterwaveV4OrdersList: {
+    input: { target: "./src/client/specs/v4/orders-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/orders-list.zod.ts"),
+  },
+  flutterwaveV4OrdersUpdate: {
+    input: { target: "./src/client/specs/v4/orders-update.yaml" },
+    output: zodOutput("./src/client/generated/v4/orders-update.zod.ts"),
+  },
+  flutterwaveV4VirtualAccountsList: {
+    input: { target: "./src/client/specs/v4/virtual-accounts-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/virtual-accounts-list.zod.ts"),
+  },
+  flutterwaveV4VirtualAccountsUpdate: {
+    input: { target: "./src/client/specs/v4/virtual-accounts-update.yaml" },
+    output: zodOutput("./src/client/generated/v4/virtual-accounts-update.zod.ts"),
+  },
+  flutterwaveV4TransferRecipientsList: {
+    input: { target: "./src/client/specs/v4/transfer-recipients-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-recipients-list.zod.ts"),
+  },
+  flutterwaveV4TransferRecipients: {
+    input: { target: "./src/client/specs/v4/transfer-recipients.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-recipients.zod.ts"),
+  },
+  flutterwaveV4TransferRecipientsGet: {
+    input: { target: "./src/client/specs/v4/transfer-recipients-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-recipients-get.zod.ts"),
+  },
+  flutterwaveV4TransferRecipientsDelete: {
+    input: { target: "./src/client/specs/v4/transfer-recipients-delete.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-recipients-delete.zod.ts"),
+  },
+  flutterwaveV4TransferSendersList: {
+    input: { target: "./src/client/specs/v4/transfer-senders-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-senders-list.zod.ts"),
+  },
+  flutterwaveV4TransferSenders: {
+    input: { target: "./src/client/specs/v4/transfer-senders.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-senders.zod.ts"),
+  },
+  flutterwaveV4TransferSendersGet: {
+    input: { target: "./src/client/specs/v4/transfer-senders-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-senders-get.zod.ts"),
+  },
+  flutterwaveV4TransferSendersDelete: {
+    input: { target: "./src/client/specs/v4/transfer-senders-delete.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-senders-delete.zod.ts"),
+  },
+  flutterwaveV4Transfers: {
+    input: { target: "./src/client/specs/v4/transfers.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfers.zod.ts"),
+  },
+  flutterwaveV4TransfersGet: {
+    input: { target: "./src/client/specs/v4/transfers-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfers-get.zod.ts"),
+  },
+  flutterwaveV4TransfersList: {
+    input: { target: "./src/client/specs/v4/transfers-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfers-list.zod.ts"),
+  },
+  flutterwaveV4TransfersUpdate: {
+    input: { target: "./src/client/specs/v4/transfers-update.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfers-update.zod.ts"),
+  },
+  flutterwaveV4TransfersRetry: {
+    input: { target: "./src/client/specs/v4/transfers-retry.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfers-retry.zod.ts"),
+  },
 });
