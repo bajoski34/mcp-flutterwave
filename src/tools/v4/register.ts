@@ -177,6 +177,16 @@ import {
   ResendWebhookSchema,
   type ResendWebhookArgs,
 } from './resendWebhook.js';
+import {
+  getBankBranches,
+  GetBankBranchesSchema,
+  type GetBankBranchesArgs,
+} from './getBankBranches.js';
+import {
+  resolveBankAccount,
+  ResolveBankAccountSchema,
+  type ResolveBankAccountArgs,
+} from './resolveBankAccount.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -527,6 +537,24 @@ export async function handleResendWebhook(args: ResendWebhookArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error resending webhook: ${message}`);
+  }
+}
+
+export async function handleGetBankBranches(args: GetBankBranchesArgs) {
+  try {
+    return await getBankBranches(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving bank branches: ${message}`);
+  }
+}
+
+export async function handleResolveBankAccount(args: ResolveBankAccountArgs) {
+  try {
+    return await resolveBankAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error resolving bank account: ${message}`);
   }
 }
 
@@ -945,5 +973,27 @@ export function registerV4Tools() {
     ].join(' '),
     ResendWebhookSchema,
     async (args) => handleResendWebhook(args),
+  );
+
+  server.tool(
+    'get_bank_branches',
+    [
+      'List Flutterwave v4 branches for a bank (GET /banks/{id}/branches).',
+      'The id comes from get_banks.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetBankBranchesSchema,
+    async (args) => handleGetBankBranches(args),
+  );
+
+  server.tool(
+    'resolve_bank_account',
+    [
+      'Resolve a Flutterwave v4 bank account (POST /banks/account-resolve).',
+      'Currency is NGN, GBP, USD, GHS, or UGX. NGN account requires code and number.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ResolveBankAccountSchema,
+    async (args) => handleResolveBankAccount(args),
   );
 }

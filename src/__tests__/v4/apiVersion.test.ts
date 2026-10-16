@@ -51,6 +51,8 @@ describe('v4 api version selection', () => {
       'create_orchestrator_order',
       'create_orchestrator_transfer',
       'resend_webhook',
+      'get_bank_branches',
+      'resolve_bank_account',
     ]);
   });
 

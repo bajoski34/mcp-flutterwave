@@ -189,4 +189,12 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/resend-webhook.yaml" },
     output: zodOutput("./src/client/generated/v4/resend-webhook.zod.ts"),
   },
+  flutterwaveV4BankBranches: {
+    input: { target: "./src/client/specs/v4/bank-branches.yaml" },
+    output: zodOutput("./src/client/generated/v4/bank-branches.zod.ts"),
+  },
+  flutterwaveV4BankAccountResolve: {
+    input: { target: "./src/client/specs/v4/bank-account-resolve.yaml" },
+    output: zodOutput("./src/client/generated/v4/bank-account-resolve.zod.ts"),
+  },
 });

@@ -130,7 +130,7 @@ When adding new Flutterwave API endpoints:
 
 v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
 
-`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, refund, order, and virtual account, plus the list, lookup, wallet, settlement, chargeback, transfer-rate, and orchestrator tools. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
+`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, refund, order, and virtual account, plus the list, lookup, wallet, settlement, chargeback, transfer-rate, orchestrator, and bank lookup tools. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
 
 Notes on the current v4 codegen state:
 
@@ -171,6 +171,8 @@ Notes on the current v4 codegen state:
 - `create_orchestrator_order` encrypts card fields, then validates with `OrchestrationDirectOrderPostBody` from `src/client/generated/v4/orchestration-direct-order.zod.ts`.
 - `create_orchestrator_transfer` validates with `DirectTransfersPostBody` from `src/client/generated/v4/direct-transfers.zod.ts`.
 - `resend_webhook` validates with `ResendWebhookBody` from `src/client/generated/v4/resend-webhook.zod.ts`.
+- `get_bank_branches` validates the path id with `BankBranchesGetParams` from `src/client/generated/v4/bank-branches.zod.ts`.
+- `resolve_bank_account` validates with `BankAccountResolvePostBody` from `src/client/generated/v4/bank-account-resolve.zod.ts`.
 - Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
 - After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 

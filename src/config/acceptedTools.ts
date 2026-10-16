@@ -80,6 +80,8 @@ export const V4_ACCEPTED_TOOLS = [
   'create_orchestrator_order',
   'create_orchestrator_transfer',
   'resend_webhook',
+  'get_bank_branches',
+  'resolve_bank_account',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {
