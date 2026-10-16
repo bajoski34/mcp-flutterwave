@@ -57,6 +57,10 @@ describe('v4 api version selection', () => {
       'update_order',
       'list_virtual_accounts',
       'update_virtual_account',
+      'list_transfer_recipients',
+      'create_transfer_recipient',
+      'get_transfer_recipient',
+      'delete_transfer_recipient',
     ]);
   });
 

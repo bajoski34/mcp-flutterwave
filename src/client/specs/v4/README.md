@@ -48,6 +48,10 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `orders-update.yaml` | `v4/reference/orders_put` |
 | `virtual-accounts-list.yaml` | `v4/reference/virtual_accounts_list` |
 | `virtual-accounts-update.yaml` | `v4/reference/virtual_accounts_put` |
+| `transfer-recipients-list.yaml` | `v4/reference/transfers_recipients_list` |
+| `transfer-recipients.yaml` | `v4/reference/transfers_recipients_create` |
+| `transfer-recipients-get.yaml` | `v4/reference/transfers_recipients_get` |
+| `transfer-recipients-delete.yaml` | `v4/reference/transfers_recipients_delete` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 

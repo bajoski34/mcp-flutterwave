@@ -130,7 +130,7 @@ When adding new Flutterwave API endpoints:
 
 v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
 
-`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, refund, order, and virtual account, plus the list, lookup, wallet, settlement, chargeback, transfer-rate, orchestrator, and bank lookup tools, plus list and update for orders and virtual accounts. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
+`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, refund, order, and virtual account, plus the list, lookup, wallet, settlement, chargeback, transfer-rate, orchestrator, and bank lookup tools, plus list and update for orders and virtual accounts, and transfer recipient tools. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
 
 Notes on the current v4 codegen state:
 
@@ -177,6 +177,10 @@ Notes on the current v4 codegen state:
 - `update_order` validates with `OrdersPutBody` from `src/client/generated/v4/orders-update.zod.ts`.
 - `list_virtual_accounts` validates with `VirtualAccountsListQueryParams` from `src/client/generated/v4/virtual-accounts-list.zod.ts`.
 - `update_virtual_account` validates with `VirtualAccountsPutBody` from `src/client/generated/v4/virtual-accounts-update.zod.ts`.
+- `list_transfer_recipients` validates with `TransfersRecipientsListQueryParams` from `src/client/generated/v4/transfer-recipients-list.zod.ts`.
+- `create_transfer_recipient` validates with `TransfersRecipientsCreateBody` from `src/client/generated/v4/transfer-recipients.zod.ts`.
+- `get_transfer_recipient` validates the path id with `TransfersRecipientsGetParams` from `src/client/generated/v4/transfer-recipients-get.zod.ts`.
+- `delete_transfer_recipient` validates the path id with `TransfersRecipientsDeleteParams` from `src/client/generated/v4/transfer-recipients-delete.zod.ts`.
 - Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
 - After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 

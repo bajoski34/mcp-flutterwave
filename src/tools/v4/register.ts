@@ -207,6 +207,26 @@ import {
   UpdateVirtualAccountSchema,
   type UpdateVirtualAccountArgs,
 } from './updateVirtualAccount.js';
+import {
+  listTransferRecipients,
+  ListTransferRecipientsSchema,
+  type ListTransferRecipientsArgs,
+} from './listTransferRecipients.js';
+import {
+  createTransferRecipient,
+  CreateTransferRecipientSchema,
+  type CreateTransferRecipientArgs,
+} from './createTransferRecipient.js';
+import {
+  getTransferRecipient,
+  GetTransferRecipientSchema,
+  type GetTransferRecipientArgs,
+} from './getTransferRecipient.js';
+import {
+  deleteTransferRecipient,
+  DeleteTransferRecipientSchema,
+  type DeleteTransferRecipientArgs,
+} from './deleteTransferRecipient.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -611,6 +631,48 @@ export async function handleUpdateVirtualAccount(args: UpdateVirtualAccountArgs)
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error updating virtual account: ${message}`);
+  }
+}
+
+export async function handleListTransferRecipients(
+  args: ListTransferRecipientsArgs,
+) {
+  try {
+    return await listTransferRecipients(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing transfer recipients: ${message}`);
+  }
+}
+
+export async function handleCreateTransferRecipient(
+  args: CreateTransferRecipientArgs,
+) {
+  try {
+    return await createTransferRecipient(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating transfer recipient: ${message}`);
+  }
+}
+
+export async function handleGetTransferRecipient(args: GetTransferRecipientArgs) {
+  try {
+    return await getTransferRecipient(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving transfer recipient: ${message}`);
+  }
+}
+
+export async function handleDeleteTransferRecipient(
+  args: DeleteTransferRecipientArgs,
+) {
+  try {
+    return await deleteTransferRecipient(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error deleting transfer recipient: ${message}`);
   }
 }
 
@@ -1095,5 +1157,46 @@ export function registerV4Tools() {
     ].join(' '),
     UpdateVirtualAccountSchema,
     async (args) => handleUpdateVirtualAccount(args),
+  );
+
+  server.tool(
+    'list_transfer_recipients',
+    [
+      'List Flutterwave v4 transfer recipients (GET /transfers/recipients).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListTransferRecipientsSchema,
+    async (args) => handleListTransferRecipients(args),
+  );
+
+  server.tool(
+    'create_transfer_recipient',
+    [
+      'Create a Flutterwave v4 transfer recipient (POST /transfers/recipients).',
+      'type selects the rail, for example bank_ngn. NGN bank recipients require bank.account_number and bank.code.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateTransferRecipientSchema,
+    async (args) => handleCreateTransferRecipient(args),
+  );
+
+  server.tool(
+    'get_transfer_recipient',
+    [
+      'Retrieve a Flutterwave v4 transfer recipient (GET /transfers/recipients/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetTransferRecipientSchema,
+    async (args) => handleGetTransferRecipient(args),
+  );
+
+  server.tool(
+    'delete_transfer_recipient',
+    [
+      'Delete a Flutterwave v4 transfer recipient (DELETE /transfers/recipients/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    DeleteTransferRecipientSchema,
+    async (args) => handleDeleteTransferRecipient(args),
   );
 }

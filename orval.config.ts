@@ -213,4 +213,20 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/virtual-accounts-update.yaml" },
     output: zodOutput("./src/client/generated/v4/virtual-accounts-update.zod.ts"),
   },
+  flutterwaveV4TransferRecipientsList: {
+    input: { target: "./src/client/specs/v4/transfer-recipients-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-recipients-list.zod.ts"),
+  },
+  flutterwaveV4TransferRecipients: {
+    input: { target: "./src/client/specs/v4/transfer-recipients.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-recipients.zod.ts"),
+  },
+  flutterwaveV4TransferRecipientsGet: {
+    input: { target: "./src/client/specs/v4/transfer-recipients-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-recipients-get.zod.ts"),
+  },
+  flutterwaveV4TransferRecipientsDelete: {
+    input: { target: "./src/client/specs/v4/transfer-recipients-delete.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-recipients-delete.zod.ts"),
+  },
 });
