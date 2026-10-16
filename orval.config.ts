@@ -229,4 +229,20 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/transfer-recipients-delete.yaml" },
     output: zodOutput("./src/client/generated/v4/transfer-recipients-delete.zod.ts"),
   },
+  flutterwaveV4TransferSendersList: {
+    input: { target: "./src/client/specs/v4/transfer-senders-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-senders-list.zod.ts"),
+  },
+  flutterwaveV4TransferSenders: {
+    input: { target: "./src/client/specs/v4/transfer-senders.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-senders.zod.ts"),
+  },
+  flutterwaveV4TransferSendersGet: {
+    input: { target: "./src/client/specs/v4/transfer-senders-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-senders-get.zod.ts"),
+  },
+  flutterwaveV4TransferSendersDelete: {
+    input: { target: "./src/client/specs/v4/transfer-senders-delete.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-senders-delete.zod.ts"),
+  },
 });

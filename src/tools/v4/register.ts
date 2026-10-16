@@ -227,6 +227,26 @@ import {
   DeleteTransferRecipientSchema,
   type DeleteTransferRecipientArgs,
 } from './deleteTransferRecipient.js';
+import {
+  listTransferSenders,
+  ListTransferSendersSchema,
+  type ListTransferSendersArgs,
+} from './listTransferSenders.js';
+import {
+  createTransferSender,
+  CreateTransferSenderSchema,
+  type CreateTransferSenderArgs,
+} from './createTransferSender.js';
+import {
+  getTransferSender,
+  GetTransferSenderSchema,
+  type GetTransferSenderArgs,
+} from './getTransferSender.js';
+import {
+  deleteTransferSender,
+  DeleteTransferSenderSchema,
+  type DeleteTransferSenderArgs,
+} from './deleteTransferSender.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -673,6 +693,42 @@ export async function handleDeleteTransferRecipient(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error deleting transfer recipient: ${message}`);
+  }
+}
+
+export async function handleListTransferSenders(args: ListTransferSendersArgs) {
+  try {
+    return await listTransferSenders(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing transfer senders: ${message}`);
+  }
+}
+
+export async function handleCreateTransferSender(args: CreateTransferSenderArgs) {
+  try {
+    return await createTransferSender(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating transfer sender: ${message}`);
+  }
+}
+
+export async function handleGetTransferSender(args: GetTransferSenderArgs) {
+  try {
+    return await getTransferSender(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving transfer sender: ${message}`);
+  }
+}
+
+export async function handleDeleteTransferSender(args: DeleteTransferSenderArgs) {
+  try {
+    return await deleteTransferSender(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error deleting transfer sender: ${message}`);
   }
 }
 
@@ -1198,5 +1254,46 @@ export function registerV4Tools() {
     ].join(' '),
     DeleteTransferRecipientSchema,
     async (args) => handleDeleteTransferRecipient(args),
+  );
+
+  server.tool(
+    'list_transfer_senders',
+    [
+      'List Flutterwave v4 transfer senders (GET /transfers/senders).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListTransferSendersSchema,
+    async (args) => handleListTransferSenders(args),
+  );
+
+  server.tool(
+    'create_transfer_sender',
+    [
+      'Create a Flutterwave v4 transfer sender (POST /transfers/senders).',
+      'type is generic_sender, bank_egp, bank_gbp, bank_eur, or mobile_money_egp. Every sender requires a first and last name.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateTransferSenderSchema,
+    async (args) => handleCreateTransferSender(args),
+  );
+
+  server.tool(
+    'get_transfer_sender',
+    [
+      'Retrieve a Flutterwave v4 transfer sender (GET /transfers/senders/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetTransferSenderSchema,
+    async (args) => handleGetTransferSender(args),
+  );
+
+  server.tool(
+    'delete_transfer_sender',
+    [
+      'Delete a Flutterwave v4 transfer sender (DELETE /transfers/senders/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    DeleteTransferSenderSchema,
+    async (args) => handleDeleteTransferSender(args),
   );
 }
