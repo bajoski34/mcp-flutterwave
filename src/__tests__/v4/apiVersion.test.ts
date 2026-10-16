@@ -65,6 +65,11 @@ describe('v4 api version selection', () => {
       'create_transfer_sender',
       'get_transfer_sender',
       'delete_transfer_sender',
+      'create_transfer',
+      'get_transfer',
+      'list_transfers',
+      'update_transfer',
+      'retry_transfer',
     ]);
   });
 

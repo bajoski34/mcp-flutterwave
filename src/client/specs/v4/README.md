@@ -56,6 +56,11 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `transfer-senders.yaml` | `v4/reference/transfers_senders_create` |
 | `transfer-senders-get.yaml` | `v4/reference/transfers_senders_get` |
 | `transfer-senders-delete.yaml` | `v4/reference/transfers_senders_delete` |
+| `transfers.yaml` | `v4/reference/transfers_post` |
+| `transfers-get.yaml` | `v4/reference/transfer_get` |
+| `transfers-list.yaml` | `v4/reference/transfers_list` |
+| `transfers-update.yaml` | `v4/reference/transfer_put` |
+| `transfers-retry.yaml` | `v4/reference/transfer_post_retry` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 

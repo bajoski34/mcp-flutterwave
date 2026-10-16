@@ -94,6 +94,11 @@ export const V4_ACCEPTED_TOOLS = [
   'create_transfer_sender',
   'get_transfer_sender',
   'delete_transfer_sender',
+  'create_transfer',
+  'get_transfer',
+  'list_transfers',
+  'update_transfer',
+  'retry_transfer',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {

@@ -247,6 +247,31 @@ import {
   DeleteTransferSenderSchema,
   type DeleteTransferSenderArgs,
 } from './deleteTransferSender.js';
+import {
+  createTransfer,
+  CreateTransferSchema,
+  type CreateTransferArgs,
+} from './createTransfer.js';
+import {
+  getTransfer,
+  GetTransferSchema,
+  type GetTransferArgs,
+} from './getTransfer.js';
+import {
+  listTransfers,
+  ListTransfersSchema,
+  type ListTransfersArgs,
+} from './listTransfers.js';
+import {
+  updateTransfer,
+  UpdateTransferSchema,
+  type UpdateTransferArgs,
+} from './updateTransfer.js';
+import {
+  retryTransfer,
+  RetryTransferSchema,
+  type RetryTransferArgs,
+} from './retryTransfer.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -729,6 +754,51 @@ export async function handleDeleteTransferSender(args: DeleteTransferSenderArgs)
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error deleting transfer sender: ${message}`);
+  }
+}
+
+export async function handleCreateTransfer(args: CreateTransferArgs) {
+  try {
+    return await createTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating transfer: ${message}`);
+  }
+}
+
+export async function handleGetTransfer(args: GetTransferArgs) {
+  try {
+    return await getTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving transfer: ${message}`);
+  }
+}
+
+export async function handleListTransfers(args: ListTransfersArgs) {
+  try {
+    return await listTransfers(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing transfers: ${message}`);
+  }
+}
+
+export async function handleUpdateTransfer(args: UpdateTransferArgs) {
+  try {
+    return await updateTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating transfer: ${message}`);
+  }
+}
+
+export async function handleRetryTransfer(args: RetryTransferArgs) {
+  try {
+    return await retryTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrying transfer: ${message}`);
   }
 }
 
@@ -1295,5 +1365,58 @@ export function registerV4Tools() {
     ].join(' '),
     DeleteTransferSenderSchema,
     async (args) => handleDeleteTransferSender(args),
+  );
+
+  server.tool(
+    'create_transfer',
+    [
+      'Create a Flutterwave v4 transfer (POST /transfers).',
+      'Requires action (instant, deferred, or scheduled), recipient_id, source_currency, and amount. sender_id is optional. Scheduled transfers also need disburse_option.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateTransferSchema,
+    async (args) => handleCreateTransfer(args),
+  );
+
+  server.tool(
+    'get_transfer',
+    [
+      'Retrieve a Flutterwave v4 transfer (GET /transfers/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetTransferSchema,
+    async (args) => handleGetTransfer(args),
+  );
+
+  server.tool(
+    'list_transfers',
+    [
+      'List Flutterwave v4 transfers (GET /transfers).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListTransfersSchema,
+    async (args) => handleListTransfers(args),
+  );
+
+  server.tool(
+    'update_transfer',
+    [
+      'Update a deferred or scheduled Flutterwave v4 transfer (PUT /transfers/{id}).',
+      'Provide initiate, close, or disburse_option.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateTransferSchema,
+    async (args) => handleUpdateTransfer(args),
+  );
+
+  server.tool(
+    'retry_transfer',
+    [
+      'Retry or duplicate a Flutterwave v4 transfer (POST /transfers/{id}/retries).',
+      'action is retry or duplicate.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    RetryTransferSchema,
+    async (args) => handleRetryTransfer(args),
   );
 }
