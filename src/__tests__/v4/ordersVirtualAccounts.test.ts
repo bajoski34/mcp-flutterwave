@@ -116,5 +116,123 @@ describe('orders and virtual accounts', () => {
       payment_method_id: 'pmd_1',
     });
     expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('400');
+  });
+
+  it('throws when creating an order returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { createOrder } = await import('../../tools/v4/createOrder.js');
+    await expect(
+      createOrder({
+        amount: 100,
+        currency: 'NGN',
+        reference: 'order-ref-1',
+        customer_id: 'cus_1',
+        payment_method_id: 'pmd_1',
+      }),
+    ).rejects.toThrow('Flutterwave v4 create order request failed: 400');
+  });
+
+  it('rejects an empty order id before calling the API', async () => {
+    const { getOrder } = await import('../../tools/v4/getOrder.js');
+    await expect(getOrder({ id: '' })).rejects.toThrow('tool schema validation');
+    expect(mockFlwV4Fetch).not.toHaveBeenCalled();
+  });
+
+  it('encodes the order id into the request path', async () => {
+    const { getOrder } = await import('../../tools/v4/getOrder.js');
+    await getOrder({ id: 'ord_/weird id' });
+    expect(mockFlwV4Fetch).toHaveBeenCalledWith('/orders/ord_%2Fweird%20id', {
+      method: 'GET',
+    });
+  });
+
+  it('throws when getting an order returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { getOrder } = await import('../../tools/v4/getOrder.js');
+    await expect(getOrder({ id: 'ord_missing' })).rejects.toThrow(
+      'Flutterwave v4 get order request failed: 404',
+    );
+  });
+
+  it('returns isError when getting an order fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { handleGetOrder } = await import('../../tools/v4/register.js');
+    const result = await handleGetOrder({ id: 'ord_missing' });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('404');
+  });
+
+  it('throws when creating a virtual account returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { createVirtualAccount } = await import(
+      '../../tools/v4/createVirtualAccount.js'
+    );
+    await expect(
+      createVirtualAccount({
+        customer_id: 'cus_1',
+        reference: 'va-ref-1',
+        currency: 'NGN',
+        account_type: 'static',
+      }),
+    ).rejects.toThrow(
+      'Flutterwave v4 create virtual account request failed: 400',
+    );
+  });
+
+  it('returns isError when creating a virtual account fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { handleCreateVirtualAccount } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleCreateVirtualAccount({
+      customer_id: 'cus_1',
+      reference: 'va-ref-1',
+      currency: 'NGN',
+      account_type: 'static',
+    });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('400');
+  });
+
+  it('rejects an empty virtual account id before calling the API', async () => {
+    const { getVirtualAccount } = await import(
+      '../../tools/v4/getVirtualAccount.js'
+    );
+    await expect(getVirtualAccount({ id: '' })).rejects.toThrow(
+      'tool schema validation',
+    );
+    expect(mockFlwV4Fetch).not.toHaveBeenCalled();
+  });
+
+  it('encodes the virtual account id into the request path', async () => {
+    const { getVirtualAccount } = await import(
+      '../../tools/v4/getVirtualAccount.js'
+    );
+    await getVirtualAccount({ id: 'van_/weird id' });
+    expect(mockFlwV4Fetch).toHaveBeenCalledWith(
+      '/virtual-accounts/van_%2Fweird%20id',
+      { method: 'GET' },
+    );
+  });
+
+  it('throws when getting a virtual account returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { getVirtualAccount } = await import(
+      '../../tools/v4/getVirtualAccount.js'
+    );
+    await expect(getVirtualAccount({ id: 'van_missing' })).rejects.toThrow(
+      'Flutterwave v4 get virtual account request failed: 404',
+    );
+  });
+
+  it('returns isError when getting a virtual account fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { handleGetVirtualAccount } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleGetVirtualAccount({ id: 'van_missing' });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('404');
   });
 });
