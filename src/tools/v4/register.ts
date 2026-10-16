@@ -187,6 +187,26 @@ import {
   ResolveBankAccountSchema,
   type ResolveBankAccountArgs,
 } from './resolveBankAccount.js';
+import {
+  listOrders,
+  ListOrdersSchema,
+  type ListOrdersArgs,
+} from './listOrders.js';
+import {
+  updateOrder,
+  UpdateOrderSchema,
+  type UpdateOrderArgs,
+} from './updateOrder.js';
+import {
+  listVirtualAccounts,
+  ListVirtualAccountsSchema,
+  type ListVirtualAccountsArgs,
+} from './listVirtualAccounts.js';
+import {
+  updateVirtualAccount,
+  UpdateVirtualAccountSchema,
+  type UpdateVirtualAccountArgs,
+} from './updateVirtualAccount.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -555,6 +575,42 @@ export async function handleResolveBankAccount(args: ResolveBankAccountArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error resolving bank account: ${message}`);
+  }
+}
+
+export async function handleListOrders(args: ListOrdersArgs) {
+  try {
+    return await listOrders(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing orders: ${message}`);
+  }
+}
+
+export async function handleUpdateOrder(args: UpdateOrderArgs) {
+  try {
+    return await updateOrder(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating order: ${message}`);
+  }
+}
+
+export async function handleListVirtualAccounts(args: ListVirtualAccountsArgs) {
+  try {
+    return await listVirtualAccounts(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error listing virtual accounts: ${message}`);
+  }
+}
+
+export async function handleUpdateVirtualAccount(args: UpdateVirtualAccountArgs) {
+  try {
+    return await updateVirtualAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error updating virtual account: ${message}`);
   }
 }
 
@@ -995,5 +1051,49 @@ export function registerV4Tools() {
     ].join(' '),
     ResolveBankAccountSchema,
     async (args) => handleResolveBankAccount(args),
+  );
+
+  server.tool(
+    'list_orders',
+    [
+      'List Flutterwave v4 orders (GET /orders).',
+      'Optional filters: status, from, to, customer_id, and payment_method_id.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListOrdersSchema,
+    async (args) => handleListOrders(args),
+  );
+
+  server.tool(
+    'update_order',
+    [
+      'Update a Flutterwave v4 order (PUT /orders/{id}).',
+      'Provide meta, or action void or capture.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateOrderSchema,
+    async (args) => handleUpdateOrder(args),
+  );
+
+  server.tool(
+    'list_virtual_accounts',
+    [
+      'List Flutterwave v4 virtual accounts (GET /virtual-accounts).',
+      'Optional filters: from, to, and reference.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ListVirtualAccountsSchema,
+    async (args) => handleListVirtualAccounts(args),
+  );
+
+  server.tool(
+    'update_virtual_account',
+    [
+      'Update a Flutterwave v4 virtual account (PUT /virtual-accounts/{id}).',
+      'action_type is update_bvn or update_status. update_status sets status to inactive.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    UpdateVirtualAccountSchema,
+    async (args) => handleUpdateVirtualAccount(args),
   );
 }

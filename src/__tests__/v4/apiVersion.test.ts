@@ -53,6 +53,10 @@ describe('v4 api version selection', () => {
       'resend_webhook',
       'get_bank_branches',
       'resolve_bank_account',
+      'list_orders',
+      'update_order',
+      'list_virtual_accounts',
+      'update_virtual_account',
     ]);
   });
 

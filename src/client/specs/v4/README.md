@@ -44,6 +44,10 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `resend-webhook.yaml` | `v4/reference/resend_webhook` |
 | `bank-branches.yaml` | `v4/reference/bank_branches_get` |
 | `bank-account-resolve.yaml` | `v4/reference/bank_account_resolve_post` |
+| `orders-list.yaml` | `v4/reference/orders_list` |
+| `orders-update.yaml` | `v4/reference/orders_put` |
+| `virtual-accounts-list.yaml` | `v4/reference/virtual_accounts_list` |
+| `virtual-accounts-update.yaml` | `v4/reference/virtual_accounts_put` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 

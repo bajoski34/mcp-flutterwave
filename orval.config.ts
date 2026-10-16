@@ -197,4 +197,20 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/bank-account-resolve.yaml" },
     output: zodOutput("./src/client/generated/v4/bank-account-resolve.zod.ts"),
   },
+  flutterwaveV4OrdersList: {
+    input: { target: "./src/client/specs/v4/orders-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/orders-list.zod.ts"),
+  },
+  flutterwaveV4OrdersUpdate: {
+    input: { target: "./src/client/specs/v4/orders-update.yaml" },
+    output: zodOutput("./src/client/generated/v4/orders-update.zod.ts"),
+  },
+  flutterwaveV4VirtualAccountsList: {
+    input: { target: "./src/client/specs/v4/virtual-accounts-list.yaml" },
+    output: zodOutput("./src/client/generated/v4/virtual-accounts-list.zod.ts"),
+  },
+  flutterwaveV4VirtualAccountsUpdate: {
+    input: { target: "./src/client/specs/v4/virtual-accounts-update.yaml" },
+    output: zodOutput("./src/client/generated/v4/virtual-accounts-update.zod.ts"),
+  },
 });

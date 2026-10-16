@@ -82,6 +82,10 @@ export const V4_ACCEPTED_TOOLS = [
   'resend_webhook',
   'get_bank_branches',
   'resolve_bank_account',
+  'list_orders',
+  'update_order',
+  'list_virtual_accounts',
+  'update_virtual_account',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {
