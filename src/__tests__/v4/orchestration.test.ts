@@ -134,6 +134,15 @@ describe('orchestration tools', () => {
     const [path, init] = mockFlwV4Fetch.mock.calls[0] as [string, RequestInit];
     expect(path).toBe('/orchestration/direct-orders');
     expect(init.method).toBe('POST');
+    const body = JSON.parse(String(init.body)) as {
+      payment_method: { type: string; card: Record<string, string> };
+    };
+    expect(body.payment_method.type).toBe('card');
+    expect(body.payment_method.card.encrypted_card_number).toBeTruthy();
+    expect(body.payment_method.card.encrypted_cvv).toBeTruthy();
+    expect(body.payment_method.card.nonce).toHaveLength(12);
+    expect(JSON.stringify(body)).not.toContain(CARD.card_number);
+    expect(JSON.stringify(body)).not.toContain(CARD.cvv);
   });
 
   it('creates an orchestrator bank transfer', async () => {
@@ -173,6 +182,7 @@ describe('orchestration tools', () => {
         payment_instruction: { destination_currency: 'NGN' },
       }),
     ).rejects.toThrow('generated schema validation');
+    expect(mockFlwV4Fetch).not.toHaveBeenCalled();
   });
 
   it('resends a webhook', async () => {
@@ -196,5 +206,181 @@ describe('orchestration tools', () => {
       destination: { currency: 'USD', amount: 100 },
     });
     expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('400');
+  });
+
+  it('throws when a rate quote returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { quoteTransferRate } = await import(
+      '../../tools/v4/quoteTransferRate.js'
+    );
+    await expect(
+      quoteTransferRate({
+        source: { currency: 'NGN' },
+        destination: { currency: 'USD', amount: 100 },
+      }),
+    ).rejects.toThrow('Flutterwave v4 quote transfer rate request failed: 400');
+  });
+
+  it('rejects an empty transfer rate id before calling the API', async () => {
+    const { getTransferRate } = await import('../../tools/v4/getTransferRate.js');
+    await expect(getTransferRate({ id: '' })).rejects.toThrow(
+      'tool schema validation',
+    );
+    expect(mockFlwV4Fetch).not.toHaveBeenCalled();
+  });
+
+  it('encodes the transfer rate id into the request path', async () => {
+    const { getTransferRate } = await import('../../tools/v4/getTransferRate.js');
+    await getTransferRate({ id: 'rex_/weird id' });
+    expect(mockFlwV4Fetch).toHaveBeenCalledWith(
+      '/transfers/rates/rex_%2Fweird%20id',
+      { method: 'GET' },
+    );
+  });
+
+  it('throws when getting a transfer rate returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { getTransferRate } = await import('../../tools/v4/getTransferRate.js');
+    await expect(getTransferRate({ id: 'rex_missing' })).rejects.toThrow(
+      'Flutterwave v4 get transfer rate request failed: 404',
+    );
+  });
+
+  it('returns isError when getting a transfer rate fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { handleGetTransferRate } = await import('../../tools/v4/register.js');
+    const result = await handleGetTransferRate({ id: 'rex_missing' });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('404');
+  });
+
+  it('throws when an orchestrator charge returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { createOrchestratorCharge } = await import(
+      '../../tools/v4/createOrchestratorCharge.js'
+    );
+    await expect(
+      createOrchestratorCharge({
+        amount: 100,
+        currency: 'NGN',
+        reference: 'orch-charge-1',
+        customer: { email: 'sandbox@example.com' },
+        ...CARD,
+      }),
+    ).rejects.toThrow(
+      'Flutterwave v4 create orchestrator charge request failed: 400',
+    );
+  });
+
+  it('returns isError when an orchestrator charge fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { handleCreateOrchestratorCharge } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleCreateOrchestratorCharge({
+      amount: 100,
+      currency: 'NGN',
+      reference: 'orch-charge-1',
+      customer: { email: 'sandbox@example.com' },
+      ...CARD,
+    });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('400');
+  });
+
+  it('throws when an orchestrator order returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { createOrchestratorOrder } = await import(
+      '../../tools/v4/createOrchestratorOrder.js'
+    );
+    await expect(
+      createOrchestratorOrder({
+        amount: 100,
+        currency: 'NGN',
+        reference: 'orch-order-1',
+        customer: { email: 'sandbox@example.com' },
+        ...CARD,
+      }),
+    ).rejects.toThrow(
+      'Flutterwave v4 create orchestrator order request failed: 400',
+    );
+  });
+
+  it('returns isError when an orchestrator order fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { handleCreateOrchestratorOrder } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleCreateOrchestratorOrder({
+      amount: 100,
+      currency: 'NGN',
+      reference: 'orch-order-1',
+      customer: { email: 'sandbox@example.com' },
+      ...CARD,
+    });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('400');
+  });
+
+  it('throws when an orchestrator transfer returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { createOrchestratorTransfer } = await import(
+      '../../tools/v4/createOrchestratorTransfer.js'
+    );
+    await expect(
+      createOrchestratorTransfer({
+        type: 'bank',
+        action: 'instant',
+        reference: 'trf-ref-1',
+        payment_instruction: {
+          destination_currency: 'NGN',
+          source_currency: 'NGN',
+          amount: { value: 100, applies_to: 'destination_currency' },
+          recipient: { bank: { account_number: '0123456789', code: '044' } },
+        },
+      }),
+    ).rejects.toThrow(
+      'Flutterwave v4 create orchestrator transfer request failed: 400',
+    );
+  });
+
+  it('returns isError when an orchestrator transfer fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 400 }));
+    const { handleCreateOrchestratorTransfer } = await import(
+      '../../tools/v4/register.js'
+    );
+    const result = await handleCreateOrchestratorTransfer({
+      type: 'bank',
+      action: 'instant',
+      reference: 'trf-ref-1',
+      payment_instruction: {
+        destination_currency: 'NGN',
+        source_currency: 'NGN',
+        amount: { value: 100, applies_to: 'destination_currency' },
+        recipient: { bank: { account_number: '0123456789', code: '044' } },
+      },
+    });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('400');
+  });
+
+  it('throws when resending a webhook returns a non-OK response', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { resendWebhook } = await import('../../tools/v4/resendWebhook.js');
+    await expect(
+      resendWebhook({ id: 'chg_1', type: 'charge.completed' }),
+    ).rejects.toThrow('Flutterwave v4 resend webhook request failed: 404');
+  });
+
+  it('returns isError when resending a webhook fails', async () => {
+    mockFlwV4Fetch.mockResolvedValueOnce(new Response('nope', { status: 404 }));
+    const { handleResendWebhook } = await import('../../tools/v4/register.js');
+    const result = await handleResendWebhook({
+      id: 'chg_1',
+      type: 'charge.completed',
+    });
+    expect('isError' in result && result.isError).toBe(true);
+    expect(result.content[0]?.text).toContain('404');
   });
 });
