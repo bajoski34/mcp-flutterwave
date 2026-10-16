@@ -45,6 +45,12 @@ describe('v4 api version selection', () => {
       'get_order',
       'create_virtual_account',
       'get_virtual_account',
+      'quote_transfer_rate',
+      'get_transfer_rate',
+      'create_orchestrator_charge',
+      'create_orchestrator_order',
+      'create_orchestrator_transfer',
+      'resend_webhook',
     ]);
   });
 

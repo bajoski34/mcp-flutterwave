@@ -165,4 +165,28 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/virtual-accounts-get.yaml" },
     output: zodOutput("./src/client/generated/v4/virtual-accounts-get.zod.ts"),
   },
+  flutterwaveV4TransferRates: {
+    input: { target: "./src/client/specs/v4/transfer-rates.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-rates.zod.ts"),
+  },
+  flutterwaveV4TransferRatesGet: {
+    input: { target: "./src/client/specs/v4/transfer-rates-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/transfer-rates-get.zod.ts"),
+  },
+  flutterwaveV4OrchestrationDirectCharge: {
+    input: { target: "./src/client/specs/v4/orchestration-direct-charge.yaml" },
+    output: zodOutput("./src/client/generated/v4/orchestration-direct-charge.zod.ts"),
+  },
+  flutterwaveV4OrchestrationDirectOrder: {
+    input: { target: "./src/client/specs/v4/orchestration-direct-order.yaml" },
+    output: zodOutput("./src/client/generated/v4/orchestration-direct-order.zod.ts"),
+  },
+  flutterwaveV4DirectTransfers: {
+    input: { target: "./src/client/specs/v4/direct-transfers.yaml" },
+    output: zodOutput("./src/client/generated/v4/direct-transfers.zod.ts"),
+  },
+  flutterwaveV4ResendWebhook: {
+    input: { target: "./src/client/specs/v4/resend-webhook.yaml" },
+    output: zodOutput("./src/client/generated/v4/resend-webhook.zod.ts"),
+  },
 });

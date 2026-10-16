@@ -147,6 +147,36 @@ import {
   GetVirtualAccountSchema,
   type GetVirtualAccountArgs,
 } from './getVirtualAccount.js';
+import {
+  quoteTransferRate,
+  QuoteTransferRateSchema,
+  type QuoteTransferRateArgs,
+} from './quoteTransferRate.js';
+import {
+  getTransferRate,
+  GetTransferRateSchema,
+  type GetTransferRateArgs,
+} from './getTransferRate.js';
+import {
+  createOrchestratorCharge,
+  CreateOrchestratorChargeSchema,
+  type CreateOrchestratorChargeArgs,
+} from './createOrchestratorCharge.js';
+import {
+  createOrchestratorOrder,
+  CreateOrchestratorOrderSchema,
+  type CreateOrchestratorOrderArgs,
+} from './createOrchestratorOrder.js';
+import {
+  createOrchestratorTransfer,
+  CreateOrchestratorTransferSchema,
+  type CreateOrchestratorTransferArgs,
+} from './createOrchestratorTransfer.js';
+import {
+  resendWebhook,
+  ResendWebhookSchema,
+  type ResendWebhookArgs,
+} from './resendWebhook.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -435,6 +465,68 @@ export async function handleGetVirtualAccount(args: GetVirtualAccountArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error retrieving virtual account: ${message}`);
+  }
+}
+
+export async function handleQuoteTransferRate(args: QuoteTransferRateArgs) {
+  try {
+    return await quoteTransferRate(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error quoting transfer rate: ${message}`);
+  }
+}
+
+export async function handleGetTransferRate(args: GetTransferRateArgs) {
+  try {
+    return await getTransferRate(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving transfer rate: ${message}`);
+  }
+}
+
+export async function handleCreateOrchestratorCharge(
+  args: CreateOrchestratorChargeArgs,
+) {
+  try {
+    return await createOrchestratorCharge(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating orchestrator charge: ${message}`);
+  }
+}
+
+export async function handleCreateOrchestratorOrder(
+  args: CreateOrchestratorOrderArgs,
+) {
+  try {
+    return await createOrchestratorOrder(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating orchestrator order: ${message}`);
+  }
+}
+
+export async function handleCreateOrchestratorTransfer(
+  args: CreateOrchestratorTransferArgs,
+) {
+  try {
+    return await createOrchestratorTransfer(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(
+      `Error creating orchestrator transfer: ${message}`,
+    );
+  }
+}
+
+export async function handleResendWebhook(args: ResendWebhookArgs) {
+  try {
+    return await resendWebhook(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error resending webhook: ${message}`);
   }
 }
 
@@ -788,5 +880,70 @@ export function registerV4Tools() {
     ].join(' '),
     GetVirtualAccountSchema,
     async (args) => handleGetVirtualAccount(args),
+  );
+
+  server.tool(
+    'quote_transfer_rate',
+    [
+      'Quote a Flutterwave v4 transfer rate (POST /transfers/rates).',
+      'Requires source.currency and destination.currency plus destination.amount.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    QuoteTransferRateSchema,
+    async (args) => handleQuoteTransferRate(args),
+  );
+
+  server.tool(
+    'get_transfer_rate',
+    [
+      'Retrieve a Flutterwave v4 transfer rate by id (GET /transfers/rates/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetTransferRateSchema,
+    async (args) => handleGetTransferRate(args),
+  );
+
+  server.tool(
+    'create_orchestrator_charge',
+    [
+      'Create a Flutterwave v4 charge with inline customer and card details (POST /orchestration/direct-charges).',
+      'Card fields are encrypted with FLW_ENCRYPTION_KEY_V4 before the request is sent.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateOrchestratorChargeSchema,
+    async (args) => handleCreateOrchestratorCharge(args),
+  );
+
+  server.tool(
+    'create_orchestrator_order',
+    [
+      'Create a Flutterwave v4 order with inline customer and card details (POST /orchestration/direct-orders).',
+      'Card fields are encrypted with FLW_ENCRYPTION_KEY_V4 before the request is sent.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateOrchestratorOrderSchema,
+    async (args) => handleCreateOrchestratorOrder(args),
+  );
+
+  server.tool(
+    'create_orchestrator_transfer',
+    [
+      'Create a Flutterwave v4 transfer with inline recipient details (POST /direct-transfers).',
+      'type is bank, mobile_money, wallet, cash_pickup, or crypto. action is instant, deferred, or scheduled.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateOrchestratorTransferSchema,
+    async (args) => handleCreateOrchestratorTransfer(args),
+  );
+
+  server.tool(
+    'resend_webhook',
+    [
+      'Resend a Flutterwave v4 webhook (POST /resend-webhook).',
+      'type is charge.completed, transfer.disburse, transfer.reversal, or order.authorization.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    ResendWebhookSchema,
+    async (args) => handleResendWebhook(args),
   );
 }

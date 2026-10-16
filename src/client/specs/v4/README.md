@@ -36,6 +36,12 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `orders-get.yaml` | `v4/reference/orders_get` |
 | `virtual-accounts.yaml` | `v4/reference/virtual_accounts_post` |
 | `virtual-accounts-get.yaml` | `v4/reference/virtual_account_get` |
+| `transfer-rates.yaml` | `v4/reference/transfer_rates_post` |
+| `transfer-rates-get.yaml` | `v4/reference/transfer_rates_get` |
+| `orchestration-direct-charge.yaml` | `v4/reference/orchestration_direct_charge_post` |
+| `orchestration-direct-order.yaml` | `v4/reference/orchestration_direct_order_post` |
+| `direct-transfers.yaml` | `v4/reference/direct_transfers_post` |
+| `resend-webhook.yaml` | `v4/reference/resend_webhook` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 
