@@ -41,6 +41,10 @@ describe('v4 api version selection', () => {
       'get_chargeback',
       'create_chargeback',
       'update_chargeback',
+      'create_order',
+      'get_order',
+      'create_virtual_account',
+      'get_virtual_account',
     ]);
   });
 

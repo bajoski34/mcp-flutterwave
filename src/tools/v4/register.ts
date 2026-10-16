@@ -131,6 +131,22 @@ import {
   UpdateChargebackSchema,
   type UpdateChargebackArgs,
 } from './updateChargeback.js';
+import {
+  createOrder,
+  CreateOrderSchema,
+  type CreateOrderArgs,
+} from './createOrder.js';
+import { getOrder, GetOrderSchema, type GetOrderArgs } from './getOrder.js';
+import {
+  createVirtualAccount,
+  CreateVirtualAccountSchema,
+  type CreateVirtualAccountArgs,
+} from './createVirtualAccount.js';
+import {
+  getVirtualAccount,
+  GetVirtualAccountSchema,
+  type GetVirtualAccountArgs,
+} from './getVirtualAccount.js';
 
 function createErrorResponse(message: string) {
   return {
@@ -383,6 +399,42 @@ export async function handleUpdateChargeback(args: UpdateChargebackArgs) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return createErrorResponse(`Error updating chargeback: ${message}`);
+  }
+}
+
+export async function handleCreateOrder(args: CreateOrderArgs) {
+  try {
+    return await createOrder(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating order: ${message}`);
+  }
+}
+
+export async function handleGetOrder(args: GetOrderArgs) {
+  try {
+    return await getOrder(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving order: ${message}`);
+  }
+}
+
+export async function handleCreateVirtualAccount(args: CreateVirtualAccountArgs) {
+  try {
+    return await createVirtualAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error creating virtual account: ${message}`);
+  }
+}
+
+export async function handleGetVirtualAccount(args: GetVirtualAccountArgs) {
+  try {
+    return await getVirtualAccount(args);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return createErrorResponse(`Error retrieving virtual account: ${message}`);
   }
 }
 
@@ -694,5 +746,47 @@ export function registerV4Tools() {
     ].join(' '),
     UpdateChargebackSchema,
     async (args) => handleUpdateChargeback(args),
+  );
+
+  server.tool(
+    'create_order',
+    [
+      'Create a Flutterwave v4 order (POST /orders).',
+      'Requires amount, currency, reference, customer_id, and payment_method_id.',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateOrderSchema,
+    async (args) => handleCreateOrder(args),
+  );
+
+  server.tool(
+    'get_order',
+    [
+      'Retrieve a Flutterwave v4 order by id (GET /orders/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetOrderSchema,
+    async (args) => handleGetOrder(args),
+  );
+
+  server.tool(
+    'create_virtual_account',
+    [
+      'Create a Flutterwave v4 virtual account (POST /virtual-accounts).',
+      'Requires customer_id, reference, currency (NGN, GHS, EGP, KES, MAD, or ZAR), and account_type (static or dynamic).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    CreateVirtualAccountSchema,
+    async (args) => handleCreateVirtualAccount(args),
+  );
+
+  server.tool(
+    'get_virtual_account',
+    [
+      'Retrieve a Flutterwave v4 virtual account by id (GET /virtual-accounts/{id}).',
+      'Available only when FLW_API_VERSION=v4.',
+    ].join(' '),
+    GetVirtualAccountSchema,
+    async (args) => handleGetVirtualAccount(args),
   );
 }

@@ -149,4 +149,20 @@ export default defineConfig({
     input: { target: "./src/client/specs/v4/chargebacks-update.yaml" },
     output: zodOutput("./src/client/generated/v4/chargebacks-update.zod.ts"),
   },
+  flutterwaveV4Orders: {
+    input: { target: "./src/client/specs/v4/orders.yaml" },
+    output: zodOutput("./src/client/generated/v4/orders.zod.ts"),
+  },
+  flutterwaveV4OrdersGet: {
+    input: { target: "./src/client/specs/v4/orders-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/orders-get.zod.ts"),
+  },
+  flutterwaveV4VirtualAccounts: {
+    input: { target: "./src/client/specs/v4/virtual-accounts.yaml" },
+    output: zodOutput("./src/client/generated/v4/virtual-accounts.zod.ts"),
+  },
+  flutterwaveV4VirtualAccountsGet: {
+    input: { target: "./src/client/specs/v4/virtual-accounts-get.yaml" },
+    output: zodOutput("./src/client/generated/v4/virtual-accounts-get.zod.ts"),
+  },
 });

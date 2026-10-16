@@ -70,6 +70,10 @@ export const V4_ACCEPTED_TOOLS = [
   'get_chargeback',
   'create_chargeback',
   'update_chargeback',
+  'create_order',
+  'get_order',
+  'create_virtual_account',
+  'get_virtual_account',
 ] as const;
 
 export function acceptedToolsFor(version: ApiVersion): readonly string[] {

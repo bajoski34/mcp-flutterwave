@@ -130,7 +130,7 @@ When adding new Flutterwave API endpoints:
 
 v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
 
-`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, and refund, plus list/search/update reads, reference lookups, wallet tools, and settlement and chargeback tools. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
+`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, refund, order, and virtual account, plus the list, lookup, wallet, settlement, and chargeback tools. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
 
 Notes on the current v4 codegen state:
 
@@ -161,6 +161,10 @@ Notes on the current v4 codegen state:
 - `get_chargeback` validates the path id with `ChargebacksGetByIdParams` from `src/client/generated/v4/chargebacks-get.zod.ts`.
 - `create_chargeback` validates with `ChargebacksPostBody` from `src/client/generated/v4/chargebacks.zod.ts`.
 - `update_chargeback` validates with `ChargebackPutBody` from `src/client/generated/v4/chargebacks-update.zod.ts`.
+- `create_order` validates with `OrdersPostBody` from `src/client/generated/v4/orders.zod.ts`.
+- `get_order` validates the path id with `OrdersGetParams` from `src/client/generated/v4/orders-get.zod.ts`.
+- `create_virtual_account` validates with `VirtualAccountsPostBody` from `src/client/generated/v4/virtual-accounts.zod.ts`.
+- `get_virtual_account` validates the path id with `VirtualAccountGetParams` from `src/client/generated/v4/virtual-accounts-get.zod.ts`.
 - Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
 - After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 

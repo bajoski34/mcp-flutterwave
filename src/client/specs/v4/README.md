@@ -32,6 +32,10 @@ These YAML files are **vendored/extracted** from Flutterwave's embedded OpenAPI 
 | `chargebacks-get.yaml` | `v4/reference/chargebacks_get_by_id` |
 | `chargebacks.yaml` | `v4/reference/chargebacks_post` |
 | `chargebacks-update.yaml` | `v4/reference/chargeback_put` |
+| `orders.yaml` | `v4/reference/orders_post` |
+| `orders-get.yaml` | `v4/reference/orders_get` |
+| `virtual-accounts.yaml` | `v4/reference/virtual_accounts_post` |
+| `virtual-accounts-get.yaml` | `v4/reference/virtual_account_get` |
 
 Provenance headers (source URL + fetch date) are preserved at the top of each file.
 
