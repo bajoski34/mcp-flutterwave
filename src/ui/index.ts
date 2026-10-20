@@ -21,20 +21,153 @@ export interface AvsAuthUIData { tx_ref: string; charge_type: string; fields: st
 export interface ThreeDsRedirectUIData { tx_ref: string; charge_type: string; redirect_url: string; flw_ref?: string; amount?: number; currency?: string; }
 export interface OtpPromptUIData { tx_ref: string; charge_type: string; flw_ref: string; processor_response?: string; amount?: number; currency?: string; email?: string; }
 
+// ---------------------------------------------------------------------------
+// Card design v2 (transaction, checkout, transfer)
+// ---------------------------------------------------------------------------
+
+const CARD = {
+    ink: '#16161A', muted: '#6B6B73', faint: '#A1A1A8', line: '#F0F0EC', lineStrong: '#E2E2DE',
+    surface: '#FFFFFF', subtle: '#FAFAF8', chip: '#F4F4F1', accent: '#FF9B00',
+};
+
+const escapeHtml = (value: unknown): string =>
+    String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
+
+const ICONS = {
+    card: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+    link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+    send: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>',
+    check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>',
+    clock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>',
+    cross: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    copy: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+    arrow: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+};
+
+const cardStyles = `<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:transparent;padding:16px;color:${CARD.ink};line-height:1.45;-webkit-font-smoothing:antialiased}
+.card{max-width:440px;margin:0 auto;background:${CARD.surface};border:1px solid ${CARD.line};border-radius:24px;box-shadow:0 1px 2px rgba(22,22,26,.04),0 12px 32px -12px rgba(22,22,26,.12);overflow:hidden}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 24px 0}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.icon{width:32px;height:32px;flex:none;border-radius:9px;background:${CARD.accent};color:${CARD.ink};display:flex;align-items:center;justify-content:center}
+.title{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.subtitle{font-size:12px;color:${CARD.muted}}
+.status{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;text-transform:capitalize}
+.status.success{background:#E7F6EC;color:#0B6B32}
+.status.pending{background:#FFF4E0;color:#8A4B00}
+.status.failed{background:#FDECEC;color:#A11A1A}
+.status.active{background:#EEF2FF;color:#3730A3}
+.dot{width:6px;height:6px;border-radius:999px;background:currentColor}
+.hero{padding:32px 24px 24px;display:flex;flex-direction:column;gap:8px}
+.eyebrow{font-size:12px;font-weight:500;color:${CARD.muted};text-transform:uppercase;letter-spacing:.08em}
+.amount{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ccy{font-size:18px;font-weight:500;color:${CARD.muted}}
+.value{font-size:44px;font-weight:600;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
+.value .dec{color:${CARD.faint}}
+.meta{font-size:13px;color:${CARD.muted}}
+.rule{margin:0 24px;border-top:1px dashed ${CARD.lineStrong}}
+.rows{padding:4px 24px 8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid ${CARD.line}}
+.row:last-child{border-bottom:0}
+.row dt{font-size:13px;color:${CARD.muted};flex:none}
+.row dd{font-size:14px;font-weight:500;text-align:right;display:flex;align-items:center;gap:8px;min-width:0;word-break:break-word;justify-content:flex-end}
+.mono{font-family:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+.copy{width:28px;height:28px;flex:none;border:0;border-radius:7px;background:${CARD.chip};color:${CARD.muted};display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.copy:hover{color:${CARD.ink}}
+.person{margin:0 24px;padding:14px 16px;border-radius:14px;background:${CARD.subtle};border:1px solid ${CARD.line};display:flex;align-items:center;gap:12px}
+.avatar{width:36px;height:36px;flex:none;border-radius:999px;background:#FFF1DC;color:#8A4B00;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.person-name{font-size:14px;font-weight:600}
+.person-sub{font-size:13px;color:${CARD.muted};word-break:break-word}
+.field{padding:24px 24px 0;display:flex;flex-direction:column;gap:10px}
+.field label{font-size:13px;color:${CARD.muted}}
+.input{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 14px;border-radius:12px;border:1px solid ${CARD.lineStrong}}
+.input input{flex:1;min-width:0;border:0;outline:none;background:transparent;font-family:'Geist Mono',ui-monospace,Menlo,monospace;font-size:13px;color:${CARD.ink};text-overflow:ellipsis}
+.btn-ghost{height:36px;padding:0 12px;border:0;border-radius:8px;background:${CARD.chip};color:${CARD.ink};font:inherit;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.actions{padding:24px}
+.btn{height:48px;border-radius:12px;background:${CARD.ink};color:#fff;text-decoration:none;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn svg{color:${CARD.accent}}
+.steps{margin:0 24px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.step{display:flex;flex-direction:column;gap:8px;font-size:12px;color:${CARD.muted}}
+.bar{height:4px;border-radius:999px;background:#ECECE8}
+.step.done{color:${CARD.ink};font-weight:600}.step.done .bar{background:${CARD.ink}}
+.step.current{color:#8A4B00;font-weight:600}.step.current .bar{background:${CARD.accent}}
+.step.error{color:#A11A1A;font-weight:600}.step.error .bar{background:#D93636}
+.foot{padding:14px 24px;background:${CARD.subtle};border-top:1px solid ${CARD.line};display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:${CARD.muted}}
+.foot strong{color:${CARD.ink};font-weight:600}
+</style>`;
+
+const cardHead = (title: string) =>
+    `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">${cardStyles}</head>`;
+
+// Copies data-copy values; falls back to a selection-based copy where the clipboard API is blocked in sandboxed iframes.
+const copyScript = `<script>document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var t=b.getAttribute('data-copy');var done=function(){var o=b.getAttribute('aria-label');b.setAttribute('aria-label','Copied');setTimeout(function(){b.setAttribute('aria-label',o)},1500)};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(function(){})}else{var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(_){}a.remove()}});</script>`;
+
+const formatAmount = (amount: number, currency: string) => {
+    const [whole, dec] = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).split('.');
+    return `<div class="amount"><span class="ccy">${escapeHtml(currency)}</span><span class="value">${whole}<span class="dec">.${dec}</span></span></div>`;
+};
+
+const statusKind = (status: string) => {
+    const s = status.toLowerCase();
+    if (s === 'successful' || s === 'success' || s === 'completed') return 'success';
+    if (s === 'pending' || s === 'new' || s === 'processing') return 'pending';
+    return 'failed';
+};
+
+const statusPill = (status: string) => {
+    const kind = statusKind(status);
+    const icon = kind === 'success' ? ICONS.check : kind === 'pending' ? ICONS.clock : ICONS.cross;
+    return `<span class="status ${kind}">${icon}${escapeHtml(status)}</span>`;
+};
+
+const initials = (name: string) =>
+    escapeHtml(name.trim().split(/\s+/).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? '').join(''));
+
+const copyButton = (value: string, label: string) =>
+    `<button type="button" class="copy" data-copy="${escapeHtml(value)}" aria-label="Copy ${escapeHtml(label)}">${ICONS.copy}</button>`;
+
+const row = (label: string, value: string) => `<div class="row"><dt>${label}</dt><dd>${value}</dd></div>`;
+
+const cardTop = (icon: string, title: string, subtitle: string, right: string) =>
+    `<div class="top"><div class="brand"><div class="icon">${icon}</div><div><div class="title">${title}</div><div class="subtitle">${subtitle}</div></div></div>${right}</div>`;
+
+const cardFoot = (right = '') => `<div class="foot"><span>Powered by <strong>Flutterwave</strong></span>${right}</div>`;
+
 export function createTransactionUI(data: TransactionUIData) {
-    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Transaction Details</title>${baseStyles}</head><body><div class="container"><div class="header"><h1>Transaction Details</h1><p>Flutterwave Payment</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="status ${statusClass}">${data.status}</div></div><div class="amount" style="text-align:center">${data.currency} ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Transaction ID</div><div class="info-value">${data.tx_id}</div></div>${data.customer?.name?`<div class="info-item"><div class="info-label">Customer Name</div><div class="info-value">${data.customer.name}</div></div>`:''} ${data.customer?.email?`<div class="info-item"><div class="info-label">Customer Email</div><div class="info-value">${data.customer.email}</div></div>`:''} ${data.created_at?`<div class="info-item"><div class="info-label">Created At</div><div class="info-value">${new Date(data.created_at).toLocaleString()}</div></div>`:''}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    const date = data.created_at ? new Date(data.created_at) : null;
+    const dateStr = date && !isNaN(date.getTime())
+        ? date.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : '';
+    const rows = [
+        row('Transaction ID', `<span class="mono">${escapeHtml(data.tx_id)}</span>${copyButton(data.tx_id, 'transaction ID')}`),
+        data.customer?.name ? row('Customer', `<span class="avatar" style="width:26px;height:26px;font-size:11px">${initials(data.customer.name)}</span>${escapeHtml(data.customer.name)}`) : '',
+        data.customer?.email ? row('Email', escapeHtml(data.customer.email)) : '',
+    ].join('');
+    const html = `${cardHead('Transaction details')}<body><main class="card">${cardTop(ICONS.card, 'Transaction', 'Flutterwave payment', statusPill(data.status))}<section class="hero"><span class="eyebrow">Amount</span>${formatAmount(data.amount, data.currency)}${dateStr ? `<span class="meta">${escapeHtml(dateStr)}</span>` : ''}</section><div class="rule"></div><dl class="rows">${rows}</dl>${cardFoot()}</main>${copyScript}</body></html>`;
     return createUIResource({ uri: `ui://transaction/${data.tx_id}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
 }
 
 export function createCheckoutUI(data: CheckoutUIData) {
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Payment Link Created</title>${baseStyles}</head><body><div class="container"><div class="header"><h1>Payment Link Created</h1><p>Share this link with your customer</p></div><div class="content"><div class="amount" style="text-align:center">${data.currency} ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Customer Name</div><div class="info-value">${data.customer.name}</div></div><div class="info-item"><div class="info-label">Customer Email</div><div class="info-value">${data.customer.email}</div></div></div><div class="link-box">${data.link}</div><div style="text-align:center;margin-top:20px"><a href="${data.link}" target="_blank" class="button">Open Payment Link</a></div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    const link = escapeHtml(data.link);
+    const shortLink = escapeHtml(data.link.replace(/^https?:\/\//, ''));
+    const html = `${cardHead('Payment link created')}<body><main class="card">${cardTop(ICONS.link, 'Payment link created', 'Share it with your customer', '<span class="status active"><span class="dot"></span>Active</span>')}<section class="hero"><span class="eyebrow">Amount requested</span>${formatAmount(data.amount, data.currency)}</section><div class="person"><span class="avatar">${initials(data.customer.name)}</span><div style="min-width:0"><div class="person-name">${escapeHtml(data.customer.name)}</div><div class="person-sub">${escapeHtml(data.customer.email)}</div></div></div><div class="field"><label for="paylink">Checkout link</label><div class="input"><input id="paylink" readonly value="${shortLink}"><button type="button" class="btn-ghost" data-copy="${link}" aria-label="Copy checkout link">${ICONS.copy}Copy</button></div></div><div class="actions"><a class="btn" href="${link}" target="_blank" rel="noopener noreferrer">Open checkout ${ICONS.arrow}</a></div>${cardFoot()}</main>${copyScript}</body></html>`;
     return createUIResource({ uri: `ui://checkout/${Date.now()}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
 }
 
 export function createTransferUI(data: TransferUIData) {
-    const statusClass = data.status.toLowerCase() === 'successful' ? 'success' : data.status.toLowerCase() === 'pending' ? 'pending' : 'failed';
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Transfer Details</title>${baseStyles}</head><body><div class="container"><div class="header"><h1>Transfer Details</h1><p>Flutterwave Transfer</p></div><div class="content"><div style="text-align:center;margin-bottom:24px"><div class="status ${statusClass}">${data.status}</div></div><div class="amount" style="text-align:center">${data.currency} ${data.amount.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="info-grid"><div class="info-item"><div class="info-label">Reference</div><div class="info-value">${data.reference}</div></div>${data.beneficiary.name?`<div class="info-item"><div class="info-label">Beneficiary Name</div><div class="info-value">${data.beneficiary.name}</div></div>`:''} ${data.beneficiary.account_number?`<div class="info-item"><div class="info-label">Account Number</div><div class="info-value">${data.beneficiary.account_number}</div></div>`:''} ${data.beneficiary.bank_name?`<div class="info-item"><div class="info-label">Bank Name</div><div class="info-value">${data.beneficiary.bank_name}</div></div>`:''}</div></div><div class="footer">Powered by Flutterwave</div></div></body></html>`;
+    const kind = statusKind(data.status);
+    const steps = kind === 'success'
+        ? ['done', 'done', 'done']
+        : kind === 'pending' ? ['done', 'current', ''] : ['done', 'error', ''];
+    const labels = ['Initiated', kind === 'failed' ? 'Failed' : 'Processing', 'Completed'];
+    const progress = `<div class="steps" role="list" aria-label="Transfer progress">${labels.map((l, i) => `<div class="step ${steps[i]}" role="listitem"><div class="bar"></div>${l}</div>`).join('')}</div>`;
+    const { name, account_number, bank_name } = data.beneficiary;
+    const bankLine = [bank_name ? escapeHtml(bank_name) : '', account_number ? `<span class="mono">${escapeHtml(account_number)}</span>` : ''].filter(Boolean).join(' · ');
+    const beneficiary = name || bankLine
+        ? `<div class="person" style="margin-top:24px">${name ? `<span class="avatar">${initials(name)}</span>` : ''}<div style="min-width:0">${name ? `<div class="person-name">${escapeHtml(name)}</div>` : ''}${bankLine ? `<div class="person-sub">${bankLine}</div>` : ''}</div></div>`
+        : '';
+    const html = `${cardHead('Transfer details')}<body><main class="card">${cardTop(ICONS.send, 'Bank transfer', 'Flutterwave payout', statusPill(data.status))}<section class="hero"><span class="eyebrow">Amount sent</span>${formatAmount(data.amount, data.currency)}</section>${progress}${beneficiary}<dl class="rows" style="margin-top:8px">${row('Reference', `<span class="mono">${escapeHtml(data.reference)}</span>${copyButton(data.reference, 'reference')}`)}</dl>${cardFoot()}</main>${copyScript}</body></html>`;
     return createUIResource({ uri: `ui://transfer/${data.reference}` as URI, content: { type: 'rawHtml', htmlString: html }, encoding: 'text' }).resource;
 }
 
