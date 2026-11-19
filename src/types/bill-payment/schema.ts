@@ -16,9 +16,7 @@ export const BILL_CATEGORIES = [
 
 export const GetBillProvidersSchema = {
     category: z.enum(BILL_CATEGORIES, {
-        errorMap: () => ({
-            message: `Category must be one of: ${BILL_CATEGORIES.join(', ')}`,
-        }),
+        error: `Category must be one of: ${BILL_CATEGORIES.join(', ')}`,
     }),
 };
 
