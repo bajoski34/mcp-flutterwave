@@ -1,64 +1,12 @@
 #!/usr/bin/env node
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import server from "./server.js";
+import server, { startServer } from "./server.js";
 import { Options } from "./types/index.js";
-import { config } from "./config/index.js";
+import "./config/index.js";
+import { getApiVersion } from "./config/apiVersion.js";
+import { acceptedToolsFor } from "./config/acceptedTools.js";
 
 const ACCEPTED_ARGS = ['tools'];
-
-const ACCEPTED_TOOLS = [
-    // checkout
-    'create_checkout',
-    'disable_checkout',
-    // transactions
-    'read_transaction',
-    'read_transaction_with_reference',
-    'read_transaction_timeline',
-    'resend_transaction_webhook',
-    // transfers
-    'create_transfer',
-    'create_beneficiary',
-    'list_beneficiaries',
-    // plans
-    'create_payment_plan',
-    'get_payment_plans',
-    // charges
-    'charge_card',
-    'charge_bank_account',
-    'charge_mobile_money',
-    'charge_mpesa',
-    'charge_ussd',
-    'validate_charge',
-    // virtual accounts
-    'create_virtual_account',
-    'get_virtual_account',
-    'update_virtual_account',
-    'list_virtual_account_bulk',
-    // bill payments
-    'get_bill_categories',
-    'get_bill_providers',
-    'get_bill_items',
-    'validate_bill_customer',
-    'pay_bill',
-    'get_bill_status',
-    // fx trade
-    'request_fx_quote',
-    'get_fx_quote',
-    'initiate_fx_trade',
-    'get_fx_trade',
-    // verification
-    'initiate_bvn_verification',
-    'get_bvn_details',
-    'resolve_bank_account',
-    'verify_card_bin',
-    // stablecoins
-    'get_stablecoin_fee',
-    'send_stablecoin',
-    'convert_to_stablecoin',
-];
-
-// Create a Set for faster lookup performance (O(1) vs O(n))
-const ACCEPTED_TOOLS_SET = new Set(ACCEPTED_TOOLS);
 
 export function parseArgs(args: string[]): Options {
     const options: Options = {};
@@ -84,37 +32,43 @@ export function parseArgs(args: string[]): Options {
         throw new Error('The --tools arguments must be provided.');
     }
 
-    // Validate tools against accepted enum values using Set for better performance
+    const apiVersion = getApiVersion();
+    const acceptedTools = acceptedToolsFor(apiVersion);
+    const acceptedToolsSet = new Set<string>(acceptedTools);
+
+    // Validate tools against the version that this process is registered for.
     options.tools.forEach((tool: string) => {
         const trimmedTool = tool.trim();
         if (trimmedTool === 'all') {
             return;
         }
-        if (!ACCEPTED_TOOLS_SET.has(trimmedTool)) {
+        if (!acceptedToolsSet.has(trimmedTool)) {
             throw new Error(
-                `Invalid tool: ${tool}. Accepted tools are: ${ACCEPTED_TOOLS.join(
+                `Invalid tool: ${tool}. Accepted tools are: ${acceptedTools.join(
                     ', '
                 )}`
             );
         }
     });
 
-    // Check if API key is either provided in args or set in environment variables
-    const apiKey = process.env.FLW_SECRET_KEY;
+    if (apiVersion === 'v3') {
+        const apiKey = process.env.FLW_SECRET_KEY;
 
-    if (!apiKey) {
-        throw new Error(
-            'Flutterwave Secret key not provided. Please either pass it as an argument --secret-key=$KEY or set the FLW_SECRET_KEY environment variable.'
-        );
+        if (!apiKey) {
+            throw new Error(
+                'Flutterwave Secret key not provided. Set the FLW_SECRET_KEY environment variable.'
+            );
+        }
+
+        options.apiKey = apiKey;
     }
-
-    options.apiKey = apiKey;
 
     return options;
 }
 
 async function main() {
     const options = parseArgs(process.argv.slice(2));
+    await startServer();
     const transport = new StdioServerTransport();
 
     // Handle process termination

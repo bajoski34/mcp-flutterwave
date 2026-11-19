@@ -55,15 +55,18 @@ Thank you for your interest in contributing to mcp-flutterwave! This document pr
 
 ```
 src/
-├── client/           # Flutterwave API client
-│   ├── http/        # HTTP client configuration
-│   ├── lib/         # API endpoint implementations
-│   ├── specs/       # OpenAPI specifications
-│   └── types/       # Generated TypeScript types
-├── config/          # Configuration files
-├── tools/           # MCP tool implementations
-├── types/           # Type definitions and schemas
-└── server.ts        # MCP server setup
+├── client/              # Flutterwave API client
+│   ├── http/            # v3 HTTP client configuration
+│   ├── lib/             # v3 API endpoint implementations
+│   ├── middleware/      # Auth middleware (e.g. authMiddlewareV3)
+│   ├── v4/              # v4 auth, encryption, environment, http
+│   ├── specs/           # OpenAPI specifications (v3/ and v4/)
+│   ├── types/           # Generated v3 TypeScript types
+│   └── generated/       # Generated v4 Zod schemas (Orval)
+├── config/              # Configuration files
+├── tools/               # MCP tool implementations
+├── types/               # Type definitions and schemas
+└── server.ts            # MCP server setup
 ```
 
 ### Adding New Tools
@@ -103,7 +106,7 @@ src/
    });
    ```
 
-3. **Register the tool** in `src/registered-tools.ts`
+3. **Register the tool** in `src/tools/index.ts` (v4 tools go through `src/tools/v4/register.ts` and `V4_ACCEPTED_TOOLS`)
 
 4. **Update documentation** and tool lists in relevant files
 
@@ -111,10 +114,84 @@ src/
 
 When adding new Flutterwave API endpoints:
 
+**v3**
+
 1. **Add OpenAPI spec** in `src/client/specs/v3/`
 2. **Generate types** using `npm run build:types`
 3. **Implement client class** in `src/client/lib/`
 4. **Export from main client** in `src/client/index.ts`
+
+**v4**
+
+1. **Vendor an OpenAPI fragment** in `src/client/specs/v4/` (extracted from Flutterwave's `reference/*.md` pages — see that folder's README)
+2. **Register the fragment** in `orval.config.ts`
+3. **Regenerate Zod schemas** using `npm run generate:v4` (also runs as part of `npm run build`, after `build:types`)
+4. Wire the generated schemas into MCP tools / the v4 client as needed
+
+v3 types and v4 Zod output use different generators on purpose: v3 stays on `openapi-typescript`; v4 uses Orval so tool-arg validation schemas come from the same OpenAPI source.
+
+`FLW_API_VERSION` selects which tools this process registers. It defaults to `v3`. Set it to `v4` to register the v4 tool set, including create/get for customer, card payment method, charge, refund, order, and virtual account, plus the list, lookup, wallet, settlement, chargeback, transfer-rate, orchestrator, and bank lookup tools, plus list and update for orders and virtual accounts, and transfer recipient, sender, and transfer tools. v4 startup requires `FLW_CLIENT_ID`, `FLW_CLIENT_SECRET`, and `FLW_ENCRYPTION_KEY_V4` instead of `FLW_SECRET_KEY`.
+
+Notes on the current v4 codegen state:
+
+- `create_customer` validates with `CustomersCreateBody` from `src/client/generated/v4/customers.zod.ts`.
+- `create_card_payment_method` validates the encrypted request body with `PaymentMethodsPostBody` from `src/client/generated/v4/payment-methods.zod.ts`. The tool's public arguments stay plaintext; the generated schema describes the wire payload.
+- `create_charge` validates with `ChargesPostBody` from `src/client/generated/v4/charge.zod.ts`.
+- `get_charge` validates the path id with `ChargesGetParams` from `src/client/generated/v4/charges-get.zod.ts`.
+- `create_refund` validates with `RefundsPostBody` from `src/client/generated/v4/refunds.zod.ts`.
+- `get_customer` validates the path id with `CustomersGetParams` from `src/client/generated/v4/customers-get.zod.ts`.
+- `get_refund` validates the path id with `RefundsGetParams` from `src/client/generated/v4/refunds-get.zod.ts`.
+- `get_payment_method` validates the path id with `PaymentMethodsGetParams` from `src/client/generated/v4/payment-methods-get.zod.ts`.
+- `list_customers` validates with `CustomersListQueryParams` from `src/client/generated/v4/customers-list.zod.ts`.
+- `search_customers` validates with `CustomersSearchBody` and `CustomersSearchQueryParams` from `src/client/generated/v4/customers-search.zod.ts`.
+- `update_customer` validates with `CustomersPutBody` from `src/client/generated/v4/customers-update.zod.ts`.
+- `list_charges` validates with `ChargesListQueryParams` from `src/client/generated/v4/charges-list.zod.ts`.
+- `update_charge` validates with `ChargesPutBody` from `src/client/generated/v4/charges-update.zod.ts`.
+- `list_refunds` validates with `RefundsListQueryParams` from `src/client/generated/v4/refunds-list.zod.ts`.
+- `list_payment_methods` validates with `PaymentMethodsListQueryParams` from `src/client/generated/v4/payment-methods-list.zod.ts`.
+- `get_fees` validates with `FeesGetQueryParams` from `src/client/generated/v4/fees.zod.ts`.
+- `get_banks` validates with `BanksGetQueryParams` from `src/client/generated/v4/banks.zod.ts`.
+- `get_mobile_networks` validates with `MobileNetworksGetQueryParams` from `src/client/generated/v4/mobile-networks.zod.ts`.
+- `get_wallet_balance` validates the path currency with `FetchCurrencyWalletBalanceParams` from `src/client/generated/v4/wallet-balance.zod.ts`.
+- `get_wallet_statement` validates with `GetWalletStatementQueryParams` from `src/client/generated/v4/wallet-statement.zod.ts`.
+- `resolve_wallet_account` validates with `WalletAccountResolvePostBody` from `src/client/generated/v4/wallet-lookup.zod.ts`.
+- `list_settlements` validates with `SettlementListQueryParams` from `src/client/generated/v4/settlements-list.zod.ts`.
+- `get_settlement` validates the path id with `SettlementGetParams` from `src/client/generated/v4/settlements-get.zod.ts`.
+- `list_chargebacks` validates with `ChargebacksListQueryParams` from `src/client/generated/v4/chargebacks-list.zod.ts`.
+- `get_chargeback` validates the path id with `ChargebacksGetByIdParams` from `src/client/generated/v4/chargebacks-get.zod.ts`.
+- `create_chargeback` validates with `ChargebacksPostBody` from `src/client/generated/v4/chargebacks.zod.ts`.
+- `update_chargeback` validates with `ChargebackPutBody` from `src/client/generated/v4/chargebacks-update.zod.ts`.
+- `create_order` validates with `OrdersPostBody` from `src/client/generated/v4/orders.zod.ts`.
+- `get_order` validates the path id with `OrdersGetParams` from `src/client/generated/v4/orders-get.zod.ts`.
+- `create_virtual_account` validates with `VirtualAccountsPostBody` from `src/client/generated/v4/virtual-accounts.zod.ts`.
+- `get_virtual_account` validates the path id with `VirtualAccountGetParams` from `src/client/generated/v4/virtual-accounts-get.zod.ts`.
+- `quote_transfer_rate` validates with `TransferRatesPostBody` from `src/client/generated/v4/transfer-rates.zod.ts`.
+- `get_transfer_rate` validates the path id with `TransferRatesGetParams` from `src/client/generated/v4/transfer-rates-get.zod.ts`.
+- `create_orchestrator_charge` encrypts card fields, then validates with `OrchestrationDirectChargePostBody` from `src/client/generated/v4/orchestration-direct-charge.zod.ts`.
+- `create_orchestrator_order` encrypts card fields, then validates with `OrchestrationDirectOrderPostBody` from `src/client/generated/v4/orchestration-direct-order.zod.ts`.
+- `create_orchestrator_transfer` validates with `DirectTransfersPostBody` from `src/client/generated/v4/direct-transfers.zod.ts`.
+- `resend_webhook` validates with `ResendWebhookBody` from `src/client/generated/v4/resend-webhook.zod.ts`.
+- `get_bank_branches` validates the path id with `BankBranchesGetParams` from `src/client/generated/v4/bank-branches.zod.ts`.
+- `resolve_bank_account` validates with `BankAccountResolvePostBody` from `src/client/generated/v4/bank-account-resolve.zod.ts`.
+- `list_orders` validates with `OrdersListQueryParams` from `src/client/generated/v4/orders-list.zod.ts`.
+- `update_order` validates with `OrdersPutBody` from `src/client/generated/v4/orders-update.zod.ts`.
+- `list_virtual_accounts` validates with `VirtualAccountsListQueryParams` from `src/client/generated/v4/virtual-accounts-list.zod.ts`.
+- `update_virtual_account` validates with `VirtualAccountsPutBody` from `src/client/generated/v4/virtual-accounts-update.zod.ts`.
+- `list_transfer_recipients` validates with `TransfersRecipientsListQueryParams` from `src/client/generated/v4/transfer-recipients-list.zod.ts`.
+- `create_transfer_recipient` validates with `TransfersRecipientsCreateBody` from `src/client/generated/v4/transfer-recipients.zod.ts`.
+- `get_transfer_recipient` validates the path id with `TransfersRecipientsGetParams` from `src/client/generated/v4/transfer-recipients-get.zod.ts`.
+- `delete_transfer_recipient` validates the path id with `TransfersRecipientsDeleteParams` from `src/client/generated/v4/transfer-recipients-delete.zod.ts`.
+- `list_transfer_senders` validates with `TransfersSendersListQueryParams` from `src/client/generated/v4/transfer-senders-list.zod.ts`.
+- `create_transfer_sender` validates with `TransfersSendersCreateBody` from `src/client/generated/v4/transfer-senders.zod.ts`.
+- `get_transfer_sender` validates the path id with `TransfersSendersGetParams` from `src/client/generated/v4/transfer-senders-get.zod.ts`.
+- `delete_transfer_sender` validates the path id with `TransfersSendersDeleteParams` from `src/client/generated/v4/transfer-senders-delete.zod.ts`.
+- `create_transfer` validates with `TransfersPostBody` from `src/client/generated/v4/transfers.zod.ts`.
+- `get_transfer` validates the path id with `TransferGetParams` from `src/client/generated/v4/transfers-get.zod.ts`.
+- `list_transfers` validates with `TransfersListQueryParams` from `src/client/generated/v4/transfers-list.zod.ts`.
+- `update_transfer` validates with `TransferPutBody` from `src/client/generated/v4/transfers-update.zod.ts`.
+- `retry_transfer` validates with `TransferPostRetryBody` from `src/client/generated/v4/transfers-retry.zod.ts`.
+- Orval is configured with `response: false` in [`orval.config.ts`](orval.config.ts): Flutterwave's `processor_response` enum-of-objects emits invalid `zod.literal({…})` under zod@3. Request body/header/param/query schemas are generated.
+- After editing a v4 YAML fragment, run `npm run generate:v4` (or `npm run build`) and commit the updated Zod files under `src/client/generated/v4/`.
 
 ### Testing
 
@@ -142,13 +219,7 @@ docs: update README with new tool examples
 
 ## Supported Tools
 
-Current tools that can be extended or improved:
-
-- **Transactions**: Get transaction details, resend webhooks
-- **Checkout**: Create payment links, disable links
-- **Plans**: Create and retrieve subscription plans
-- **Refunds**: Process transaction refunds
-- **Subscriptions**: Manage customer subscriptions
+The live names are `V3_ACCEPTED_TOOLS` and `V4_ACCEPTED_TOOLS` in `src/config/acceptedTools.ts`. The README lists both. `FLW_API_VERSION` chooses which list the process registers. Default is v3.
 
 ## Common Issues and Solutions
 
@@ -167,8 +238,9 @@ Current tools that can be extended or improved:
 ### API Client Issues
 
 - Verify OpenAPI specifications are accurate
-- Regenerate types after spec changes: `npm run build:types`
-- Check HTTP client configuration in `src/client/http/`
+- Regenerate v3 types after spec changes: `npm run build:types`
+- Regenerate v4 Zod schemas after spec changes: `npm run generate:v4` (also included in `npm run build`)
+- Check HTTP client configuration in `src/client/http/` (v3) or `src/client/v4/` (v4)
 
 ## Submitting Changes
 
