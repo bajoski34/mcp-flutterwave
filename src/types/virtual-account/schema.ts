@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const CreateVirtualAccountSchema = {
     email: z.string().email('Invalid email address'),
     currency: z.enum(['NGN', 'GHS'] as const, {
-        errorMap: () => ({ message: 'Currency must be NGN or GHS' }),
+        error: 'Currency must be NGN or GHS',
     }),
     tx_ref: z.string().min(1, 'Transaction reference is required'),
     amount: z.number().positive('Amount must be a positive number').optional(),

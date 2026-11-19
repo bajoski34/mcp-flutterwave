@@ -4,10 +4,10 @@ export const FX_CURRENCIES = ['NGN', 'GHS', 'USD'] as const;
 
 export const RequestFxQuoteSchema = {
     base_currency: z.enum(FX_CURRENCIES, {
-        errorMap: () => ({ message: 'base_currency must be one of: NGN, GHS, USD' }),
+        error: 'base_currency must be one of: NGN, GHS, USD',
     }),
     target_currency: z.enum(FX_CURRENCIES, {
-        errorMap: () => ({ message: 'target_currency must be one of: NGN, GHS, USD' }),
+        error: 'target_currency must be one of: NGN, GHS, USD',
     }),
     quantity: z.number().positive('quantity must be a positive number (amount of base_currency to convert)'),
     reference: z.string().min(1).optional(),
